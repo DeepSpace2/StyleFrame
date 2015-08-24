@@ -18,9 +18,9 @@ sf.apply_style_by_indexes(indexes_to_color=sf[sf['col_a'] > 50],
                           cols_name=['col_a'], color='blue', bold=True, size=10)
 ```
 
-Creating pandas ExcelWriter used to save the excel. In future versions this will be simplified
+Creating ExcelWriter used to save the excel.
 ```python
-ew = pd.ExcelWriter(r'C:\my_excel.xlsx', engine='openpyxl')
+ew = StyleFrame.ExcelWriter(r'C:\my_excel.xlsx', engine='openpyxl')
 sf.to_excel(ew)
 ew.save()
 ```

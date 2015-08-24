@@ -56,6 +56,10 @@ class StyleFrame(object):
     def read_excel(cls, path, sheetname, **kwargs):
         return StyleFrame(pd.read_excel(path, sheetname=sheetname, **kwargs))
 
+    @classmethod
+    def ExcelWriter(cls, path):
+        return pd.ExcelWriter(path, engine='openpyxl')
+
     def to_excel(self, excel_writer, sheet_name='Sheet1', na_rep='', float_format=None, columns=None, header=True, index=False,
                  index_label=None, startrow=0, startcol=0, engine='openpyxl', merge_cells=True, encoding=None, inf_rep='inf', right_to_left=True):
         """
