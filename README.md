@@ -6,7 +6,6 @@ StyleFrame constructor supports all the ways you are used to initiate pandas dat
 An existing dataframe, a dictionary or a list of dictionaries
 ```python
 from StyleFrame import StyleFrame
-from StyleFrame import Styler
 
 sf = StyleFrame({'col_a': range(100)})
 ```
