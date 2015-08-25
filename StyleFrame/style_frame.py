@@ -15,7 +15,7 @@ class StyleFrame(object):
         elif isinstance(obj, pd.Series):
             self.data_df = obj.apply(lambda x: Container(x) if not isinstance(x, Container) else x.value)
         elif isinstance(obj, dict) or isinstance(obj, list):
-            self.data_df = pd.DataFrame(obj).applymap(lambda x: Container(x))
+            self.data_df = pd.DataFrame(obj).applymap(lambda x: x if isinstance(x, Container) else Container(x))
         else:
             raise TypeError("{} __init__ doesn't support {}".format(type(self).__name__, type(obj).__name__))
         self.data_df.columns = [Container(col) for col in self.data_df.columns]
