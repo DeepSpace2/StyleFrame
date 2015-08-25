@@ -4,6 +4,7 @@ from container import Container
 from styler import Styler
 import numpy as np
 
+
 class StyleFrame(object):
     """
     A wrapper class that wraps pandas DataFrame.
