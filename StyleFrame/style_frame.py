@@ -3,6 +3,7 @@ import pandas as pd
 from container import Container
 from styler import Styler
 import numpy as np
+from openpyxl.cell import get_column_letter
 
 
 class StyleFrame(object):
@@ -121,6 +122,7 @@ class StyleFrame(object):
                 if column in self.data_df.columns:  # column name
                     column_index = self.data_df.columns.get_loc(column) + startcol + 1  # worksheet columns index start from 1
                     column_as_letter = get_column_letter(column_index)
+
                 elif isinstance(column, int) and column >= 1:  # column index
                     column_as_letter = get_column_letter(column)
                 elif column in sheet.column_dimensions:  # column letter

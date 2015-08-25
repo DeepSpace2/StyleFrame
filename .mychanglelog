@@ -1,0 +1,6 @@
+0.0.5.5     - Added ability to hide certain columns when doing to excel.
+
+0.0.5.2     - Added ExcelWriter to StyleFrame class
+            - Supports initializing StyleFrame with containers
+
+0.0.5       - Initial release
