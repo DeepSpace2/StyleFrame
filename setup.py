@@ -10,7 +10,7 @@ setup(
     # https://packaging.python.org/en/latest/single_source_version.html
     version='0.0.5.5',
 
-    description='A library that wraps pandas and openpyxl and allows easy styling of dataframes in excel, A library that wraps pandas and openpyxl and allows easy styling of dataframes in excel. A simple documentation can be found at https://github.com/DeepSpace2/StyleFrame',
+    description='A library that wraps pandas and openpyxl and allows easy styling of dataframes in excel, A library that wraps pandas and openpyxl and allows easy styling of dataframes in excel. A simple documentation can be found at http://styleframe.readthedocs.org/en/latest/',
     # long_description=long_description,
 
     # The project's main homepage.
