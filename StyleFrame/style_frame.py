@@ -172,5 +172,3 @@ class StyleFrame(object):
                 self.columns[self.columns.get_loc(col_name)].style = Styler(color=color, bold=bold, size=size, number_format=number_format).create_style()
             for index in self.index:
                 self.ix[index, col_name].style = Styler(color=color, bold=bold, size=size, number_format=number_format).create_style()
-
-

@@ -12,6 +12,7 @@ name_to_hex_dict = {'white': 'FFFFFF',
                      '000000FF': '000000FF',
                      '0000FF00': '0000FF00'}
 
+
 class Styler(object):
     """
     Creates openpyxl Style to be applied
