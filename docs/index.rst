@@ -23,7 +23,7 @@ blue background and a bold, sized 10 font.::
 
 Creating ExcelWriter used to save the excel:
 ::
-    ew = StyleFrame.ExcelWriter(r'C:\my_excel.xlsx', engine='openpyxl')
+    ew = StyleFrame.ExcelWriter(r'C:\my_excel.xlsx')
     sf.to_excel(ew)
     ew.save()
 
