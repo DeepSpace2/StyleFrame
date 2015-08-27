@@ -3,14 +3,16 @@ StyleFrame
 
 A library that wraps pandas and openpyxl and allows easy styling of dataframes in excel.
 
-# Some usage examples:
+Some usage examples:
+===================
+
 StyleFrame constructor supports all the ways you are used to initiate pandas dataframe.
 An existing dataframe, a dictionary or a list of dictionaries
-```python
-from StyleFrame import StyleFrame
+::
+    from StyleFrame import StyleFrame
 
-sf = StyleFrame({'col_a': range(100)})
-```
+    sf = StyleFrame({'col_a': range(100)})
+
 
 Applying a style to rows that meet a condition using pandas selecting syntax.
 In this example all the cells in the `col_a` column with the value > 50 will have
