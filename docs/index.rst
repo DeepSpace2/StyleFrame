@@ -19,7 +19,7 @@ In this example all the cells in the `col_a` column with the value > 50 will hav
 blue background and a bold, sized 10 font.::
 
     sf.apply_style_by_indexes(indexes_to_color=sf[sf['col_a'] > 50],
-                              cols_name=['col_a'], color='blue', bold=True, size=10)
+                              cols_to_style=['col_a'], bg_color='blue', bold=True, font_size=10)
 
 Creating ExcelWriter used to save the excel:
 ::
@@ -29,5 +29,5 @@ Creating ExcelWriter used to save the excel:
 
 It is also possible to style a whole column or columns, and decide whether to style the headers or not:
 ::
-    sf.apply_column_style(cols_name=['a'], color='green', style_header=True)
+    sf.apply_column_style(cols_to_style=['a'], bg_color='green', style_header=True)
 

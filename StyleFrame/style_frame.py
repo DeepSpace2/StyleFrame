@@ -133,42 +133,42 @@ class StyleFrame(object):
 
                 sheet.column_dimensions[column_as_letter].hidden = True
 
-    def apply_style_by_indexes(self, indexes_to_style=None, cols_name=None, color='white', bold=False, size=12, number_format='General'):
+    def apply_style_by_indexes(self, indexes_to_style=None, cols_to_style=None, bg_color='white', bold=False, font_size=12, number_format='General'):
         """
         applies a certain style to the provided indexes in the dataframe in the provided columns
         :param indexes_to_style: indexes to apply the style to
-        :param cols_name: the columns to apply the style to, if not provided all the columns will be styled
-        :param color: the color to use
+        :param cols_to_style: the columns to apply the style to, if not provided all the columns will be styled
+        :param bg_color: the color to use
         :param bold: bold or not
-        :param size: the font size
+        :param font_size: the font size
         :param number_format: style the number format
         :return:
         """
-        if cols_name is not None and type(cols_name) not in [list, tuple]:
+        if cols_to_style is not None and type(cols_to_style) not in [list, tuple]:
             raise TypeError("cols_name must be a list or a tuple")
-        elif cols_name is None:
-            cols_name = list(self.data_df.columns)
+        elif cols_to_style is None:
+            cols_to_style = list(self.data_df.columns)
         for index in indexes_to_style:
-            for col in cols_name:
-                self.ix[index, col].style = Styler(color=color, bold=bold, size=size, number_format=number_format).create_style()
+            for col in cols_to_style:
+                self.ix[index, col].style = Styler(color=bg_color, bold=bold, size=font_size, number_format=number_format).create_style()
 
-    def apply_column_style(self, cols_name=None, color='white', bold=False, size=12, style_header=False, number_format='General'):
+    def apply_column_style(self, cols_to_style=None, bg_color='white', bold=False, font_size=12, style_header=False, number_format='General'):
         """
         apply style to a whole column
-        :param cols_name: the columns to apply the style to
-        :param color:the color to use
+        :param cols_to_style: the columns to apply the style to
+        :param bg_color:the color to use
         :param bold: bold or not
-        :param size: the font size
+        :param font_size: the font size
         :param style_header: style the header or not
         :param number_format: style the number format
         :return:
         """
-        if type(cols_name) not in [list, tuple]:
+        if type(cols_to_style) not in [list, tuple]:
             raise TypeError("cols_name must be a list or a tuple")
-        if not all(col in self.columns for col in cols_name):
-            raise KeyError("one of the columns in {} wasn't found".format(cols_name))
-        for col_name in cols_name:
+        if not all(col in self.columns for col in cols_to_style):
+            raise KeyError("one of the columns in {} wasn't found".format(cols_to_style))
+        for col_name in cols_to_style:
             if style_header:
-                self.columns[self.columns.get_loc(col_name)].style = Styler(color=color, bold=bold, size=size, number_format=number_format).create_style()
+                self.columns[self.columns.get_loc(col_name)].style = Styler(color=bg_color, bold=bold, size=font_size, number_format=number_format).create_style()
             for index in self.index:
-                self.ix[index, col_name].style = Styler(color=color, bold=bold, size=size, number_format=number_format).create_style()
+                self.ix[index, col_name].style = Styler(color=bg_color, bold=bold, size=font_size, number_format=number_format).create_style()
