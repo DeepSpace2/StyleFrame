@@ -109,7 +109,11 @@ class StyleFrame(object):
             sheet.cell(row=startrow + 1, column=col_index + startcol + 1).style = Styler(bg_color=current_fgColor, bold=True, font_size=current_size).create_style()
             for row_index, index in enumerate(self.data_df.index):
                 sheet.cell(row=row_index + startrow + 2, column=col_index + startcol + 1).style = self.data_df.ix[index, column].style
-                
+            try:
+                column_letter = get_column_letter(col_index + startcol + 1)
+                sheet.column_dimensions[column_letter].width = self.data_df.columns[col_index].width
+            except AttributeError:
+                pass
         ''' Iterating over the columns_to_hide and check if the format is columns name, column index as number or letter  '''
         if columns_to_hide is not None:
             if not isinstance(columns_to_hide, (list, tuple)):
@@ -155,7 +159,7 @@ class StyleFrame(object):
                                                    number_format=number_format).create_style()
 
     def apply_column_style(self, cols_to_style=None, bg_color='white', bold=False, font_size=12, style_header=False,
-                           number_format='General'):
+                           number_format='General', column_width=None):
         """
         apply style to a whole column
         :param cols_to_style: the columns to apply the style to
@@ -164,15 +168,26 @@ class StyleFrame(object):
         :param font_size: the font size
         :param style_header: style the header or not
         :param number_format: style the number format
+        :param column_width: determine the width of the line
         :return:
         """
         if type(cols_to_style) not in [list, tuple]:
             raise TypeError("cols_name must be a list or a tuple")
         if not all(col in self.columns for col in cols_to_style):
             raise KeyError("one of the columns in {} wasn't found".format(cols_to_style))
+        if column_width:
+            try:
+                float(column_width)
+            except ValueError:
+                raise ValueError('column width must be numeric value')
+            if column_width <= 0:
+                raise ValueError('column width must be positive number')
+
         for col_name in cols_to_style:
             if style_header:
                 self.columns[self.columns.get_loc(col_name)].style = Styler(bg_color=bg_color, bold=bold, font_size=font_size, number_format=number_format).create_style()
+            if column_width:
+                self.columns[self.columns.get_loc(col_name)].width = column_width
             for index in self.index:
                 self.ix[index, col_name].style = Styler(bg_color=bg_color, bold=bold, font_size=font_size, number_format=number_format).create_style()
 
@@ -191,3 +206,5 @@ class StyleFrame(object):
             for column in new_style_frame.data_df.columns:
                 column.value = columns[column]
             return new_style_frame
+
+
