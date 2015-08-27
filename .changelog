@@ -1,3 +1,6 @@
+0.0.5.5     - Added ability to hide certain columns when exporting to excel.
+            - Changed parameters names. See the documentation.
+
 0.0.5.2     - Added ExcelWriter to StyleFrame class
             - Supports initializing StyleFrame with containers
 

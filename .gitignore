@@ -59,4 +59,6 @@ target/
 # pycharm
 .idea/
 
+features_tests/
+
 .mychangelog

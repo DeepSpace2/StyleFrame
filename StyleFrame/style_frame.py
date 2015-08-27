@@ -4,6 +4,7 @@ from container import Container
 from styler import Styler
 import numpy as np
 from openpyxl.cell import get_column_letter
+from copy import deepcopy
 
 
 class StyleFrame(object):
@@ -105,7 +106,7 @@ class StyleFrame(object):
         for col_index, column in enumerate(self.data_df.columns):
             current_fgColor = self.data_df.columns[col_index].style.fill.fgColor.rgb
             current_size = self.data_df.columns[col_index].style.font.size
-            sheet.cell(row=startrow + 1, column=col_index + startcol + 1).style = Styler(color=current_fgColor, bold=True, size=current_size).create_style()
+            sheet.cell(row=startrow + 1, column=col_index + startcol + 1).style = Styler(bg_color=current_fgColor, bold=True, font_size=current_size).create_style()
             for row_index, index in enumerate(self.data_df.index):
                 sheet.cell(row=row_index + startrow + 2, column=col_index + startcol + 1).style = self.data_df.ix[index, column].style
                 
@@ -150,9 +151,11 @@ class StyleFrame(object):
             cols_to_style = list(self.data_df.columns)
         for index in indexes_to_style:
             for col in cols_to_style:
-                self.ix[index, col].style = Styler(color=bg_color, bold=bold, size=font_size, number_format=number_format).create_style()
+                self.ix[index, col].style = Styler(bg_color=bg_color, bold=bold, font_size=font_size,
+                                                   number_format=number_format).create_style()
 
-    def apply_column_style(self, cols_to_style=None, bg_color='white', bold=False, font_size=12, style_header=False, number_format='General'):
+    def apply_column_style(self, cols_to_style=None, bg_color='white', bold=False, font_size=12, style_header=False,
+                           number_format='General'):
         """
         apply style to a whole column
         :param cols_to_style: the columns to apply the style to
@@ -169,6 +172,22 @@ class StyleFrame(object):
             raise KeyError("one of the columns in {} wasn't found".format(cols_to_style))
         for col_name in cols_to_style:
             if style_header:
-                self.columns[self.columns.get_loc(col_name)].style = Styler(color=bg_color, bold=bold, size=font_size, number_format=number_format).create_style()
+                self.columns[self.columns.get_loc(col_name)].style = Styler(bg_color=bg_color, bold=bold, font_size=font_size, number_format=number_format).create_style()
             for index in self.index:
-                self.ix[index, col_name].style = Styler(color=bg_color, bold=bold, size=font_size, number_format=number_format).create_style()
+                self.ix[index, col_name].style = Styler(bg_color=bg_color, bold=bold, font_size=font_size, number_format=number_format).create_style()
+
+    def apply_headers_style(self, bg_color='white', bold=True, font_size=12, number_format='General'):
+        for column in self.data_df.columns:
+            column.style = Styler(bg_color=bg_color, bold=bold, font_size=font_size, number_format=number_format).create_style()
+
+    def rename(self, columns=None, inplace=False):
+        if not isinstance(columns, dict):
+            raise TypeError("'columns' must be a dictionary")
+        if inplace:
+            for column in self.data_df.columns:
+                column.value = columns[column]
+        else:
+            new_style_frame = deepcopy(self)
+            for column in new_style_frame.data_df.columns:
+                column.value = columns[column]
+            return new_style_frame
