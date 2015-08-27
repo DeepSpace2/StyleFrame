@@ -109,11 +109,11 @@ class StyleFrame(object):
             sheet.cell(row=startrow + 1, column=col_index + startcol + 1).style = Styler(bg_color=current_fgColor, bold=True, font_size=current_size).create_style()
             for row_index, index in enumerate(self.data_df.index):
                 sheet.cell(row=row_index + startrow + 2, column=col_index + startcol + 1).style = self.data_df.ix[index, column].style
-            try:
+            try:  # try to apply the change of the width
                 column_letter = get_column_letter(col_index + startcol + 1)
                 sheet.column_dimensions[column_letter].width = self.data_df.columns[col_index].width
             except AttributeError:
-                pass
+                pass  # width attribute does not exists since no change of width has occurred
         ''' Iterating over the columns_to_hide and check if the format is columns name, column index as number or letter  '''
         if columns_to_hide is not None:
             if not isinstance(columns_to_hide, (list, tuple)):
