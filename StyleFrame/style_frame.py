@@ -210,7 +210,6 @@ class StyleFrame(object):
         :param bold: bold or not
         :param font_size: the font size
         :param font_color: the font color
-        :param style_header: style the header or not
         :param number_format: style the number format
         :return:
         """

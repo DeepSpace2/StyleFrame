@@ -4,7 +4,7 @@ StyleFrame
 A library that wraps pandas and openpyxl and allows easy styling of dataframes in excel.
 
 Some usage examples
---------------------
+-------------------
 
 StyleFrame constructor supports all the ways you are used to initiate pandas dataframe.
 An existing dataframe, a dictionary or a list of dictionaries:
@@ -98,7 +98,6 @@ Parameters:
         style_header: style the header or not
         number_format: Excel's number format to use
 
-::
 
 Renaming columns
 ^^^^^^^^^^^^^^^^
