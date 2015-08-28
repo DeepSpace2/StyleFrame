@@ -3,7 +3,7 @@ StyleFrame
 
 A library that wraps pandas and openpyxl and allows easy styling of dataframes in excel.
 
-Some usage examples:
+Some usage examples
 --------------------
 
 StyleFrame constructor supports all the ways you are used to initiate pandas dataframe.
@@ -36,11 +36,11 @@ It is also possible to style a whole column or columns, and decide whether to st
     sf.apply_column_style(cols_to_style=['a'], bg_color='green', style_header=True)
 
 
-API:
+API
 ----
 Given that `sf = StyleFrame(...)` :
 
-Styling by indexes:
+Styling by indexes
 ^^^^^^^^^^^^^^^^^^^
 ::
 
@@ -60,8 +60,8 @@ Parameters:
     number_format: Excel's number format to use
 
 
-Styling by columns:
-^^^^^^^^^^^^^^^^^^^
+Styling by columns
+^^^^^^^^^^^^^^^^^^
 ::
 
     sf.apply_column_style(cols_to_style=None, bg_color=colors.white, bold=False, font_size=12, font_color=colors.black,
@@ -79,7 +79,7 @@ Parameters:
     style_header: style the header or not
     number_format: Excel's number format to use
 
-Styling headers only:
+Styling headers only
 ^^^^^^^^^^^^^^^^^^^^^
 ::
 
@@ -100,7 +100,7 @@ Parameters:
 
 ::
 
-Renaming columns:
+Renaming columns
 ^^^^^^^^^^^^^^^^^
         sf.rename(columns=None, inplace=False)
 
