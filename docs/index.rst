@@ -37,7 +37,7 @@ API:
 Given that `sf = StyleFrame(...)` :
 ::
     sf.apply_style_by_indexes(indexes_to_style=None, cols_to_style=None, bg_color=colors.white, bold=False,
-                           font_size=12, font_color=colors.black, number_format=number_formats.general)
+                              font_size=12, font_color=colors.black, number_format=number_formats.general)
 
 Applies a certain style to the provided indexes in the dataframe to the provided columns.
 Parameters:
@@ -49,8 +49,8 @@ Parameters:
     font_size: the font size
     font_color: the font color
     number_format: Excel's number format to use
-a
 
+a
 
 ::
     sf.apply_column_style(cols_to_style=None, bg_color=colors.white, bold=False, font_size=12, font_color=colors.black,
