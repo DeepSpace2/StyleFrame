@@ -20,7 +20,7 @@ In this example all the cells in the `col_a` column with the value > 50 will hav
 blue background and a bold, sized 10 font:
 ::
 
-    sf.apply_style_by_indexes(indexes_to_color=sf[sf['col_a'] > 50],
+    sf.apply_style_by_indexes(indexes_to_style=sf[sf['col_a'] > 50],
                               cols_to_style=['col_a'], bg_color='blue', bold=True, font_size=10)
 
 Creating ExcelWriter used to save the excel:
@@ -95,7 +95,6 @@ Parameters:
         bold: bold or not
         font_size: the font size
         font_color: the font color
-        style_header: style the header or not
         number_format: Excel's number format to use
 
 
