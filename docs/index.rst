@@ -51,7 +51,6 @@ Parameters:
     number_format: Excel's number format to use
 
 a
-
 ::
     sf.apply_column_style(cols_to_style=None, bg_color=colors.white, bold=False, font_size=12, font_color=colors.black,
                           style_header=False, number_format=number_formats.general)
