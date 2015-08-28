@@ -34,10 +34,10 @@ It is also possible to style a whole column or columns, and decide whether to st
 
 API:
 ====
-Given that `sf = StyleFrame(...)`:
+Given that `sf = StyleFrame(...)` :
 ::
     sf.apply_style_by_indexes(indexes_to_style=None, cols_to_style=None, bg_color=colors.white, bold=False,
-                           font_size=12, font_color=colors.black, number_format=number_formats.general):
+                           font_size=12, font_color=colors.black, number_format=number_formats.general)
 
 Applies a certain style to the provided indexes in the dataframe to the provided columns.
 Parameters:
@@ -49,11 +49,12 @@ Parameters:
     font_size: the font size
     font_color: the font color
     number_format: Excel's number format to use
+-
 
 
 ::
     sf.apply_column_style(cols_to_style=None, bg_color=colors.white, bold=False, font_size=12, font_color=colors.black,
-                          style_header=False, number_format=number_formats.general):
+                          style_header=False, number_format=number_formats.general)
 
 Apply a style to a whole column.
 Parameters:
@@ -65,11 +66,12 @@ Parameters:
     font_color: the font color
     style_header: style the header or not
     number_format: Excel's number format to use
+-
 
 
 ::
     sf.apply_headers_style(bg_color=colors.white, bold=True, font_size=12, font_color=colors.black,
-                           number_format=number_formats.general):
+                           number_format=number_formats.general)
 
 
 Apply style to the headers only.
@@ -81,9 +83,11 @@ Parameters:
         font_color: the font color
         style_header: style the header or not
         number_format: Excel's number format to use
+-
+
 
 ::
-        sf.rename(columns=None, inplace=False):
+        sf.rename(columns=None, inplace=False)
 
 Rename the underlying dataframe's columns.
 Parameters:
