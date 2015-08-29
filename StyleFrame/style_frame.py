@@ -3,7 +3,7 @@ import pandas as pd
 from container import Container
 from styler import Styler, number_formats, colors
 import numpy as np
-from openpyxl.cell import get_column_letter
+import openpyxl.cell
 from copy import deepcopy
 import datetime as dt
 
@@ -15,16 +15,19 @@ class StyleFrame(object):
     """
     def __init__(self, obj):
         if isinstance(obj, pd.DataFrame):
-            self.data_df = obj.applymap(lambda x: Container(x))
+            self.data_df = obj.applymap(lambda x: Container(x) if not isinstance(x, Container) else x)
         elif isinstance(obj, pd.Series):
-            self.data_df = obj.apply(lambda x: Container(x) if not isinstance(x, Container) else x.value)
+            self.data_df = obj.apply(lambda x: Container(x) if not isinstance(x, Container) else x)
         elif isinstance(obj, dict) or isinstance(obj, list):
-            self.data_df = pd.DataFrame(obj).applymap(lambda x: x if isinstance(x, Container) else Container(x))
+            self.data_df = pd.DataFrame(obj).applymap(lambda x: Container(x) if not isinstance(x, Container) else x)
         elif isinstance(obj, StyleFrame):
             self.data_df = deepcopy(obj)
         else:
             raise TypeError("{} __init__ doesn't support {}".format(type(self).__name__, type(obj).__name__))
         self.data_df.columns = [Container(col) for col in self.data_df.columns]
+
+        self._columns_width = dict()
+        self._rows_height = dict()
 
     def __str__(self):
         return str(self.data_df)
@@ -75,7 +78,7 @@ class StyleFrame(object):
         """
         Saves the dataframe to excel and applies the styles.
         :param right_to_left: sets the sheet to be right to left.
-        :param columns_to_hide: list or tuple of columns to hide, may be column index (starts from 1)
+        :param columns_to_hide: single column, list or tuple of columns to hide, may be column index (starts from 1)
                                 column name or column letter.
         Read Pandas' documentation about the other parameters
         """
@@ -93,6 +96,25 @@ class StyleFrame(object):
                         return x
                 except TypeError:
                     return x
+
+        def get_column_as_letter(column_to_convert):
+            if not isinstance(column_to_convert, (int, str)):
+                    raise TypeError("column must be an index, column letter or column name")
+
+            column_as_letter = None
+            if column_to_convert in self.data_df.columns:  # column name
+                column_index = self.data_df.columns.get_loc(column_to_convert) + startcol + 1  # worksheet columns index start from 1
+                column_as_letter = openpyxl.cell.get_column_letter(column_index)
+
+            elif isinstance(column_to_convert, int) and column_to_convert >= 1:  # column index
+                column_as_letter = openpyxl.cell.get_column_letter(startcol + column_to_convert)
+            elif column_to_convert in sheet.column_dimensions:  # column letter
+                column_as_letter = column_to_convert
+
+            if column_as_letter is None or column_as_letter not in sheet.column_dimensions:
+                raise IndexError("column: %s is out of columns range." % column_to_convert)
+
+            return column_as_letter
 
         export_df = self.data_df.applymap(lambda x: get_values(x))
 
@@ -127,26 +149,21 @@ class StyleFrame(object):
         ''' Iterating over the columns_to_hide and check if the format is columns name, column index as number or letter  '''
         if columns_to_hide is not None:
             if not isinstance(columns_to_hide, (list, tuple)):
-                raise TypeError("columns_to_hide must be a list or a tuple")
+                columns_to_hide = [columns_to_hide]
             
             for column in columns_to_hide:
-                if not isinstance(column, (int, str)):
-                    raise TypeError("column must be an index, column letter or column name")
+                column_letter = get_column_as_letter(column_to_convert=column)
+                sheet.column_dimensions[column_letter].hidden = True
 
-                column_as_letter = None
-                if column in self.data_df.columns:  # column name
-                    column_index = self.data_df.columns.get_loc(column) + startcol + 1  # worksheet columns index start from 1
-                    column_as_letter = get_column_letter(column_index)
+        for column in self._columns_width:
+            column_letter = get_column_as_letter(column_to_convert=column)
+            sheet.column_dimensions[column_letter].width = self._columns_width[column]
 
-                elif isinstance(column, int) and column >= 1:  # column index
-                    column_as_letter = get_column_letter(column)
-                elif column in sheet.column_dimensions:  # column letter
-                    column_as_letter = column
+        for row in self._rows_height:
+            if row in sheet.row_dimensions:
+                sheet.row_dimensions[startrow + row].height = self._rows_height[row]
 
-                if column_as_letter is None or column_as_letter not in sheet.column_dimensions:
-                    raise IndexError("column: %s is out of columns range." % column)
 
-                sheet.column_dimensions[column_as_letter].hidden = True
 
     def apply_style_by_indexes(self, indexes_to_style=None, cols_to_style=None, bg_color=colors.white, bold=False,
                                font_size=12, font_color=colors.black, number_format=number_formats.general):
@@ -161,7 +178,7 @@ class StyleFrame(object):
         :param number_format: style the number format
         :return:
         """
-        if cols_to_style is not None and type(cols_to_style) not in [list, tuple]:
+        if cols_to_style is not None and not isinstance(cols_to_style, (list, tuple)):
             raise TypeError("cols_name must be a list or a tuple")
         elif cols_to_style is None:
             cols_to_style = list(self.data_df.columns)
@@ -183,7 +200,7 @@ class StyleFrame(object):
         :param number_format: style the number format
         :return:
         """
-        if type(cols_to_style) not in [list, tuple]:
+        if not isinstance(cols_to_style, (list, tuple)):
             raise TypeError("cols_name must be a list or a tuple")
         if not all(col in self.columns for col in cols_to_style):
             raise KeyError("one of the columns in {} wasn't found".format(cols_to_style))
@@ -216,6 +233,38 @@ class StyleFrame(object):
         for column in self.data_df.columns:
             column.style = Styler(bg_color=bg_color, bold=bold, font_size=font_size,
                                   font_color=font_color, number_format=number_format).create_style()
+
+    def change_column_width(self, columns, width):
+        if not isinstance(columns, (list, tuple)):
+            columns = [columns]
+        try:
+            width = float(width)
+        except ValueError:
+            raise ValueError('columns width must be numeric value')
+
+        if width <= 0:
+            raise ValueError('columns width must be positive')
+
+        for column in columns:
+            if not isinstance(column, (int, str)):
+                raise TypeError("column must be an index, column letter or column name")
+            self._columns_width[column] = width
+
+    def change_row_height(self, rows, height):
+        if not isinstance(rows, (list, tuple)):
+            rows = [rows]
+        try:
+            height = float(height)
+        except ValueError:
+            raise ValueError('rows width must be numeric value')
+
+        if height <= 0:
+            raise ValueError('rows width must be positive')
+
+        for row in rows:
+            if not isinstance(row, int):
+                raise TypeError("row must be an index")
+            self._rows_height[row] = height
 
     def rename(self, columns=None, inplace=False):
         """
