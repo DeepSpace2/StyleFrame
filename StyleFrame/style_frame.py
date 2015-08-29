@@ -235,6 +235,12 @@ class StyleFrame(object):
                                   font_color=font_color, number_format=number_format).create_style()
 
     def change_column_width(self, columns, width):
+        """
+        change the width of the given columns
+        :param columns: a single or a list/tuple of column name, index or letter to change their width
+        :param width: numeric positive value of the new width
+        :return:
+        """
         if not isinstance(columns, (list, tuple)):
             columns = [columns]
         try:
@@ -251,6 +257,12 @@ class StyleFrame(object):
             self._columns_width[column] = width
 
     def change_row_height(self, rows, height):
+        """
+        change the height of the given rows
+        :param rows: a single row index, list of indexes or tuple of indexes to change their height
+        :param height: numeric positive value of the new height
+        :return:
+        """
         if not isinstance(rows, (list, tuple)):
             rows = [rows]
         try:
