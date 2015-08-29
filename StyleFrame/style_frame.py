@@ -247,8 +247,8 @@ class StyleFrame(object):
             columns = [columns]
         try:
             width = float(width)
-        except ValueError:
-            raise ValueError('columns width must be numeric value')
+        except TypeError:
+            raise TypeError('columns width must be numeric value')
 
         if width <= 0:
             raise ValueError('columns width must be positive')
