@@ -1,3 +1,9 @@
+0.0.6       - Added ability to style only the columns headers.
+            - Added ability to rename columns while keeping the style of the headers
+            - Added ability to change font color
+            - Added 'number_formats` dictionary
+            - Added support for 'direct' item assignment, ie sf['column_c'] = 5
+
 0.0.5.5     - Added ability to hide certain columns when exporting to excel.
             - Changed parameters names. See the documentation.
 

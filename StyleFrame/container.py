@@ -65,16 +65,24 @@ class Container(object):
         return self.value + other
 
     def __sub__(self, other):
-        return self.value - other.value
+        if isinstance(other, self.__class__):
+            return self.value - other.value
+        return self.value - other
 
     def __div__(self, other):
-        return self.value / other.value
+        if isinstance(other, self.__class__):
+            return self.value / other.value
+        return self.value / other
 
     def __mul__(self, other):
-        return self.value * other.value
+        if isinstance(other, self.__class__):
+            return self.value * other.value
+        return self.value * other
 
     def __mod__(self, other):
-        return self.value % other.value
+        if isinstance(other, self.__class__):
+            return self.value % other.value
+        return self.value % other
 
     def __pow__(self, power, modulo=None):
         return self.value ** power
