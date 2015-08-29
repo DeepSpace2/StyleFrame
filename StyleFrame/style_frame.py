@@ -162,6 +162,8 @@ class StyleFrame(object):
         for row in self._rows_height:
             if row in sheet.row_dimensions:
                 sheet.row_dimensions[startrow + row].height = self._rows_height[row]
+            else:
+                raise IndexError('row: %s is out of range and therefore you can not change its height' % row)
 
 
 
@@ -267,8 +269,8 @@ class StyleFrame(object):
             rows = [rows]
         try:
             height = float(height)
-        except ValueError:
-            raise ValueError('rows width must be numeric value')
+        except TypeError:
+            raise TypeError('rows width must be numeric value')
 
         if height <= 0:
             raise ValueError('rows width must be positive')
