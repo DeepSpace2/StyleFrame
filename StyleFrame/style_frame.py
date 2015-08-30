@@ -26,8 +26,8 @@ class StyleFrame(object):
             raise TypeError("{} __init__ doesn't support {}".format(type(self).__name__, type(obj).__name__))
         self.data_df.columns = [Container(col) for col in self.data_df.columns]
 
-        self._columns_width = dict()
-        self._rows_height = dict()
+        self.columns_width = dict()
+        self.rows_height = dict()
 
     def __str__(self):
         return str(self.data_df)
@@ -155,13 +155,14 @@ class StyleFrame(object):
                 column_letter = get_column_as_letter(column_to_convert=column)
                 sheet.column_dimensions[column_letter].hidden = True
 
-        for column in self._columns_width:
+        for column in self.columns_width:
             column_letter = get_column_as_letter(column_to_convert=column)
-            sheet.column_dimensions[column_letter].width = self._columns_width[column]
+            sheet.column_dimensions[column_letter].width = self.columns_width[column]
 
-        for row in self._rows_height:
+        for row in self.rows_height:
+
             if row in sheet.row_dimensions:
-                sheet.row_dimensions[startrow + row].height = self._rows_height[row]
+                sheet.row_dimensions[startrow + row].height = self.rows_height[row]
             else:
                 raise IndexError('row: %s is out of range and therefore you can not change its height' % row)
 
@@ -236,9 +237,9 @@ class StyleFrame(object):
             column.style = Styler(bg_color=bg_color, bold=bold, font_size=font_size,
                                   font_color=font_color, number_format=number_format).create_style()
 
-    def change_column_width(self, columns, width):
+    def set_column_width(self, columns, width):
         """
-        change the width of the given columns
+        set the width of the given columns
         :param columns: a single or a list/tuple of column name, index or letter to change their width
         :param width: numeric positive value of the new width
         :return:
@@ -256,11 +257,11 @@ class StyleFrame(object):
         for column in columns:
             if not isinstance(column, (int, str)):
                 raise TypeError("column must be an index, column letter or column name")
-            self._columns_width[column] = width
+            self.columns_width[column] = width
 
-    def change_row_height(self, rows, height):
+    def set_row_height(self, rows, height):
         """
-        change the height of the given rows
+        set the height of the given rows
         :param rows: a single row index, list of indexes or tuple of indexes to change their height
         :param height: numeric positive value of the new height
         :return:
@@ -278,7 +279,7 @@ class StyleFrame(object):
         for row in rows:
             if not isinstance(row, int):
                 raise TypeError("row must be an index")
-            self._rows_height[row] = height
+            self.rows_height[row] = height
 
     def rename(self, columns=None, inplace=False):
         """

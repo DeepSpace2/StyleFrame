@@ -112,3 +112,31 @@ Parameters:
         inplace: whether to rename the columns inplace or return a new StyleFrame object
         return: None if inplace=True, StyleFrame if inplace=False
 
+
+Setting columns width
+^^^^^^^^^^^^^^^^^^^^^
+::
+
+    sf.set_column_width(columns, width)
+
+Set the width of the given columns
+Parameters:
+::
+
+        columns: a single or a list/tuple of column name, index or letter to change their width
+        width: numeric positive value of the new width
+
+
+Setting rows height
+^^^^^^^^^^^^^^^^^^^
+::
+
+    sf.set_row_height(rows, height)
+
+
+Set the height of the given rows.
+Parameters:
+::
+
+        rows: a single row index, list of indexes or tuple of indexes to change their height
+        height: numeric positive value of the new height
