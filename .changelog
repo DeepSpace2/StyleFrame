@@ -1,3 +1,5 @@
+0.0.7       - Added ability to set rows height and columns width
+
 0.0.6       - Added ability to style only the columns headers.
             - Added ability to rename columns while keeping the style of the headers
             - Added ability to change font color
