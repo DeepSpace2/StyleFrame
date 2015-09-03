@@ -98,7 +98,7 @@ class StyleFrame(object):
                     return x
 
         def get_column_as_letter(column_to_convert):
-            if not isinstance(column_to_convert, (int, str)):
+            if not isinstance(column_to_convert, (int, basestring)):
                     raise TypeError("column must be an index, column letter or column name")
 
             column_as_letter = None
@@ -133,18 +133,30 @@ class StyleFrame(object):
         ''' Iterating over the dataframe's elements and applying their styles '''
         ''' openpyxl's rows and cols start from 1,1 while the dataframe is 0,0 '''
         for col_index, column in enumerate(self.data_df.columns):
-            current_fg_color = self.data_df.columns[col_index].style.fill.fgColor.rgb
+            current_bg_color = self.data_df.columns[col_index].style.fill.fgColor.rgb
             current_size = self.data_df.columns[col_index].style.font.size
             current_font_color = self.data_df.columns[col_index].style.font.color.index
-            sheet.cell(row=startrow + 1, column=col_index + startcol + 1).style = Styler(bg_color=current_fg_color,
+            current_number_format = self.data_df.columns[col_index].style.number_format
+            sheet.cell(row=startrow + 1, column=col_index + startcol + 1).style = Styler(bg_color=current_bg_color,
                                                                                          bold=True,
                                                                                          font_color=current_font_color,
-                                                                                         font_size=current_size).create_style()
+                                                                                         font_size=current_size,
+                                                                                         number_format=current_number_format).create_style()
             for row_index, index in enumerate(self.data_df.index):
+                current_cell = sheet.cell(row=row_index + startrow + 2, column=col_index + startcol + 1)
                 try:
-                    sheet.cell(row=row_index + startrow + 2, column=col_index + startcol + 1).style = self.data_df.ix[index, column].style
+                    if '=HYPERLINK' in unicode(current_cell.value):
+                        current_bg_color = current_cell.style.fill.fgColor.rgb
+                        current_font_size = current_cell.style.font.size
+                        current_cell.style = Styler(bg_color=current_bg_color,
+                                                    font_color='blue',
+                                                    font_size=current_font_size,
+                                                    number_format=number_formats.general,
+                                                    underline='single').create_style()
+                    else:
+                        current_cell.style = self.data_df.ix[index, column].style
                 except AttributeError:  # if the element in the dataframe is not Container creating a default style
-                    sheet.cell(row=row_index + startrow + 2, column=col_index + startcol + 1).style = Styler().create_style()
+                    current_cell.style = Styler().create_style()
 
         ''' Iterating over the columns_to_hide and check if the format is columns name, column index as number or letter  '''
         if columns_to_hide is not None:
@@ -160,13 +172,10 @@ class StyleFrame(object):
             sheet.column_dimensions[column_letter].width = self.columns_width[column]
 
         for row in self.rows_height:
-
             if row in sheet.row_dimensions:
                 sheet.row_dimensions[startrow + row].height = self.rows_height[row]
             else:
-                raise IndexError('row: %s is out of range and therefore you can not change its height' % row)
-
-
+                raise IndexError('row: %s is out of range' % row)
 
     def apply_style_by_indexes(self, indexes_to_style=None, cols_to_style=None, bg_color=colors.white, bold=False,
                                font_size=12, font_color=colors.black, number_format=number_formats.general):
@@ -255,7 +264,7 @@ class StyleFrame(object):
             raise ValueError('columns width must be positive')
 
         for column in columns:
-            if not isinstance(column, (int, str)):
+            if not isinstance(column, (int, basestring)):
                 raise TypeError("column must be an index, column letter or column name")
             self.columns_width[column] = width
 

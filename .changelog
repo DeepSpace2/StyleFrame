@@ -1,3 +1,6 @@
+0.0.8       - Added default style for cells with '=HYPERLINK(..)' values (blue color, underlined)
+            - Improved unicode support
+
 0.0.7       - Added ability to set rows height and columns width
 
 0.0.6       - Added ability to style only the columns headers.

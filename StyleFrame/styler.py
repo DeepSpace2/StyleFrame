@@ -6,17 +6,20 @@ class Styler(object):
     """
     Creates openpyxl Style to be applied
     """
-    def __init__(self, bg_color='white', bold=False, font_size=12, font_color='black', number_format='General'):
+    def __init__(self, bg_color='white', bold=False, font_size=12, font_color='black', number_format='General',
+                 underline=None):
         self.bg_color = bg_color
         self.bold = bold
         self.font_size = font_size
         self.font_color = font_color
         self.number_format = number_format
+        self.underline = underline
 
     def create_style(self):
         side = Side(border_style='thin', color=colors.black)
         border = Border(left=side, right=side, top=side, bottom=side)
-        return Style(font=Font(name="Arial", size=self.font_size, color=Color(colors.get(self.font_color, colors.black)), bold=self.bold),
+        return Style(font=Font(name="Arial", size=self.font_size, color=Color(colors.get(self.font_color, colors.black)),
+                               bold=self.bold, underline=self.underline),
                      fill=PatternFill(patternType='solid', fgColor=Color(colors.get(self.bg_color, colors.white))),
                      alignment=Alignment(horizontal='center', vertical='center', wrap_text=True, shrink_to_fit=True, indent=0),
                      border=border,
