@@ -98,7 +98,7 @@ class StyleFrame(object):
                     return x
 
         def get_column_as_letter(column_to_convert):
-            if not isinstance(column_to_convert, (int, basestring)):
+            if not isinstance(column_to_convert, (int, basestring, Container)):
                     raise TypeError("column must be an index, column letter or column name")
 
             column_as_letter = None
@@ -264,7 +264,7 @@ class StyleFrame(object):
             raise ValueError('columns width must be positive')
 
         for column in columns:
-            if not isinstance(column, (int, basestring)):
+            if not isinstance(column, (int, basestring, Container)):
                 raise TypeError("column must be an index, column letter or column name")
             self.columns_width[column] = width
 
@@ -284,10 +284,12 @@ class StyleFrame(object):
 
         if height <= 0:
             raise ValueError('rows width must be positive')
-
         for row in rows:
-            if not isinstance(row, int):
+            try:
+                row = int(row)
+            except TypeError:
                 raise TypeError("row must be an index")
+
             self.rows_height[row] = height
 
     def rename(self, columns=None, inplace=False):
