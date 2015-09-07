@@ -13,6 +13,7 @@ class StyleFrame(object):
     A wrapper class that wraps pandas DataFrame.
     Stores container objects that have values and Styles that will be applied to excel
     """
+
     def __init__(self, obj):
         if isinstance(obj, pd.DataFrame):
             self.data_df = obj.applymap(lambda x: Container(x) if not isinstance(x, Container) else x)
@@ -72,14 +73,16 @@ class StyleFrame(object):
     def ExcelWriter(cls, path):
         return pd.ExcelWriter(path, engine='openpyxl')
 
-    def to_excel(self, excel_writer, sheet_name='Sheet1', na_rep='', float_format=None, columns=None, header=True, index=False,
+    def to_excel(self, excel_writer, sheet_name='Sheet1', na_rep='', float_format=None, columns=None, header=True,
+                 index=False,
                  index_label=None, startrow=0, startcol=0, merge_cells=True, encoding=None, inf_rep='inf',
-                 right_to_left=True, columns_to_hide=None):
+                 allow_protection=False, right_to_left=True, columns_to_hide=None):
         """
         Saves the dataframe to excel and applies the styles.
         :param right_to_left: sets the sheet to be right to left.
         :param columns_to_hide: single column, list or tuple of columns to hide, may be column index (starts from 1)
                                 column name or column letter.
+        :param allow_protection: protect the sheet and the cells that specified as protected.
         Read Pandas' documentation about the other parameters
         """
         if index:
@@ -99,11 +102,12 @@ class StyleFrame(object):
 
         def get_column_as_letter(column_to_convert):
             if not isinstance(column_to_convert, (int, basestring, Container)):
-                    raise TypeError("column must be an index, column letter or column name")
+                raise TypeError("column must be an index, column letter or column name")
 
             column_as_letter = None
             if column_to_convert in self.data_df.columns:  # column name
-                column_index = self.data_df.columns.get_loc(column_to_convert) + startcol + 1  # worksheet columns index start from 1
+                column_index = self.data_df.columns.get_loc(
+                    column_to_convert) + startcol + 1  # worksheet columns index start from 1
                 column_as_letter = openpyxl.cell.get_column_letter(column_index)
 
             elif isinstance(column_to_convert, int) and column_to_convert >= 1:  # column index
@@ -120,11 +124,14 @@ class StyleFrame(object):
 
         export_df.columns = [col.value for col in export_df.columns]
 
-        export_df.to_excel(excel_writer, sheet_name=sheet_name, na_rep=na_rep, float_format=float_format, columns=columns,
+        export_df.to_excel(excel_writer, sheet_name=sheet_name, na_rep=na_rep, float_format=float_format,
+                           columns=columns,
                            header=header, index=index, index_label=index_label, startrow=startrow, startcol=startcol,
                            engine='openpyxl', merge_cells=merge_cells, encoding=encoding, inf_rep=inf_rep)
 
         sheet = excel_writer.book.get_sheet_by_name(sheet_name)
+
+        sheet.protection.sheet = allow_protection
 
         sheet.sheet_view.rightToLeft = right_to_left
 
@@ -162,7 +169,7 @@ class StyleFrame(object):
         if columns_to_hide is not None:
             if not isinstance(columns_to_hide, (list, tuple)):
                 columns_to_hide = [columns_to_hide]
-            
+
             for column in columns_to_hide:
                 column_letter = get_column_as_letter(column_to_convert=column)
                 sheet.column_dimensions[column_letter].hidden = True
@@ -177,7 +184,8 @@ class StyleFrame(object):
             else:
                 raise IndexError('row: %s is out of range' % row)
 
-    def apply_style_by_indexes(self, indexes_to_style=None, cols_to_style=None, bg_color=colors.white, bold=False,
+    # CHANGED
+    def apply_style_by_indexes(self, indexes_to_style, cols_to_style=None, bg_color=colors.white, bold=False,
                                font_size=12, font_color=colors.black, number_format=number_formats.general):
         """
         applies a certain style to the provided indexes in the dataframe in the provided columns
@@ -191,7 +199,7 @@ class StyleFrame(object):
         :return:
         """
         if cols_to_style is not None and not isinstance(cols_to_style, (list, tuple)):
-            raise TypeError("cols_name must be a list or a tuple")
+            cols_to_style = [cols_to_style]
         elif cols_to_style is None:
             cols_to_style = list(self.data_df.columns)
         for index in indexes_to_style:
@@ -199,8 +207,10 @@ class StyleFrame(object):
                 self.ix[index, col].style = Styler(bg_color=bg_color, bold=bold, font_size=font_size,
                                                    font_color=font_color, number_format=number_format).create_style()
 
-    def apply_column_style(self, cols_to_style=None, bg_color=colors.white, bold=False, font_size=12, font_color=colors.black,
-                           style_header=False, number_format=number_formats.general):
+    # CHANGED
+    def apply_column_style(self, cols_to_style, bg_color=colors.white, bold=False, font_size=12,
+                           font_color=colors.black, protection=False, style_header=False,
+                           number_format=number_formats.general):
         """
         apply style to a whole column
         :param cols_to_style: the columns to apply the style to
@@ -210,16 +220,19 @@ class StyleFrame(object):
         :param font_color: the font color
         :param style_header: style the header or not
         :param number_format: style the number format
+        :param protection: to protect the column from changes or not
         :return:
         """
         if not isinstance(cols_to_style, (list, tuple)):
-            raise TypeError("cols_name must be a list or a tuple")
+            cols_to_style = [cols_to_style]
+        print protection
         if not all(col in self.columns for col in cols_to_style):
             raise KeyError("one of the columns in {} wasn't found".format(cols_to_style))
         for col_name in cols_to_style:
             if style_header:
                 self.columns[self.columns.get_loc(col_name)].style = Styler(bg_color=bg_color, bold=bold,
                                                                             font_size=font_size, font_color=font_color,
+                                                                            protection=protection,
                                                                             number_format=number_format).create_style()
             for index in self.index:
                 if isinstance(self.ix[index, col_name].value, pd.tslib.Timestamp):
@@ -229,10 +242,11 @@ class StyleFrame(object):
                 elif isinstance(self.ix[index, col_name].value, dt.time):
                     number_format = number_formats.time_24_hours
                 self.ix[index, col_name].style = Styler(bg_color=bg_color, bold=bold, font_size=font_size,
-                                                        font_color=font_color, number_format=number_format).create_style()
+                                                        protection=protection, font_color=font_color,
+                                                        number_format=number_format).create_style()
 
     def apply_headers_style(self, bg_color=colors.white, bold=True, font_size=12, font_color=colors.black,
-                            number_format=number_formats.general):
+                            protection=False, number_format=number_formats.general):
         """
         apply style to the headers only
         :param bg_color:the color to use
@@ -243,8 +257,8 @@ class StyleFrame(object):
         :return:
         """
         for column in self.data_df.columns:
-            column.style = Styler(bg_color=bg_color, bold=bold, font_size=font_size,
-                                  font_color=font_color, number_format=number_format).create_style()
+            column.style = Styler(bg_color=bg_color, bold=bold, font_size=font_size, font_color=font_color,
+                                  protection=protection, number_format=number_format).create_style()
 
     def set_column_width(self, columns, width):
         """
