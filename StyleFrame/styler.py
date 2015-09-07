@@ -1,29 +1,50 @@
 # coding:utf-8
-from openpyxl.styles import PatternFill, Style, Color, Border, Side, Font, Alignment, colors as op_colors
-
+from openpyxl.styles import PatternFill, Style, Color, Border, Side, Font, Alignment, Protection, colors as op_colors
+import re
 
 class Styler(object):
     """
     Creates openpyxl Style to be applied
     """
     def __init__(self, bg_color='white', bold=False, font_size=12, font_color='black', number_format='General',
-                 underline=None):
-        self.bg_color = bg_color
+                 protection=False, underline=None):
         self.bold = bold
         self.font_size = font_size
         self.font_color = font_color
         self.number_format = number_format
+        self.protection = protection
         self.underline = underline
+
+        if bg_color[0] == '#':
+            bg_color = bg_color[1:]
+        if self.is_string_is_hex_color_code(hex_string=bg_color):
+            self.bg_color = bg_color
+        else:
+            self.bg_color = colors.get(bg_color, colors.white)
+
+        if font_color[0] == '#':
+            font_color = font_color[1:]
+        if self.is_string_is_hex_color_code(hex_string=font_color):
+            self.font_color = font_color
+        else:
+            self.font_color = colors.get(self.font_color, colors.black)
 
     def create_style(self):
         side = Side(border_style='thin', color=colors.black)
         border = Border(left=side, right=side, top=side, bottom=side)
-        return Style(font=Font(name="Arial", size=self.font_size, color=Color(colors.get(self.font_color, colors.black)),
+        return Style(font=Font(name="Arial", size=self.font_size, color=Color(self.font_color),
                                bold=self.bold, underline=self.underline),
-                     fill=PatternFill(patternType='solid', fgColor=Color(colors.get(self.bg_color, colors.white))),
+                     fill=PatternFill(patternType='solid', fgColor=self.bg_color),
                      alignment=Alignment(horizontal='center', vertical='center', wrap_text=True, shrink_to_fit=True, indent=0),
                      border=border,
-                     number_format=self.number_format)
+                     number_format=self.number_format,
+                     protection=Protection(locked=self.protection))
+
+    def is_string_is_hex_color_code(self, hex_string):
+        if re.search(r'[a-fA-F0-9]{6}$', hex_string):
+            return True
+        else:
+            return False
 
 
 def not_supported(*args, **kwargs):
@@ -47,4 +68,4 @@ number_formats = ImmutableDict(general='General', date='DD/MM/YY', percent='0.0%
                                thousands_comma_sep='#,##0')
 
 colors = ImmutableDict(white='FFFFFF', blue=op_colors.BLUE, yellow=op_colors.YELLOW, green=op_colors.GREEN,
-                       black=op_colors.BLACK, red=op_colors.RED, purple='800080')
+                       black=op_colors.BLACK, red=op_colors.RED, purple='800080', grey='D3D3D3',)
