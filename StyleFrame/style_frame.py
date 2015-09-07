@@ -13,7 +13,6 @@ class StyleFrame(object):
     A wrapper class that wraps pandas DataFrame.
     Stores container objects that have values and Styles that will be applied to excel
     """
-
     def __init__(self, obj):
         if isinstance(obj, pd.DataFrame):
             self.data_df = obj.applymap(lambda x: Container(x) if not isinstance(x, Container) else x)
@@ -74,15 +73,14 @@ class StyleFrame(object):
         return pd.ExcelWriter(path, engine='openpyxl')
 
     def to_excel(self, excel_writer, sheet_name='Sheet1', na_rep='', float_format=None, columns=None, header=True,
-                 index=False,
-                 index_label=None, startrow=0, startcol=0, merge_cells=True, encoding=None, inf_rep='inf',
+                 index=False, index_label=None, startrow=0, startcol=0, merge_cells=True, encoding=None, inf_rep='inf',
                  allow_protection=False, right_to_left=True, columns_to_hide=None):
         """
         Saves the dataframe to excel and applies the styles.
         :param right_to_left: sets the sheet to be right to left.
         :param columns_to_hide: single column, list or tuple of columns to hide, may be column index (starts from 1)
                                 column name or column letter.
-        :param allow_protection: protect the sheet and the cells that specified as protected.
+        :param allow_protection: allow to protect the sheet and the cells that specified as protected.
         Read Pandas' documentation about the other parameters
         """
         if index:
@@ -184,9 +182,9 @@ class StyleFrame(object):
             else:
                 raise IndexError('row: %s is out of range' % row)
 
-    # CHANGED
     def apply_style_by_indexes(self, indexes_to_style, cols_to_style=None, bg_color=colors.white, bold=False,
-                               font_size=12, font_color=colors.black, number_format=number_formats.general):
+                               font_size=12, font_color=colors.black, protection=False,
+                               number_format=number_formats.general):
         """
         applies a certain style to the provided indexes in the dataframe in the provided columns
         :param indexes_to_style: indexes to apply the style to
@@ -195,6 +193,7 @@ class StyleFrame(object):
         :param bold: bold or not
         :param font_size: the font size
         :param font_color: the font color
+        :param protection: to protect the cell from changes or not
         :param number_format: style the number format
         :return:
         """
@@ -205,9 +204,9 @@ class StyleFrame(object):
         for index in indexes_to_style:
             for col in cols_to_style:
                 self.ix[index, col].style = Styler(bg_color=bg_color, bold=bold, font_size=font_size,
-                                                   font_color=font_color, number_format=number_format).create_style()
+                                                   font_color=font_color, protection=protection,
+                                                   number_format=number_format).create_style()
 
-    # CHANGED
     def apply_column_style(self, cols_to_style, bg_color=colors.white, bold=False, font_size=12,
                            font_color=colors.black, protection=False, style_header=False,
                            number_format=number_formats.general):
@@ -225,7 +224,6 @@ class StyleFrame(object):
         """
         if not isinstance(cols_to_style, (list, tuple)):
             cols_to_style = [cols_to_style]
-        print protection
         if not all(col in self.columns for col in cols_to_style):
             raise KeyError("one of the columns in {} wasn't found".format(cols_to_style))
         for col_name in cols_to_style:
