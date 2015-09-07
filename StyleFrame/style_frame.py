@@ -65,7 +65,7 @@ class StyleFrame(object):
             raise AttributeError("'{}' object has no attribute '{}'".format(type(self).__name__, attr))
 
     @classmethod
-    def read_excel(cls, path, sheetname, **kwargs):
+    def read_excel(cls, path, sheetname=0, **kwargs):
         return StyleFrame(pd.read_excel(path, sheetname=sheetname, **kwargs))
 
     @classmethod
