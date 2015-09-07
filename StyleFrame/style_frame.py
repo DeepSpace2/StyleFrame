@@ -104,8 +104,7 @@ class StyleFrame(object):
 
             column_as_letter = None
             if column_to_convert in self.data_df.columns:  # column name
-                column_index = self.data_df.columns.get_loc(
-                    column_to_convert) + startcol + 1  # worksheet columns index start from 1
+                column_index = self.data_df.columns.get_loc(column_to_convert) + startcol + 1  # worksheet columns index start from 1
                 column_as_letter = openpyxl.cell.get_column_letter(column_index)
 
             elif isinstance(column_to_convert, int) and column_to_convert >= 1:  # column index
@@ -122,10 +121,9 @@ class StyleFrame(object):
 
         export_df.columns = [col.value for col in export_df.columns]
 
-        export_df.to_excel(excel_writer, sheet_name=sheet_name, na_rep=na_rep, float_format=float_format,
-                           columns=columns,
-                           header=header, index=index, index_label=index_label, startrow=startrow, startcol=startcol,
-                           engine='openpyxl', merge_cells=merge_cells, encoding=encoding, inf_rep=inf_rep)
+        export_df.to_excel(excel_writer, sheet_name=sheet_name, na_rep=na_rep, float_format=float_format, index=index,
+                           columns=columns, header=header, index_label=index_label, startrow=startrow,
+                           startcol=startcol, engine='openpyxl', merge_cells=merge_cells, encoding=encoding, inf_rep=inf_rep)
 
         sheet = excel_writer.book.get_sheet_by_name(sheet_name)
 
@@ -207,9 +205,8 @@ class StyleFrame(object):
                                                    font_color=font_color, protection=protection,
                                                    number_format=number_format).create_style()
 
-    def apply_column_style(self, cols_to_style, bg_color=colors.white, bold=False, font_size=12,
-                           font_color=colors.black, protection=False, style_header=False,
-                           number_format=number_formats.general):
+    def apply_column_style(self, cols_to_style, bg_color=colors.white, bold=False, font_size=12, protection=False,
+                           font_color=colors.black, style_header=False, number_format=number_formats.general):
         """
         apply style to a whole column
         :param cols_to_style: the columns to apply the style to
