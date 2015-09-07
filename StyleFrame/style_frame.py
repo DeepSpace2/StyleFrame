@@ -280,7 +280,7 @@ class StyleFrame(object):
         try:
             height = float(height)
         except TypeError:
-            raise TypeError('rows width must be numeric value')
+            raise TypeError('rows height must be numeric value')
 
         if height <= 0:
             raise ValueError('rows width must be positive')
