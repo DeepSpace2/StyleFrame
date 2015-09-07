@@ -199,6 +199,9 @@ class StyleFrame(object):
             cols_to_style = [cols_to_style]
         elif cols_to_style is None:
             cols_to_style = list(self.data_df.columns)
+        if not isinstance(indexes_to_style, (list, tuple)):
+            indexes_to_style = [indexes_to_style]
+
         for index in indexes_to_style:
             for col in cols_to_style:
                 self.ix[index, col].style = Styler(bg_color=bg_color, bold=bold, font_size=font_size,
