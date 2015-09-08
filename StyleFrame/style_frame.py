@@ -76,13 +76,15 @@ class StyleFrame(object):
     def to_excel(self, excel_writer, sheet_name='Sheet1', na_rep='', float_format=None, columns=None, header=True,
                  index=False, index_label=None, startrow=0, startcol=0, merge_cells=True, encoding=None, inf_rep='inf',
                  allow_protection=False, right_to_left=True, columns_to_hide=None, add_filter_to_header=False,
-                 freeze_header_panes=False):
+                 columns_and_rows_to_freeze=None):
         """
         Saves the dataframe to excel and applies the styles.
         :param right_to_left: sets the sheet to be right to left.
         :param columns_to_hide: single column, list or tuple of columns to hide, may be column index (starts from 1)
                                 column name or column letter.
         :param allow_protection: allow to protect the sheet and the cells that specified as protected.
+        :param add_filter_to_header: add filters to the header or not.
+        :param columns_and_rows_to_freeze: column and row string to freeze for example: C3 will freeze columns: A,B and rows: 1,2.
         Read Pandas' documentation about the other parameters
         """
         if index:
@@ -106,8 +108,7 @@ class StyleFrame(object):
 
             column_as_letter = None
             if column_to_convert in self.data_df.columns:  # column name
-                column_index = self.data_df.columns.get_loc(
-                    column_to_convert) + startcol + 1  # worksheet columns index start from 1
+                column_index = self.data_df.columns.get_loc(column_to_convert) + startcol + 1  # worksheet columns index start from 1
                 column_as_letter = openpyxl.cell.get_column_letter(column_index)
 
             elif isinstance(column_to_convert, int) and column_to_convert >= 1:  # column index
@@ -184,9 +185,14 @@ class StyleFrame(object):
         if add_filter_to_header:
             sheet.auto_filter.ref = get_columns_range()
 
-        if freeze_header_panes:
-            column_letter = get_column_as_letter(1)  # will take in account the startrow index
-            sheet.freeze_panes = sheet['{row}2'.format(row=column_letter)]
+        if columns_and_rows_to_freeze is not None:
+            if not isinstance(columns_and_rows_to_freeze, basestring) or len(columns_and_rows_to_freeze) < 2:
+                raise TypeError("columns_and_rows_to_freeze must be a str for example: 'C3'")
+            if columns_and_rows_to_freeze[0] not in sheet.column_dimensions:
+                raise IndexError("column: %s is out of columns range." % columns_and_rows_to_freeze[0])
+            if int(columns_and_rows_to_freeze[1]) > sheet.max_row:
+                raise IndexError("row: %s is out of rows range." % columns_and_rows_to_freeze[1])
+            sheet.freeze_panes = sheet[columns_and_rows_to_freeze]
 
         if allow_protection:
             sheet.protection.autoFilter = False
