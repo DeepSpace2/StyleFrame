@@ -75,7 +75,7 @@ class StyleFrame(object):
 
     def to_excel(self, excel_writer, sheet_name='Sheet1', na_rep='', float_format=None, columns=None, header=True,
                  index=False, index_label=None, startrow=0, startcol=0, merge_cells=True, encoding=None, inf_rep='inf',
-                 allow_protection=False, right_to_left=True, columns_to_hide=None, add_filter_to_headers=False,
+                 allow_protection=False, right_to_left=True, columns_to_hide=None, add_filter_to_header=False,
                  freeze_header_panes=False):
         """
         Saves the dataframe to excel and applies the styles.
@@ -121,8 +121,8 @@ class StyleFrame(object):
             return column_as_letter
 
         def get_columns_range():
-            start_letter = get_column_as_letter(column_to_convert=columns[0])
-            end_letter = get_column_as_letter(column_to_convert=columns[-1])
+            start_letter = get_column_as_letter(column_to_convert=self.data_df.columns[0])
+            end_letter = get_column_as_letter(column_to_convert=self.data_df.columns[-1])
             return '{start_letter}{start_index}:{end_letter}{end_index}'.format(start_letter=start_letter,
                                                                                 start_index=startrow + 1,
                                                                                 end_letter=end_letter,
@@ -181,8 +181,7 @@ class StyleFrame(object):
             else:
                 raise IndexError('row: %s is out of range' % row)
 
-        if add_filter_to_columns:
-            columns = self.data_df.columns
+        if add_filter_to_header:
             sheet.auto_filter.ref = get_columns_range()
 
         if freeze_header_panes:
