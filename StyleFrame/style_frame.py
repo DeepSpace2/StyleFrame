@@ -13,6 +13,7 @@ class StyleFrame(object):
     A wrapper class that wraps pandas DataFrame.
     Stores container objects that have values and Styles that will be applied to excel
     """
+
     def __init__(self, obj):
         if isinstance(obj, pd.DataFrame):
             self.data_df = obj.applymap(lambda x: Container(x) if not isinstance(x, Container) else x)
@@ -74,13 +75,16 @@ class StyleFrame(object):
 
     def to_excel(self, excel_writer, sheet_name='Sheet1', na_rep='', float_format=None, columns=None, header=True,
                  index=False, index_label=None, startrow=0, startcol=0, merge_cells=True, encoding=None, inf_rep='inf',
-                 allow_protection=False, right_to_left=True, columns_to_hide=None):
+                 allow_protection=False, right_to_left=True, columns_to_hide=None, add_filter_to_header=False,
+                 columns_and_rows_to_freeze=None):
         """
         Saves the dataframe to excel and applies the styles.
         :param right_to_left: sets the sheet to be right to left.
         :param columns_to_hide: single column, list or tuple of columns to hide, may be column index (starts from 1)
                                 column name or column letter.
         :param allow_protection: allow to protect the sheet and the cells that specified as protected.
+        :param add_filter_to_header: add filters to the header or not.
+        :param columns_and_rows_to_freeze: column and row string to freeze for example: C3 will freeze columns: A,B and rows: 1,2.
         Read Pandas' documentation about the other parameters
         """
         if index:
@@ -104,7 +108,8 @@ class StyleFrame(object):
 
             column_as_letter = None
             if column_to_convert in self.data_df.columns:  # column name
-                column_index = self.data_df.columns.get_loc(column_to_convert) + startcol + 1  # worksheet columns index start from 1
+                column_index = self.data_df.columns.get_loc(
+                    column_to_convert) + startcol + 1  # worksheet columns index start from 1
                 column_as_letter = openpyxl.cell.get_column_letter(column_index)
 
             elif isinstance(column_to_convert, int) and column_to_convert >= 1:  # column index
@@ -117,17 +122,24 @@ class StyleFrame(object):
 
             return column_as_letter
 
+        def get_columns_range():
+            start_letter = get_column_as_letter(column_to_convert=self.data_df.columns[0])
+            end_letter = get_column_as_letter(column_to_convert=self.data_df.columns[-1])
+            return '{start_letter}{start_index}:{end_letter}{end_index}'.format(start_letter=start_letter,
+                                                                                start_index=startrow + 1,
+                                                                                end_letter=end_letter,
+                                                                                end_index=startrow + 1)
+
         export_df = self.data_df.applymap(lambda x: get_values(x))
 
         export_df.columns = [col.value for col in export_df.columns]
 
         export_df.to_excel(excel_writer, sheet_name=sheet_name, na_rep=na_rep, float_format=float_format, index=index,
                            columns=columns, header=header, index_label=index_label, startrow=startrow,
-                           startcol=startcol, engine='openpyxl', merge_cells=merge_cells, encoding=encoding, inf_rep=inf_rep)
+                           startcol=startcol, engine='openpyxl', merge_cells=merge_cells, encoding=encoding,
+                           inf_rep=inf_rep)
 
         sheet = excel_writer.book.get_sheet_by_name(sheet_name)
-
-        sheet.protection.sheet = allow_protection
 
         sheet.sheet_view.rightToLeft = right_to_left
 
@@ -161,15 +173,6 @@ class StyleFrame(object):
                 except AttributeError:  # if the element in the dataframe is not Container creating a default style
                     current_cell.style = Styler().create_style()
 
-        ''' Iterating over the columns_to_hide and check if the format is columns name, column index as number or letter  '''
-        if columns_to_hide is not None:
-            if not isinstance(columns_to_hide, (list, tuple)):
-                columns_to_hide = [columns_to_hide]
-
-            for column in columns_to_hide:
-                column_letter = get_column_as_letter(column_to_convert=column)
-                sheet.column_dimensions[column_letter].hidden = True
-
         for column in self.columns_width:
             column_letter = get_column_as_letter(column_to_convert=column)
             sheet.column_dimensions[column_letter].width = self.columns_width[column]
@@ -179,6 +182,31 @@ class StyleFrame(object):
                 sheet.row_dimensions[startrow + row].height = self.rows_height[row]
             else:
                 raise IndexError('row: %s is out of range' % row)
+
+        if add_filter_to_header:
+            sheet.auto_filter.ref = get_columns_range()
+
+        if columns_and_rows_to_freeze is not None:
+            if not isinstance(columns_and_rows_to_freeze, basestring) or len(columns_and_rows_to_freeze) < 2:
+                raise TypeError("columns_and_rows_to_freeze must be a str for example: 'C3'")
+            if columns_and_rows_to_freeze[0] not in sheet.column_dimensions:
+                raise IndexError("column: %s is out of columns range." % columns_and_rows_to_freeze[0])
+            if int(columns_and_rows_to_freeze[1]) > sheet.max_row:
+                raise IndexError("row: %s is out of rows range." % columns_and_rows_to_freeze[1])
+            sheet.freeze_panes = sheet[columns_and_rows_to_freeze]
+
+        if allow_protection:
+            sheet.protection.autoFilter = False
+            sheet.protection.enable()
+
+        ''' Iterating over the columns_to_hide and check if the format is columns name, column index as number or letter  '''
+        if columns_to_hide is not None:
+            if not isinstance(columns_to_hide, (list, tuple)):
+                columns_to_hide = [columns_to_hide]
+
+            for column in columns_to_hide:
+                column_letter = get_column_as_letter(column_to_convert=column)
+                sheet.column_dimensions[column_letter].hidden = True
 
     def apply_style_by_indexes(self, indexes_to_style, cols_to_style=None, bg_color=colors.white, bold=False,
                                font_size=12, font_color=colors.black, protection=False,

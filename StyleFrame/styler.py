@@ -15,14 +15,14 @@ class Styler(object):
         self.protection = protection
         self.underline = underline
 
-        if bg_color[0] == '#':
+        if bg_color.startswith('#'):
             bg_color = bg_color[1:]
         if self.is_string_is_hex_color_code(hex_string=bg_color):
             self.bg_color = bg_color
         else:
             self.bg_color = colors.get(bg_color, colors.white)
 
-        if font_color[0] == '#':
+        if font_color.startswith('#'):
             font_color = font_color[1:]
         if self.is_string_is_hex_color_code(hex_string=font_color):
             self.font_color = font_color
