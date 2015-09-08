@@ -108,7 +108,8 @@ class StyleFrame(object):
 
             column_as_letter = None
             if column_to_convert in self.data_df.columns:  # column name
-                column_index = self.data_df.columns.get_loc(column_to_convert) + startcol + 1  # worksheet columns index start from 1
+                column_index = self.data_df.columns.get_loc(
+                    column_to_convert) + startcol + 1  # worksheet columns index start from 1
                 column_as_letter = openpyxl.cell.get_column_letter(column_index)
 
             elif isinstance(column_to_convert, int) and column_to_convert >= 1:  # column index
