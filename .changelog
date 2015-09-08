@@ -1,3 +1,6 @@
+0.0.9       - Some bugs fixes
+            - Added ability to protect sheets and cells from editing
+
 0.0.8       - Added default style for cells with '=HYPERLINK(..)' values (blue color, underlined)
             - Improved unicode support
 
