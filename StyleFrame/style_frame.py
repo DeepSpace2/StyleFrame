@@ -83,7 +83,7 @@ class StyleFrame(object):
         :param columns_to_hide: single column, list or tuple of columns to hide, may be column index (starts from 1)
                                 column name or column letter.
         :param allow_protection: allow to protect the sheet and the cells that specified as protected.
-        :param add_filter_to_header: add filters to the header or not.
+        :param row_to_add_filters: add filters to the given row, starts from zero (zero is to add filters to columns).
         :param columns_and_rows_to_freeze: column and row string to freeze for example: C3 will freeze columns: A,B and rows: 1,2.
         Read Pandas' documentation about the other parameters
         """
