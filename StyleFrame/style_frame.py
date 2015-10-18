@@ -41,9 +41,12 @@ class StyleFrame(object):
         return len(self.data_df)
 
     def __getitem__(self, item):
-        if type(item) == pd.Series:
+        if isinstance(item,pd.Series):
             return self.data_df.__getitem__(item).index
-        return StyleFrame(self.data_df.__getitem__(item))
+        elif isinstance(item, list):
+            return StyleFrame(self.data_df.__getitem__(item))
+        else:
+            return self.data_df.__getitem__(item)
 
     def __setitem__(self, key, value):
         if isinstance(value, pd.Series):
