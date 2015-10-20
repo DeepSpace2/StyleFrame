@@ -25,7 +25,8 @@ class StyleFrame(object):
             self.data_df = deepcopy(obj)
         else:
             raise TypeError("{} __init__ doesn't support {}".format(type(self).__name__, type(obj).__name__))
-        self.data_df.columns = [Container(col) for col in self.data_df.columns]
+        self.data_df.columns = [Container(col) if not isinstance(col, Container) else col for col in self.data_df.columns]
+        self.data_df.index = [Container(index) if not isinstance(index, Container) else index for index in self.data_df.index]
 
         self.columns_width = dict()
         self.rows_height = dict()
@@ -40,9 +41,12 @@ class StyleFrame(object):
         return len(self.data_df)
 
     def __getitem__(self, item):
-        if type(item) == pd.Series:
+        if isinstance(item,pd.Series):
             return self.data_df.__getitem__(item).index
-        return self.data_df.__getitem__(item)
+        elif isinstance(item, list):
+            return StyleFrame(self.data_df.__getitem__(item))
+        else:
+            return self.data_df.__getitem__(item)
 
     def __setitem__(self, key, value):
         if isinstance(value, pd.Series):
@@ -87,8 +91,6 @@ class StyleFrame(object):
         :param columns_and_rows_to_freeze: column and row string to freeze for example: C3 will freeze columns: A,B and rows: 1,2.
         Read Pandas' documentation about the other parameters
         """
-        if index:
-            raise ValueError("'index' must be set to False")
 
         def get_values(x):
             if isinstance(x, Container):
@@ -108,7 +110,8 @@ class StyleFrame(object):
 
             column_as_letter = None
             if column_to_convert in self.data_df.columns:  # column name
-                column_index = self.data_df.columns.get_loc(column_to_convert) + startcol + 1  # worksheet columns index start from 1
+                column_index = self.data_df.columns.get_loc(
+                    column_to_convert) + startcol + 1  # worksheet columns index start from 1
                 column_as_letter = openpyxl.cell.get_column_letter(column_index)
 
             elif isinstance(column_to_convert, int) and column_to_convert >= 1:  # column index
@@ -133,6 +136,8 @@ class StyleFrame(object):
 
         export_df.columns = [col.value for col in export_df.columns]
 
+        export_df.index = [row_index.value for row_index in export_df.index]
+
         export_df.to_excel(excel_writer, sheet_name=sheet_name, na_rep=na_rep, float_format=float_format, index=index,
                            columns=columns, header=header, index_label=index_label, startrow=startrow,
                            startcol=startcol, engine='openpyxl', merge_cells=merge_cells, encoding=encoding,
@@ -144,6 +149,10 @@ class StyleFrame(object):
 
         self.data_df.fillna(Container('NaN'), inplace=True)
 
+        if index:
+            for row_index, index in enumerate(self.data_df.index):
+                sheet.cell(row=startrow + row_index + 2, column=startcol + 1).style = index.style
+            startcol += 1
         ''' Iterating over the dataframe's elements and applying their styles '''
         ''' openpyxl's rows and cols start from 1,1 while the dataframe is 0,0 '''
         for col_index, column in enumerate(self.data_df.columns):
@@ -232,6 +241,10 @@ class StyleFrame(object):
             cols_to_style = [cols_to_style]
         elif cols_to_style is None:
             cols_to_style = list(self.data_df.columns)
+            for i in indexes_to_style:
+                self.index[i].style = Styler(bg_color=bg_color, bold=bold, font_size=font_size,
+                                             font_color=font_color, protection=protection,
+                                             number_format=number_format).create_style()
         if not isinstance(indexes_to_style, (list, tuple)):
             indexes_to_style = [indexes_to_style]
 
