@@ -137,6 +137,15 @@ Parameters:
         columns: a single or a list/tuple of column name, index or letter to change their width
         width: numeric positive value of the new width
 
+::
+
+    set_column_width_dict(self, col_width_dict)
+
+Parameters:
+::
+
+        col_width_dict: a dictionary from tuples of columns to the desired width
+
 
 Setting rows height
 ^^^^^^^^^^^^^^^^^^^
@@ -151,3 +160,14 @@ Parameters:
 
         rows: a single row index, list of indexes or tuple of indexes to change their height
         height: numeric positive value of the new height
+
+::
+
+    sf.set_column_width_dict(self, col_width_dict)
+
+Parameters:
+::
+
+    sf.set_row_height_dict: a dictionary from tuples of rows to the desired height
+
+

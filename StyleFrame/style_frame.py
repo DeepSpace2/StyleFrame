@@ -16,7 +16,10 @@ class StyleFrame(object):
 
     def __init__(self, obj):
         if isinstance(obj, pd.DataFrame):
-            self.data_df = obj.applymap(lambda x: Container(x) if not isinstance(x, Container) else x)
+            if len(obj) == 0:
+                self.data_df = deepcopy(obj)
+            else:
+                self.data_df = obj.applymap(lambda x: Container(x) if not isinstance(x, Container) else x)
         elif isinstance(obj, pd.Series):
             self.data_df = obj.apply(lambda x: Container(x) if not isinstance(x, Container) else x)
         elif isinstance(obj, dict) or isinstance(obj, list):
@@ -242,17 +245,17 @@ class StyleFrame(object):
         elif cols_to_style is None:
             cols_to_style = list(self.data_df.columns)
             for i in indexes_to_style:
-                self.index[i].style = Styler(bg_color=bg_color, bold=bold, font_size=font_size,
-                                             font_color=font_color, protection=protection,
-                                             number_format=number_format).create_style()
-        if not isinstance(indexes_to_style, (list, tuple)):
+                i.style = Styler(bg_color=bg_color, bold=bold, font_size=font_size,
+                                 font_color=font_color, protection=protection,
+                                 number_format=number_format).create_style()
+        if not isinstance(indexes_to_style, (list, tuple, pd.Index)):
             indexes_to_style = [indexes_to_style]
 
         for index in indexes_to_style:
             for col in cols_to_style:
-                self.ix[index, col].style = Styler(bg_color=bg_color, bold=bold, font_size=font_size,
-                                                   font_color=font_color, protection=protection,
-                                                   number_format=number_format).create_style()
+                self.ix[index.value, col].style = Styler(bg_color=bg_color, bold=bold, font_size=font_size,
+                                                         font_color=font_color, protection=protection,
+                                                         number_format=number_format).create_style()
 
     def apply_column_style(self, cols_to_style, bg_color=colors.white, bold=False, font_size=12, protection=False,
                            font_color=colors.black, style_header=False, number_format=number_formats.general):
@@ -311,7 +314,7 @@ class StyleFrame(object):
         :param width: numeric positive value of the new width
         :return:
         """
-        if not isinstance(columns, (list, tuple)):
+        if not isinstance(columns, (set, list, tuple)):
             columns = [columns]
         try:
             width = float(width)
@@ -326,6 +329,14 @@ class StyleFrame(object):
                 raise TypeError("column must be an index, column letter or column name")
             self.columns_width[column] = width
 
+    def set_column_width_dict(self, col_width_dict):
+        """
+        :param col_width_dict: dictionary from tuple of columns to new width
+        :return:
+        """
+        for cols, width in col_width_dict.iteritems():
+            self.set_column_width(cols, width)
+
     def set_row_height(self, rows, height):
         """
         set the height of the given rows
@@ -333,7 +344,7 @@ class StyleFrame(object):
         :param height: numeric positive value of the new height
         :return:
         """
-        if not isinstance(rows, (list, tuple)):
+        if not isinstance(rows, (set, list, tuple)):
             rows = [rows]
         try:
             height = float(height)
@@ -349,6 +360,14 @@ class StyleFrame(object):
                 raise TypeError("row must be an index")
 
             self.rows_height[row] = height
+
+    def set_row_height_dict(self, row_height_dict):
+        """
+        :param row_height_dict: dictionary from tuple of rows to new height
+        :return:
+        """
+        for rows, width in row_height_dict.iteritems():
+            self.set_row_height(rows, width)
 
     def rename(self, columns=None, inplace=False):
         """
