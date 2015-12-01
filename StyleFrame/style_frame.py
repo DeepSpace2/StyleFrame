@@ -135,10 +135,13 @@ class StyleFrame(object):
                                                                                 end_letter=end_letter,
                                                                                 end_index=startrow + row_index + 1)
 
-        export_df = self.data_df.applymap(lambda x: get_values(x))
+        if len(self.data_df) > 0:
+            export_df = self.data_df.applymap(lambda x: get_values(x))
+
+        else:
+            export_df = deepcopy(self.data_df)
 
         export_df.columns = [col.value for col in export_df.columns]
-
         export_df.index = [row_index.value for row_index in export_df.index]
 
         export_df.to_excel(excel_writer, sheet_name=sheet_name, na_rep=na_rep, float_format=float_format, index=index,
