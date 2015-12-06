@@ -230,7 +230,7 @@ class StyleFrame(object):
 
     def apply_style_by_indexes(self, indexes_to_style, cols_to_style=None, bg_color=colors.white, bold=False,
                                font_size=12, font_color=colors.black, protection=False,
-                               number_format=number_formats.general):
+                               number_format=None):
         """
         applies a certain style to the provided indexes in the dataframe in the provided columns
         :param indexes_to_style: indexes to apply the style to
@@ -243,22 +243,37 @@ class StyleFrame(object):
         :param number_format: style the number format
         :return:
         """
+
+        default_number_formats = {pd.tslib.Timestamp: 'DD/MM/YY HH:MM',
+                                  dt.date: 'DD/MM/YY',
+                                  dt.time: 'HH:MM'}
+
+        indexes_number_format = number_format
+        values_number_format = number_format
+
         if cols_to_style is not None and not isinstance(cols_to_style, (list, tuple)):
             cols_to_style = [cols_to_style]
         elif cols_to_style is None:
             cols_to_style = list(self.data_df.columns)
             for i in indexes_to_style:
+                if number_format is None:
+                    indexes_number_format = default_number_formats.get(type(i.value), number_formats.general)
+
                 i.style = Styler(bg_color=bg_color, bold=bold, font_size=font_size,
                                  font_color=font_color, protection=protection,
-                                 number_format=number_format).create_style()
+                                 number_format=indexes_number_format).create_style()
+
         if not isinstance(indexes_to_style, (list, tuple, pd.Index)):
             indexes_to_style = [indexes_to_style]
 
         for index in indexes_to_style:
             for col in cols_to_style:
+                if number_format is None:
+                    values_number_format = default_number_formats.get(type(self.ix[index.value, col].value), number_formats.general)
+
                 self.ix[index.value, col].style = Styler(bg_color=bg_color, bold=bold, font_size=font_size,
                                                          font_color=font_color, protection=protection,
-                                                         number_format=number_format).create_style()
+                                                         number_format=values_number_format).create_style()
 
     def apply_column_style(self, cols_to_style, bg_color=colors.white, bold=False, font_size=12, protection=False,
                            font_color=colors.black, style_header=False, number_format=number_formats.general):
