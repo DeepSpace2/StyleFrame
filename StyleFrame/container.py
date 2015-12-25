@@ -1,7 +1,16 @@
 # coding:utf-8
+import sys
 import datetime as dt
 import pandas as pd
-from styler import Styler
+
+PY2 = sys.version_info[0] == 2
+
+# Python 2
+if PY2:
+    from styler import Styler
+# Python 3
+else:
+    from StyleFrame.styler import Styler
 
 
 class Container(object):
@@ -27,7 +36,9 @@ class Container(object):
         return hash(self.value)
 
     def __str__(self):
-        return unicode(self.value)
+        if PY2:
+            return unicode(self.value)
+        return str(self.value)
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):

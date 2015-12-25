@@ -1,11 +1,21 @@
 # coding:utf-8
+import sys
 import pandas as pd
-from container import Container
-from styler import Styler, number_formats, colors
 import numpy as np
 import openpyxl.cell
 from copy import deepcopy
 import datetime as dt
+
+PY2 = sys.version_info[0] == 2
+
+# Python 2
+if PY2:
+    from container import Container
+    from styler import Styler, number_formats, colors
+# Python 3
+else:
+    from StyleFrame.container import Container
+    from StyleFrame.styler import Styler, number_formats, colors
 
 
 class StyleFrame(object):
@@ -38,7 +48,9 @@ class StyleFrame(object):
         return str(self.data_df)
 
     def __unicode__(self):
-        return unicode(self.data_df)
+        if PY2:
+            return unicode(self.data_df)
+        return str(self.data_df)
 
     def __len__(self):
         return len(self.data_df)
@@ -108,8 +120,12 @@ class StyleFrame(object):
                     return x
 
         def get_column_as_letter(column_to_convert):
-            if not isinstance(column_to_convert, (int, basestring, Container)):
-                raise TypeError("column must be an index, column letter or column name")
+            if PY2:
+                if not isinstance(column_to_convert, (int, basestring, Container)):
+                    raise TypeError("column must be an index, column letter or column name")
+            else:
+                if not isinstance(column_to_convert, (int, str, Container)):
+                    raise TypeError("column must be an index, column letter or column name")
 
             column_as_letter = None
             if column_to_convert in self.data_df.columns:  # column name
@@ -174,16 +190,30 @@ class StyleFrame(object):
             for row_index, index in enumerate(self.data_df.index):
                 current_cell = sheet.cell(row=row_index + startrow + 2, column=col_index + startcol + 1)
                 try:
-                    if '=HYPERLINK' in unicode(current_cell.value):
-                        current_bg_color = current_cell.style.fill.fgColor.rgb
-                        current_font_size = current_cell.style.font.size
-                        current_cell.style = Styler(bg_color=current_bg_color,
-                                                    font_color='blue',
-                                                    font_size=current_font_size,
-                                                    number_format=number_formats.general,
-                                                    underline='single').create_style()
+                    if PY2:
+                        if '=HYPERLINK' in unicode(current_cell.value):
+                            current_bg_color = current_cell.style.fill.fgColor.rgb
+                            current_font_size = current_cell.style.font.size
+                            current_cell.style = Styler(bg_color=current_bg_color,
+                                                        font_color='blue',
+                                                        font_size=current_font_size,
+                                                        number_format=number_formats.general,
+                                                        underline='single').create_style()
+                        else:
+                            current_cell.style = self.data_df.ix[index, column].style
+
                     else:
-                        current_cell.style = self.data_df.ix[index, column].style
+                        if '=HYPERLINK' in str(current_cell.value):
+                            current_bg_color = current_cell.style.fill.fgColor.rgb
+                            current_font_size = current_cell.style.font.size
+                            current_cell.style = Styler(bg_color=current_bg_color,
+                                                        font_color='blue',
+                                                        font_size=current_font_size,
+                                                        number_format=number_formats.general,
+                                                        underline='single').create_style()
+                        else:
+                            current_cell.style = self.data_df.ix[index, column].style
+
                 except AttributeError:  # if the element in the dataframe is not Container creating a default style
                     current_cell.style = Styler().create_style()
 
@@ -207,8 +237,12 @@ class StyleFrame(object):
                 raise TypeError("row must be an index and not %s" % type(row_to_add_filters))
 
         if columns_and_rows_to_freeze is not None:
-            if not isinstance(columns_and_rows_to_freeze, basestring) or len(columns_and_rows_to_freeze) < 2:
-                raise TypeError("columns_and_rows_to_freeze must be a str for example: 'C3'")
+            if PY2:
+                if not isinstance(columns_and_rows_to_freeze, basestring) or len(columns_and_rows_to_freeze) < 2:
+                    raise TypeError("columns_and_rows_to_freeze must be a str for example: 'C3'")
+            else:
+                if not isinstance(columns_and_rows_to_freeze, str) or len(columns_and_rows_to_freeze) < 2:
+                    raise TypeError("columns_and_rows_to_freeze must be a str for example: 'C3'")
             if columns_and_rows_to_freeze[0] not in sheet.column_dimensions:
                 raise IndexError("column: %s is out of columns range." % columns_and_rows_to_freeze[0])
             if int(columns_and_rows_to_freeze[1]) not in sheet.row_dimensions:
@@ -343,8 +377,12 @@ class StyleFrame(object):
             raise ValueError('columns width must be positive')
 
         for column in columns:
-            if not isinstance(column, (int, basestring, Container)):
-                raise TypeError("column must be an index, column letter or column name")
+            if PY2:
+                if not isinstance(column, (int, basestring, Container)):
+                    raise TypeError("column must be an index, column letter or column name")
+            else:
+                if not isinstance(column, (int, str, Container)):
+                    raise TypeError("column must be an index, column letter or column name")
             self.columns_width[column] = width
 
     def set_column_width_dict(self, col_width_dict):
