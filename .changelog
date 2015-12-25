@@ -1,4 +1,4 @@
-0.1.3.3    - Basic support for Python 3.
+0.1.3.5    - Basic support for Python 3.
 
 0.1.3.2    - Internal changes in apply_style_by_indexes() method in order to keep number formats of dates and times.
 
