@@ -92,10 +92,10 @@ class StyleFrame(object):
     def ExcelWriter(cls, path):
         return pd.ExcelWriter(path, engine='openpyxl')
 
-    def to_excel(self, excel_writer, sheet_name='Sheet1', na_rep='', float_format=None, columns=None, header=True,
-                 index=False, index_label=None, startrow=0, startcol=0, merge_cells=True, encoding=None, inf_rep='inf',
-                 allow_protection=False, right_to_left=True, columns_to_hide=None, row_to_add_filters=None,
-                 columns_and_rows_to_freeze=None):
+    def to_excel(self, excel_writer='output.xlsx', sheet_name='Sheet1', na_rep='', float_format=None, columns=None,
+                 header=True, index=False, index_label=None, startrow=0, startcol=0, merge_cells=True, encoding=None,
+                 inf_rep='inf', allow_protection=False, right_to_left=True, columns_to_hide=None,
+                 row_to_add_filters=None, columns_and_rows_to_freeze=None):
         """
         Saves the dataframe to excel and applies the styles.
         :param right_to_left: sets the sheet to be right to left.
@@ -159,6 +159,9 @@ class StyleFrame(object):
 
         export_df.columns = [col.value for col in export_df.columns]
         export_df.index = [row_index.value for row_index in export_df.index]
+
+        if isinstance(excel_writer, basestring):
+            excel_writer = self.ExcelWriter(excel_writer)
 
         export_df.to_excel(excel_writer, sheet_name=sheet_name, na_rep=na_rep, float_format=float_format, index=index,
                            columns=columns, header=header, index_label=index_label, startrow=startrow,
@@ -261,6 +264,8 @@ class StyleFrame(object):
             for column in columns_to_hide:
                 column_letter = get_column_as_letter(column_to_convert=column)
                 sheet.column_dimensions[column_letter].hidden = True
+
+        return excel_writer
 
     def apply_style_by_indexes(self, indexes_to_style, cols_to_style=None, bg_color=colors.white, bold=False,
                                font_size=12, font_color=colors.black, protection=False,
