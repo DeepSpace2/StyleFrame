@@ -4,7 +4,7 @@ _Exporting DataFrame to designed excel file have never been so easy_
 
 A library that wraps pandas and openpyxl and allows easy styling of dataframes in excel
 ```
-$ pip install StyleFrame
+$ pip install styleframe
 ```
 You can read the documentation at http://styleframe.readthedocs.org/en/latest/
 
