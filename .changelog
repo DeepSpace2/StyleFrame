@@ -1,4 +1,4 @@
-0.1.4.0    - Supports passing a path to required output file to to_excel method, much like pandas's to_excel.
+0.1.4.1    - Supports passing a path to required output file to to_excel method, much like pandas's to_excel.
 
 0.1.3.5    - Basic support for Python 3.
 
