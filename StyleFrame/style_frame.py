@@ -120,13 +120,8 @@ class StyleFrame(object):
                     return x
 
         def get_column_as_letter(column_to_convert):
-            if PY2:
-                if not isinstance(column_to_convert, (int, basestring, Container)):
-                    raise TypeError("column must be an index, column letter or column name")
-            else:
-                if not isinstance(column_to_convert, (int, str, Container)):
-                    raise TypeError("column must be an index, column letter or column name")
-
+            if not isinstance(column_to_convert, (int, basestring if PY2 else str, Container)):
+                raise TypeError("column must be an index, column letter or column name")
             column_as_letter = None
             if column_to_convert in self.data_df.columns:  # column name
                 column_index = self.data_df.columns.get_loc(
@@ -160,7 +155,7 @@ class StyleFrame(object):
         export_df.columns = [col.value for col in export_df.columns]
         export_df.index = [row_index.value for row_index in export_df.index]
 
-        if isinstance(excel_writer, basestring):
+        if isinstance(excel_writer, basestring if PY2 else str):
             excel_writer = self.ExcelWriter(excel_writer)
 
         export_df.to_excel(excel_writer, sheet_name=sheet_name, na_rep=na_rep, float_format=float_format, index=index,
@@ -240,12 +235,8 @@ class StyleFrame(object):
                 raise TypeError("row must be an index and not %s" % type(row_to_add_filters))
 
         if columns_and_rows_to_freeze is not None:
-            if PY2:
-                if not isinstance(columns_and_rows_to_freeze, basestring) or len(columns_and_rows_to_freeze) < 2:
-                    raise TypeError("columns_and_rows_to_freeze must be a str for example: 'C3'")
-            else:
-                if not isinstance(columns_and_rows_to_freeze, str) or len(columns_and_rows_to_freeze) < 2:
-                    raise TypeError("columns_and_rows_to_freeze must be a str for example: 'C3'")
+            if not isinstance(columns_and_rows_to_freeze, basestring if PY2 else str) or len(columns_and_rows_to_freeze) < 2:
+                raise TypeError("columns_and_rows_to_freeze must be a str for example: 'C3'")
             if columns_and_rows_to_freeze[0] not in sheet.column_dimensions:
                 raise IndexError("column: %s is out of columns range." % columns_and_rows_to_freeze[0])
             if int(columns_and_rows_to_freeze[1]) not in sheet.row_dimensions:
@@ -382,12 +373,8 @@ class StyleFrame(object):
             raise ValueError('columns width must be positive')
 
         for column in columns:
-            if PY2:
-                if not isinstance(column, (int, basestring, Container)):
-                    raise TypeError("column must be an index, column letter or column name")
-            else:
-                if not isinstance(column, (int, str, Container)):
-                    raise TypeError("column must be an index, column letter or column name")
+            if not isinstance(column, (int, basestring if PY2 else str, Container)):
+                raise TypeError("column must be an index, column letter or column name")
             self.columns_width[column] = width
 
     def set_column_width_dict(self, col_width_dict):
