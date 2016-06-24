@@ -68,9 +68,9 @@ sf.apply_column_style(cols_to_style=['Sum', 'Mean'],
 ```
 
 Finally, lets export to excel but not before we use the best features of StyleFrame:
-- Add filters to headers
-- Freeze rows and columns
 - Change the page writing side
+- Freeze rows and columns
+- Add filters to headers
 
 ```
 sf.to_excel('data.xlsx',
