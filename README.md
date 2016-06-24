@@ -11,7 +11,7 @@ You can read the documentation at http://styleframe.readthedocs.org/en/latest/
 
 ## Usage Examples
 
-First, lets create DataFrame that contains data we would like to export to .xlsx file 
+First, let us create a DataFrame that contains data we would like to export to an .xlsx file 
 ```
 import pandas as pd
 
@@ -27,13 +27,17 @@ df['Mean'] = df.mean(axis=1)
 
 Now, once we have the DataFrame ready, lets create a StyleFrame object
 ```
-from StyleFrame.style_frame import StyleFrame
+from StyleFrame import StyleFrame
 
 sf = StyleFrame(df)
+# it is also possible to directly initiate StyleFrame
+sf = StyleFrame({'Col A': [1, 20, -3],
+                 'Col B': [15, 3, 116],
+                 'Col C': [33, -6, 9]})
 ```
 
 The StyleFrame object will auto-adjust the columns width and the rows height
-but we could change them manually
+but they can be changed them manually
 ```
 sf.set_column_width_dict(col_width_dict={
     ('Col A', 'Col B', 'Col C'): 15.3,
@@ -50,15 +54,15 @@ sf.set_row_height_dict(row_height_dict={
 })
 ```
 
-Next, lets change the background colour of the maximum values to red and the font to white
+Next, let's change the background color of the maximum values to red and the font to white
 ```
-from StyleFrame.styler import Styler, colors
+from StyleFrame import Styler, colors
 
 for row_index, col_name in rows_max_value.iteritems():
     sf[col_name][row_index].style = Styler(bg_color=colors.red, bold=True, font_color=colors.white).create_style()
 ```
 
-And change the font and the size of Sum and Mean columns
+And change the font and the font size of Sum and Mean columns
 ```
 sf.apply_column_style(cols_to_style=['Sum', 'Mean'],
                       font_color='#40B5BF',
@@ -67,7 +71,7 @@ sf.apply_column_style(cols_to_style=['Sum', 'Mean'],
                       style_header=True)
 ```
 
-Finally, lets export to excel but not before we use the best features of StyleFrame:
+Finally, let's export to Excel but not before we use more of StyleFrame's features:
 - Change the page writing side
 - Freeze rows and columns
 - Add filters to headers
