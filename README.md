@@ -37,7 +37,7 @@ sf = StyleFrame({'Col A': [1, 20, -3],
 ```
 
 The StyleFrame object will auto-adjust the columns width and the rows height
-but they can be changed them manually
+but they can be changed manually
 ```
 sf.set_column_width_dict(col_width_dict={
     ('Col A', 'Col B', 'Col C'): 15.3,
