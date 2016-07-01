@@ -94,7 +94,7 @@ class StyleFrame(object):
 
     def to_excel(self, excel_writer='output.xlsx', sheet_name='Sheet1', na_rep='', float_format=None, columns=None,
                  header=True, index=False, index_label=None, startrow=0, startcol=0, merge_cells=True, encoding=None,
-                 inf_rep='inf', allow_protection=False, right_to_left=True, columns_to_hide=None,
+                 inf_rep='inf', allow_protection=False, right_to_left=False, columns_to_hide=None,
                  row_to_add_filters=None, columns_and_rows_to_freeze=None):
         """
         Saves the dataframe to excel and applies the styles.
@@ -225,7 +225,7 @@ class StyleFrame(object):
             else:
                 raise IndexError('row: %s is out of range' % row)
 
-        if row_to_add_filters is not None:
+        if row_to_add_filters:
             try:
                 row_to_add_filters = int(row_to_add_filters)
                 if (row_to_add_filters + startrow + 1) not in sheet.row_dimensions:
@@ -234,7 +234,7 @@ class StyleFrame(object):
             except TypeError:
                 raise TypeError("row must be an index and not %s" % type(row_to_add_filters))
 
-        if columns_and_rows_to_freeze is not None:
+        if columns_and_rows_to_freeze:
             if not isinstance(columns_and_rows_to_freeze, basestring if PY2 else str) or len(columns_and_rows_to_freeze) < 2:
                 raise TypeError("columns_and_rows_to_freeze must be a str for example: 'C3'")
             if columns_and_rows_to_freeze[0] not in sheet.column_dimensions:
@@ -248,7 +248,7 @@ class StyleFrame(object):
             sheet.protection.enable()
 
         ''' Iterating over the columns_to_hide and check if the format is columns name, column index as number or letter  '''
-        if columns_to_hide is not None:
+        if columns_to_hide:
             if not isinstance(columns_to_hide, (list, tuple)):
                 columns_to_hide = [columns_to_hide]
 
@@ -271,7 +271,7 @@ class StyleFrame(object):
         :param font_color: the font color
         :param protection: to protect the cell from changes or not
         :param number_format: style the number format
-        :return:
+        :return: self
         """
 
         default_number_formats = {pd.tslib.Timestamp: 'DD/MM/YY HH:MM',
@@ -281,12 +281,12 @@ class StyleFrame(object):
         indexes_number_format = number_format
         values_number_format = number_format
 
-        if cols_to_style is not None and not isinstance(cols_to_style, (list, tuple)):
+        if cols_to_style and not isinstance(cols_to_style, (list, tuple)):
             cols_to_style = [cols_to_style]
-        elif cols_to_style is None:
+        elif not cols_to_style:
             cols_to_style = list(self.data_df.columns)
             for i in indexes_to_style:
-                if number_format is None:
+                if not number_format:
                     indexes_number_format = default_number_formats.get(type(i.value), number_formats.general)
 
                 i.style = Styler(bg_color=bg_color, bold=bold, font_size=font_size,
@@ -298,12 +298,13 @@ class StyleFrame(object):
 
         for index in indexes_to_style:
             for col in cols_to_style:
-                if number_format is None:
+                if not number_format:
                     values_number_format = default_number_formats.get(type(self.ix[index.value, col].value), number_formats.general)
 
                 self.ix[index.value, col].style = Styler(bg_color=bg_color, bold=bold, font_size=font_size,
                                                          font_color=font_color, protection=protection,
                                                          number_format=values_number_format).create_style()
+        return self
 
     def apply_column_style(self, cols_to_style, bg_color=colors.white, bold=False, font_size=12, protection=False,
                            font_color=colors.black, style_header=False, number_format=number_formats.general):
@@ -317,7 +318,7 @@ class StyleFrame(object):
         :param style_header: style the header or not
         :param number_format: style the number format
         :param protection: to protect the column from changes or not
-        :return:
+        :return: self
         """
         if not isinstance(cols_to_style, (list, tuple)):
             cols_to_style = [cols_to_style]
@@ -339,6 +340,7 @@ class StyleFrame(object):
                 self.ix[index, col_name].style = Styler(bg_color=bg_color, bold=bold, font_size=font_size,
                                                         protection=protection, font_color=font_color,
                                                         number_format=number_format).create_style()
+        return self
 
     def apply_headers_style(self, bg_color=colors.white, bold=True, font_size=12, font_color=colors.black,
                             protection=False, number_format=number_formats.general):
@@ -349,18 +351,19 @@ class StyleFrame(object):
         :param font_size: the font size
         :param font_color: the font color
         :param number_format: style the number format
-        :return:
+        :return: self
         """
         for column in self.data_df.columns:
             column.style = Styler(bg_color=bg_color, bold=bold, font_size=font_size, font_color=font_color,
                                   protection=protection, number_format=number_format).create_style()
+        return self
 
     def set_column_width(self, columns, width):
         """
         set the width of the given columns
         :param columns: a single or a list/tuple of column name, index or letter to change their width
         :param width: numeric positive value of the new width
-        :return:
+        :return: self
         """
         if not isinstance(columns, (set, list, tuple)):
             columns = [columns]
@@ -377,20 +380,24 @@ class StyleFrame(object):
                 raise TypeError("column must be an index, column letter or column name")
             self.columns_width[column] = width
 
+        return self
+
     def set_column_width_dict(self, col_width_dict):
         """
         :param col_width_dict: dictionary from tuple of columns to new width
-        :return:
+        :return: self
         """
-        for cols, width in col_width_dict.iteritems():
+        for cols, width in col_width_dict.items():
             self.set_column_width(cols, width)
+
+        return self
 
     def set_row_height(self, rows, height):
         """
         set the height of the given rows
         :param rows: a single row index, list of indexes or tuple of indexes to change their height
         :param height: numeric positive value of the new height
-        :return:
+        :return: self
         """
         if not isinstance(rows, (set, list, tuple)):
             rows = [rows]
@@ -409,26 +416,35 @@ class StyleFrame(object):
 
             self.rows_height[row] = height
 
+        return self
+
     def set_row_height_dict(self, row_height_dict):
         """
         :param row_height_dict: dictionary from tuple of rows to new height
-        :return:
+        :type row_height_dict: dict
+        :return: self
         """
-        for rows, width in row_height_dict.iteritems():
+        if not isinstance(row_height_dict, dict):
+            raise TypeError("'row_height_dict' must be a dictionary")
+        for rows, width in row_height_dict.items():
             self.set_row_height(rows, width)
+
+        return self
 
     def rename(self, columns=None, inplace=False):
         """
         rename the underlying dataframe's columns
         :param columns: a dictionary, old_col_name -> new_col_name
+        :type columns: dict
         :param inplace: whether to rename the columns inplace or return a new StyleFrame object
-        :return: None if inplace=True, StyleFrame if inplace=False
+        :return: self if inplace=True, new StyleFrame object if inplace=False
         """
         if not isinstance(columns, dict):
             raise TypeError("'columns' must be a dictionary")
         if inplace:
             for column in self.data_df.columns:
                 column.value = columns[column]
+            return self
         else:
             new_style_frame = deepcopy(self)
             for column in new_style_frame.data_df.columns:
