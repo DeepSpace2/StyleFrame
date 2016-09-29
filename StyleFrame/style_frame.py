@@ -225,7 +225,7 @@ class StyleFrame(object):
             else:
                 raise IndexError('row: %s is out of range' % row)
 
-        if row_to_add_filters:
+        if row_to_add_filters is not None:
             try:
                 row_to_add_filters = int(row_to_add_filters)
                 if (row_to_add_filters + startrow + 1) not in sheet.row_dimensions:
