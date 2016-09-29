@@ -225,13 +225,13 @@ class StyleFrame(object):
             else:
                 raise IndexError('row: %s is out of range' % row)
 
-        if row_to_add_filters:
+        if row_to_add_filters is not None:
             try:
                 row_to_add_filters = int(row_to_add_filters)
                 if (row_to_add_filters + startrow + 1) not in sheet.row_dimensions:
                     raise IndexError('row: %s is out of rows range' % row_to_add_filters)
                 sheet.auto_filter.ref = get_range_of_cells_for_specific_row(row_index=row_to_add_filters)
-            except TypeError:
+            except (TypeError, ValueError):
                 raise TypeError("row must be an index and not %s" % type(row_to_add_filters))
 
         if columns_and_rows_to_freeze:
