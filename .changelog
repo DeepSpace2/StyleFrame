@@ -1,3 +1,8 @@
+0.1.5   - Changed dependencies, now requires pandas 0.16.2 - 0.18.1
+        - Changed Python support: 2.7, 3.3, 3.4, 3.5
+        - Fixed a bug when trying to filter the first row
+        - Transitioning to x.y.z version numbers
+
 0.1.4.2    - 'right_to_left' is now set to False as default in 'to_excel()'
            - Most of the methods now return 'self', so for example, StyleFrame(..).rename(..).to_excel() is possible.
 

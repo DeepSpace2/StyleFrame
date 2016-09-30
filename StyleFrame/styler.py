@@ -2,6 +2,7 @@
 from openpyxl.styles import PatternFill, Style, Color, Border, Side, Font, Alignment, Protection, colors as op_colors
 import re
 
+
 class Styler(object):
     """
     Creates openpyxl Style to be applied

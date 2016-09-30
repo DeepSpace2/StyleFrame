@@ -56,7 +56,7 @@ class StyleFrame(object):
         return len(self.data_df)
 
     def __getitem__(self, item):
-        if isinstance(item,pd.Series):
+        if isinstance(item, pd.Series):
             return self.data_df.__getitem__(item).index
         elif isinstance(item, list):
             return StyleFrame(self.data_df.__getitem__(item))
@@ -234,7 +234,7 @@ class StyleFrame(object):
             except (TypeError, ValueError):
                 raise TypeError("row must be an index and not %s" % type(row_to_add_filters))
 
-        if columns_and_rows_to_freeze:
+        if columns_and_rows_to_freeze is not None:
             if not isinstance(columns_and_rows_to_freeze, basestring if PY2 else str) or len(columns_and_rows_to_freeze) < 2:
                 raise TypeError("columns_and_rows_to_freeze must be a str for example: 'C3'")
             if columns_and_rows_to_freeze[0] not in sheet.column_dimensions:
