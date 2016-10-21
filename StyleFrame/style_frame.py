@@ -43,6 +43,7 @@ class StyleFrame(object):
 
         self.columns_width = dict()
         self.rows_height = dict()
+        self._custom_headers_style = False
 
     def __str__(self):
         return str(self.data_df)
@@ -173,18 +174,15 @@ class StyleFrame(object):
             for row_index, index in enumerate(self.data_df.index):
                 sheet.cell(row=startrow + row_index + 2, column=startcol + 1).style = index.style
             startcol += 1
+
+        if header and not self._custom_headers_style:
+            self.apply_headers_style()
+
         ''' Iterating over the dataframe's elements and applying their styles '''
         ''' openpyxl's rows and cols start from 1,1 while the dataframe is 0,0 '''
         for col_index, column in enumerate(self.data_df.columns):
-            current_bg_color = self.data_df.columns[col_index].style.fill.fgColor.rgb
-            current_size = self.data_df.columns[col_index].style.font.size
-            current_font_color = self.data_df.columns[col_index].style.font.color.index
-            current_number_format = self.data_df.columns[col_index].style.number_format
-            sheet.cell(row=startrow + 1, column=col_index + startcol + 1).style = Styler(bg_color=current_bg_color,
-                                                                                         bold=True,
-                                                                                         font_color=current_font_color,
-                                                                                         font_size=current_size,
-                                                                                         number_format=current_number_format).create_style()
+            sheet.cell(row=startrow + 1, column=col_index + startcol + 1).style = column.style
+
             for row_index, index in enumerate(self.data_df.index):
                 current_cell = sheet.cell(row=row_index + startrow + 2, column=col_index + startcol + 1)
                 try:
@@ -356,6 +354,7 @@ class StyleFrame(object):
         for column in self.data_df.columns:
             column.style = Styler(bg_color=bg_color, bold=bold, font_size=font_size, font_color=font_color,
                                   protection=protection, number_format=number_format).create_style()
+        self._custom_headers_style = True
         return self
 
     def set_column_width(self, columns, width):
@@ -407,7 +406,7 @@ class StyleFrame(object):
             raise TypeError('rows height must be numeric value')
 
         if height <= 0:
-            raise ValueError('rows width must be positive')
+            raise ValueError('rows height must be positive')
         for row in rows:
             try:
                 row = int(row)
@@ -426,9 +425,10 @@ class StyleFrame(object):
         """
         if not isinstance(row_height_dict, dict):
             raise TypeError("'row_height_dict' must be a dictionary")
-        for rows, width in row_height_dict.items():
-            self.set_row_height(rows, width)
-
+        for rows, height in row_height_dict.items():
+            if not isinstance(height, (int, float)) or height <= 0:
+                raise ValueError('rows height must be positive value')
+            self.set_row_height(rows, height)
         return self
 
     def rename(self, columns=None, inplace=False):

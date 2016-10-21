@@ -1,3 +1,5 @@
+0.1.6   - Fixed a bug when using header=False in to_excel
+
 0.1.5   - Changed dependencies, now requires pandas 0.16.2 - 0.18.1
         - Changed Python support: 2.7, 3.3, 3.4, 3.5
         - Fixed a bug when trying to filter the first row
