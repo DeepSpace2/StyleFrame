@@ -10,7 +10,9 @@ PY2 = sys.version_info[0] == 2
 
 # Python 2
 if PY2:
+    # noinspection PyUnresolvedReferences
     from container import Container
+    # noinspection PyUnresolvedReferences
     from styler import Styler, number_formats, colors
 # Python 3
 else:
@@ -89,6 +91,7 @@ class StyleFrame(object):
     def read_excel(cls, path, sheetname=0, **kwargs):
         return StyleFrame(pd.read_excel(path, sheetname=sheetname, **kwargs))
 
+    # noinspection PyPep8Naming
     @classmethod
     def ExcelWriter(cls, path):
         return pd.ExcelWriter(path, engine='openpyxl')
@@ -258,17 +261,18 @@ class StyleFrame(object):
 
     def apply_style_by_indexes(self, indexes_to_style, cols_to_style=None, bg_color=colors.white, bold=False,
                                font_size=12, font_color=colors.black, protection=False,
-                               number_format=None):
+                               number_format=None, underline=None):
         """
         applies a certain style to the provided indexes in the dataframe in the provided columns
         :param indexes_to_style: indexes to apply the style to
         :param cols_to_style: the columns to apply the style to, if not provided all the columns will be styled
-        :param bg_color: the color to use
+        :param bg_color: the color to use.
         :param bold: bold or not
         :param font_size: the font size
         :param font_color: the font color
         :param protection: to protect the cell from changes or not
         :param number_format: style the number format
+        :param underline: the type of text underline
         :return: self
         """
 
@@ -289,7 +293,7 @@ class StyleFrame(object):
 
                 i.style = Styler(bg_color=bg_color, bold=bold, font_size=font_size,
                                  font_color=font_color, protection=protection,
-                                 number_format=indexes_number_format).create_style()
+                                 number_format=indexes_number_format, underline=underline).create_style()
 
         if not isinstance(indexes_to_style, (list, tuple, pd.Index)):
             indexes_to_style = [indexes_to_style]
@@ -301,11 +305,13 @@ class StyleFrame(object):
 
                 self.ix[index.value, col].style = Styler(bg_color=bg_color, bold=bold, font_size=font_size,
                                                          font_color=font_color, protection=protection,
-                                                         number_format=values_number_format).create_style()
+                                                         number_format=values_number_format,
+                                                         underline=underline).create_style()
         return self
 
     def apply_column_style(self, cols_to_style, bg_color=colors.white, bold=False, font_size=12, protection=False,
-                           font_color=colors.black, style_header=False, number_format=number_formats.general):
+                           font_color=colors.black, style_header=False, number_format=number_formats.general,
+                           underline=None):
         """
         apply style to a whole column
         :param cols_to_style: the columns to apply the style to
@@ -316,6 +322,7 @@ class StyleFrame(object):
         :param style_header: style the header or not
         :param number_format: style the number format
         :param protection: to protect the column from changes or not
+        :param underline: the type of text underline
         :return: self
         """
         if not isinstance(cols_to_style, (list, tuple)):
@@ -327,7 +334,9 @@ class StyleFrame(object):
                 self.columns[self.columns.get_loc(col_name)].style = Styler(bg_color=bg_color, bold=bold,
                                                                             font_size=font_size, font_color=font_color,
                                                                             protection=protection,
-                                                                            number_format=number_format).create_style()
+                                                                            number_format=number_format,
+                                                                            underline=underline).create_style()
+                self._custom_headers_style = True
             for index in self.index:
                 if isinstance(self.ix[index, col_name].value, pd.tslib.Timestamp):
                     number_format = number_formats.date_time
@@ -337,11 +346,11 @@ class StyleFrame(object):
                     number_format = number_formats.time_24_hours
                 self.ix[index, col_name].style = Styler(bg_color=bg_color, bold=bold, font_size=font_size,
                                                         protection=protection, font_color=font_color,
-                                                        number_format=number_format).create_style()
+                                                        number_format=number_format, underline=underline).create_style()
         return self
 
     def apply_headers_style(self, bg_color=colors.white, bold=True, font_size=12, font_color=colors.black,
-                            protection=False, number_format=number_formats.general):
+                            protection=False, number_format=number_formats.general, underline=None):
         """
         apply style to the headers only
         :param bg_color:the color to use
@@ -349,11 +358,13 @@ class StyleFrame(object):
         :param font_size: the font size
         :param font_color: the font color
         :param number_format: style the number format
+        :param protection: to protect the column from changes or not
+        :param underline: the type of text underline
         :return: self
         """
         for column in self.data_df.columns:
             column.style = Styler(bg_color=bg_color, bold=bold, font_size=font_size, font_color=font_color,
-                                  protection=protection, number_format=number_format).create_style()
+                                  protection=protection, number_format=number_format, underline=underline).create_style()
         self._custom_headers_style = True
         return self
 

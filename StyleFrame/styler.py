@@ -1,6 +1,10 @@
 # coding:utf-8
 from openpyxl.styles import PatternFill, Style, Color, Border, Side, Font, Alignment, Protection, colors as op_colors
-import re
+
+try:  # python2
+    import utils
+except ImportError:  # python3
+    from StyleFrame import utils
 
 
 class Styler(object):
@@ -18,14 +22,14 @@ class Styler(object):
 
         if bg_color.startswith('#'):
             bg_color = bg_color[1:]
-        if self.is_string_is_hex_color_code(hex_string=bg_color):
+        if utils.is_string_is_hex_color_code(hex_string=bg_color):
             self.bg_color = bg_color
         else:
             self.bg_color = colors.get(bg_color, colors.white)
 
         if font_color.startswith('#'):
             font_color = font_color[1:]
-        if self.is_string_is_hex_color_code(hex_string=font_color):
+        if utils.is_string_is_hex_color_code(hex_string=font_color):
             self.font_color = font_color
         else:
             self.font_color = colors.get(self.font_color, colors.black)
@@ -41,13 +45,8 @@ class Styler(object):
                      number_format=self.number_format,
                      protection=Protection(locked=self.protection))
 
-    def is_string_is_hex_color_code(self, hex_string):
-        if re.search(r'[a-fA-F0-9]{6}$', hex_string):
-            return True
-        else:
-            return False
 
-
+# noinspection PyUnusedLocal
 def not_supported(*args, **kwargs):
         raise NotImplementedError('ImmutableDict is immutable')
 
