@@ -10,6 +10,17 @@ Installation:
     pip install styleframe
 
 
+Testing:
+--------
+
+You can make sure everything works as expected by running StyleFrame's unittests:
+::
+
+    from StyleFrame import tests
+
+    tests.run()
+
+
 Some usage examples
 -------------------
 

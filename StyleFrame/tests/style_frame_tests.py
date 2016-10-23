@@ -103,7 +103,6 @@ class StyleFrameTest(unittest.TestCase):
     def test_rename(self):
         names_dict = {'a': 'A', 'b': 'B'}
         self.sf.rename(columns=names_dict, inplace=True)
-
         self.assertTrue(all(new_col_name in self.sf.columns
                             for new_col_name in names_dict.values()))
 
@@ -112,6 +111,10 @@ class StyleFrameTest(unittest.TestCase):
             # noinspection PyStatementEffect
             self.sf['a']
 
+
+def run():
+    suite = unittest.TestLoader().loadTestsFromTestCase(StyleFrameTest)
+    unittest.TextTestRunner().run(suite)
 
 if __name__ == '__main__':
     unittest.main()
