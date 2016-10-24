@@ -96,19 +96,17 @@ class StyleFrame(object):
             raise AttributeError("'{}' object has no attribute '{}'".format(type(self).__name__, attr))
 
     @classmethod
-    def _read_style(cls, path, sheetname, sf, **kwargs):
-        sheet = load_workbook(path).get_sheet_by_name(sheetname)
-        for row_index, sf_index in enumerate(sf.index, start=1):
-            for col_index, col_name in enumerate(sf.columns, start=1):
-                sf.ix[sf_index - 1, col_name].style = sheet.cell(row=row_index, column=col_index).style
-        return sf
-
-    @classmethod
     def read_excel(cls, path, sheetname='Sheet1', read_style=False, **kwargs):
+        def _read_style():
+            sheet = load_workbook(path).get_sheet_by_name(sheetname)
+            for row_index, sf_index in enumerate(sf.index, start=1):
+                for col_index, col_name in enumerate(sf.columns, start=1):
+                    sf.ix[sf_index - 1, col_name].style = sheet.cell(row=row_index, column=col_index).style
+
         sf = StyleFrame(pd.read_excel(path, sheetname=sheetname, **kwargs))
         if not read_style:
             return sf
-        cls._read_style(path=path, sf=sf, sheetname=sheetname, **kwargs)
+        _read_style()
         return sf
 
     # noinspection PyPep8Naming
