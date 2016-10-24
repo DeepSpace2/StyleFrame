@@ -79,7 +79,7 @@ sf.apply_column_style(cols_to_style=['Col A', 'Col B', 'Col C'],
                       styler_obj=Styler(number_format=utils.number_formats.thousands_comma_sep))
 ```
 
-Next, let's change the background color of the maximum values to red and the font to white
+Next, let's change the background color of the maximum values to red and the font to white  
 we will also protect those cells and prevent the ability to change their value
 ```python
 style = Styler(bg_color=utils.colors.red, bold=True, font_color=utils.colors.white, protection=True,
