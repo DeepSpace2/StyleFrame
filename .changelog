@@ -1,3 +1,16 @@
+0.2dev-1:  - Added ability to change font
+           - Added ability to change cell border type
+           - Added 'style_obj' arg to all "styling methods" to accept Styler object so styles can be reused.
+             The ability to directly pass style specifiers is deprecated and may break in a future version.
+           - Added basic ability to read stylized excel into a stylized StyleFrame
+             Currently doesn't support reading style from a subset of sheet (ie using startrow, startcol and the such.)
+             Pass read_style=True to StyleFrame.read_excel
+
+           INTERNAL CHANGES:
+           - Moved number_formats and colors (also added borders and underline) and changed them to classes in utils.py
+             instead of custom ImmutableDict.
+           - Added deprecation message when not passing Styler object to "styling methods".
+
 0.1.8:  - Added ability to run tests by code:
           `from StyleFrame import tests ; tests.run()`
 

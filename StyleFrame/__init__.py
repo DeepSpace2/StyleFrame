@@ -7,7 +7,9 @@ if sys.version_info < (3, 0):
     # noinspection PyUnresolvedReferences
     from container import Container
     # noinspection PyUnresolvedReferences
-    from styler import Styler, number_formats, colors
+    from styler import Styler
+    # noinspection PyUnresolvedReferences
+    import utils
     # noinspection PyUnresolvedReferences,PyPackageRequirements
     from version import _version_
 
@@ -15,7 +17,9 @@ if sys.version_info < (3, 0):
 else:
     from StyleFrame.style_frame import StyleFrame
     from StyleFrame.container import Container
-    from StyleFrame.styler import Styler, number_formats, colors
+    from StyleFrame.styler import Styler
+    from StyleFrame import utils
     from StyleFrame.version import _version_
 
 from StyleFrame.tests import style_frame_tests as tests
+from StyleFrame import warnings_conf
