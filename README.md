@@ -114,14 +114,14 @@ sf.to_excel(excel_writer=ew,
 
 Adding another excel sheet
 ```python
-sf = StyleFrame(obj={'Dates': [date(2016, 10, 20), date(2016, 10, 21), date(2016, 10, 22)]},
-                styler_obj=Styler(number_format=utils.number_formats.date))
+other_sheet_sf = StyleFrame(obj={'Dates': [date(2016, 10, 20), date(2016, 10, 21), date(2016, 10, 22)]},
+                            styler_obj=Styler(number_format=utils.number_formats.date))
 
 # change the background of all rows where the date is after 15/1/2000 to green                
-sf.apply_style_by_indexes(indexes_to_style=sf[sf['Dates'] > date(2000, 1, 15)],
-                          styler_obj=Styler(bg_color='green'))
+other_sheet_sf.apply_style_by_indexes(indexes_to_style=other_sheet_sf[other_sheet_sf['Dates'] > date(2000, 1, 15)],
+                                      styler_obj=Styler(bg_color='green'))
 
-sf.to_excel(excel_writer=ew, sheet_name='2')
+other_sheet_sf.to_excel(excel_writer=ew, sheet_name='2')
 ```
 
 Don't forget to save ;)
