@@ -33,26 +33,29 @@ class StyleFrame(object):
     Stores container objects that have values and Styles that will be applied to excel
     """
 
-    def __init__(self, obj):
+    def __init__(self, obj, styler_obj=None):
+        if styler_obj:
+            if not isinstance(styler_obj, Styler):
+                raise TypeError('styler_obj must be {}, got {} instead.'.format(Styler.__name__, type(styler_obj).__name__))
+            styler_obj = styler_obj.create_style()
         if isinstance(obj, pd.DataFrame):
             if len(obj) == 0:
                 self.data_df = deepcopy(obj)
             else:
-                self.data_df = obj.applymap(lambda x: Container(x) if not isinstance(x, Container) else x)
+                self.data_df = obj.applymap(lambda x: Container(x, styler_obj) if not isinstance(x, Container) else x)
         elif isinstance(obj, pd.Series):
-            self.data_df = obj.apply(lambda x: Container(x) if not isinstance(x, Container) else x)
+            self.data_df = obj.apply(lambda x: Container(x, styler_obj) if not isinstance(x, Container) else x)
         elif isinstance(obj, dict) or isinstance(obj, list):
-            self.data_df = pd.DataFrame(obj).applymap(lambda x: Container(x) if not isinstance(x, Container) else x)
+            self.data_df = pd.DataFrame(obj).applymap(lambda x: Container(x, styler_obj) if not isinstance(x, Container) else x)
         elif isinstance(obj, StyleFrame):
             self.data_df = deepcopy(obj)
         else:
             raise TypeError("{} __init__ doesn't support {}".format(type(self).__name__, type(obj).__name__))
-        self.data_df.columns = [Container(col) if not isinstance(col, Container) else col for col in self.data_df.columns]
-        self.data_df.index = [Container(index) if not isinstance(index, Container) else index for index in self.data_df.index]
+        self.data_df.columns = [Container(col, styler_obj) if not isinstance(col, Container) else col for col in self.data_df.columns]
+        self.data_df.index = [Container(index, styler_obj) if not isinstance(index, Container) else index for index in self.data_df.index]
 
-        # TODO these all should probably start with _
-        self.columns_width = dict()
-        self.rows_height = dict()
+        self._columns_width = dict()
+        self._rows_height = dict()
         self._custom_headers_style = False
 
     def __str__(self):
@@ -234,13 +237,13 @@ class StyleFrame(object):
                 except AttributeError:  # if the element in the dataframe is not Container creating a default style
                     current_cell.style = Styler().create_style()
 
-        for column in self.columns_width:
+        for column in self._columns_width:
             column_letter = get_column_as_letter(column_to_convert=column)
-            sheet.column_dimensions[column_letter].width = self.columns_width[column]
+            sheet.column_dimensions[column_letter].width = self._columns_width[column]
 
-        for row in self.rows_height:
+        for row in self._rows_height:
             if row in sheet.row_dimensions:
-                sheet.row_dimensions[startrow + row].height = self.rows_height[row]
+                sheet.row_dimensions[startrow + row].height = self._rows_height[row]
             else:
                 raise IndexError('row: {} is out of range'.format(row))
 
@@ -428,7 +431,7 @@ class StyleFrame(object):
         for column in columns:
             if not isinstance(column, (int, basestring if PY2 else str, Container)):
                 raise TypeError("column must be an index, column letter or column name")
-            self.columns_width[column] = width
+            self._columns_width[column] = width
 
         return self
 
@@ -464,7 +467,7 @@ class StyleFrame(object):
             except TypeError:
                 raise TypeError("row must be an index")
 
-            self.rows_height[row] = height
+            self._rows_height[row] = height
 
         return self
 

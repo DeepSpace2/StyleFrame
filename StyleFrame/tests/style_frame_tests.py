@@ -110,7 +110,7 @@ class StyleFrameTest(unittest.TestCase):
 
     def test_set_column_width(self):
         self.sf.set_column_width(columns=['a'], width=20)
-        self.assertEqual(self.sf.columns_width['a'], 20)
+        self.assertEqual(self.sf._columns_width['a'], 20)
 
         sheet = self.export_and_get_default_sheet()
 
@@ -119,7 +119,7 @@ class StyleFrameTest(unittest.TestCase):
     def test_set_column_width_dict(self):
         width_dict = {'a': 20, 'b': 30}
         self.sf.set_column_width_dict(width_dict)
-        self.assertEqual(self.sf.columns_width, width_dict)
+        self.assertEqual(self.sf._columns_width, width_dict)
 
         sheet = self.export_and_get_default_sheet()
 
@@ -128,7 +128,7 @@ class StyleFrameTest(unittest.TestCase):
 
     def test_set_row_height(self):
         self.sf.set_row_height(rows=[1], height=20)
-        self.assertEqual(self.sf.rows_height[1], 20)
+        self.assertEqual(self.sf._rows_height[1], 20)
 
         sheet = self.export_and_get_default_sheet()
 
@@ -137,7 +137,7 @@ class StyleFrameTest(unittest.TestCase):
     def test_set_row_height_dict(self):
         height_dict = {1: 20, 2: 30}
         self.sf.set_row_height_dict(height_dict)
-        self.assertEqual(self.sf.rows_height, height_dict)
+        self.assertEqual(self.sf._rows_height, height_dict)
 
         sheet = self.export_and_get_default_sheet()
 
