@@ -80,9 +80,9 @@ we will also protect those cells and prevent the ability to change their values
 ```python
 from StyleFrame import Styler, utils
 
+style = Styler(bg_color=utils.colors.red, bold=True, font_color=utils.colors.white, protection=True,
+               underline=utils.underline.double, number_format=utils.number_formats.thousands_comma_sep)
 for row_index, col_name in most_popular_meat_kind_in_each_country.iteritems():
-    style = Styler(bg_color=utils.colors.red, bold=True, font_color=utils.colors.white, protection=True,
-                   underline=utils.underline.double, number_format=utils.number_formats.thousands_comma_sep)
     oecd_meat_consumption_2015_sf[col_name][row_index].style = style.create_style()
 ```
 
