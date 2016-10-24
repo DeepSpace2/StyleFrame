@@ -298,6 +298,9 @@ class StyleFrame(object):
         """
 
         if styler_obj:
+            if not isinstance(styler_obj, Styler):
+                raise TypeError(
+                    'styler_obj must be {}, got {} instead.'.format(Styler.__name__, type(styler_obj).__name__))
             styler_obj = styler_obj.create_style()
         else:
             warnings.warn(DEPRECATION_MSG, DeprecationWarning)
@@ -354,6 +357,9 @@ class StyleFrame(object):
         """
 
         if styler_obj:
+            if not isinstance(styler_obj, Styler):
+                raise TypeError(
+                    'styler_obj must be {}, got {} instead.'.format(Styler.__name__, type(styler_obj).__name__))
             styler_obj = styler_obj.create_style()
         else:
             warnings.warn(DEPRECATION_MSG, DeprecationWarning)
@@ -400,6 +406,10 @@ class StyleFrame(object):
         """
 
         if styler_obj:
+            if not isinstance(styler_obj, Styler):
+                raise TypeError(
+                    'styler_obj must be {}, got {} instead.'.format(Styler.__name__, type(styler_obj).__name__))
+
             styler_obj = styler_obj.create_style()
         else:
             warnings.warn(DEPRECATION_MSG, DeprecationWarning)
