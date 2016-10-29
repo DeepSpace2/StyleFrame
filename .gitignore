@@ -35,6 +35,7 @@ pip-delete-this-directory.txt
 
 # Unit test / coverage reports
 /StyleFrame/tests/htmlcov/
+/StyleFrame/tests/run_coverage.py
 .tox/
 .coverage
 .coverage.*
@@ -62,4 +63,3 @@ target/
 features_tests/
 
 .mychangelog
-/StyleFrame/tests/run_coverage.py
