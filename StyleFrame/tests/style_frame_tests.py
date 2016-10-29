@@ -31,7 +31,7 @@ class StyleFrameTest(unittest.TestCase):
 
         sheet = self.export_and_get_default_sheet()
 
-        # range starts from 1 since we don't want to check the header's style
+        # range starts from 2 since we don't want to check the header's style
         self.assertTrue(all(sheet.cell(row=i, column=1).style == self.openpy_style_obj for i in range(2, len(self.sf))))
 
     def test_apply_style_by_indexes_single_col(self):
@@ -73,15 +73,15 @@ class StyleFrameTest(unittest.TestCase):
 
         sheet = self.export_and_get_default_sheet()
 
-        # range starts from 1 since we don't want to check the header's style
+        # range starts from 2 since we don't want to check the header's style
         self.assertTrue(all(sheet.cell(row=i, column=1).style == self.openpy_style_obj for i in range(2, len(self.sf))))
 
     def test_apply_style_by_indexes_single_col_styler_obj(self):
         self.sf.apply_style_by_indexes(self.sf[self.sf['a'] == 2], cols_to_style=['a'],
                                        styler_obj=self.styler_obj)
 
-        self.assertTrue(all([self.sf.ix[index, 'a'].style == self.openpy_style_obj
-                             for index in self.sf.index if self.sf.ix[index, 'a'] == 2]))
+        self.assertTrue(all(self.sf.ix[index, 'a'].style == self.openpy_style_obj
+                            for index in self.sf.index if self.sf.ix[index, 'a'] == 2))
 
         sheet = self.export_and_get_default_sheet()
 
