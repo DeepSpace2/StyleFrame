@@ -62,3 +62,4 @@ target/
 features_tests/
 
 .mychangelog
+/StyleFrame/tests/run_coverage.py
