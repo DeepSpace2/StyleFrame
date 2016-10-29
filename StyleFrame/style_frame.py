@@ -45,14 +45,16 @@ class StyleFrame(object):
                 self.data_df = obj.applymap(lambda x: Container(x, styler_obj) if not isinstance(x, Container) else x)
         elif isinstance(obj, pd.Series):
             self.data_df = obj.apply(lambda x: Container(x, styler_obj) if not isinstance(x, Container) else x)
-        elif isinstance(obj, dict) or isinstance(obj, list):
+        elif isinstance(obj, (dict, list)):
             self.data_df = pd.DataFrame(obj).applymap(lambda x: Container(x, styler_obj) if not isinstance(x, Container) else x)
         elif isinstance(obj, StyleFrame):
             self.data_df = deepcopy(obj)
         else:
             raise TypeError("{} __init__ doesn't support {}".format(type(self).__name__, type(obj).__name__))
-        self.data_df.columns = [Container(col, styler_obj) if not isinstance(col, Container) else col for col in self.data_df.columns]
-        self.data_df.index = [Container(index, styler_obj) if not isinstance(index, Container) else index for index in self.data_df.index]
+        self.data_df.columns = [Container(col, styler_obj) if not isinstance(col, Container) else deepcopy(col)
+                                for col in self.data_df.columns]
+        self.data_df.index = [Container(index, styler_obj) if not isinstance(index, Container) else deepcopy(index)
+                              for index in self.data_df.index]
 
         self._columns_width = dict()
         self._rows_height = dict()
@@ -97,6 +99,13 @@ class StyleFrame(object):
             return known_attrs[attr]
         else:
             raise AttributeError("'{}' object has no attribute '{}'".format(type(self).__name__, attr))
+
+    def __deepcopy__(self, memo):
+        new_sf = StyleFrame.__new__(StyleFrame)
+        memo[id(self)] = new_sf
+        for k, v in self.__dict__.items():
+            setattr(new_sf, k, deepcopy(v, memo))
+        return new_sf
 
     @classmethod
     def read_excel(cls, path, sheetname='Sheet1', read_style=False, **kwargs):
@@ -503,6 +512,9 @@ class StyleFrame(object):
         :param inplace: whether to rename the columns inplace or return a new StyleFrame object
         :return: self if inplace=True, new StyleFrame object if inplace=False
         """
+
+        # FIXME doesn't not currently work as expected when dealing with a StyleFrame that was created from another StyleFrame
+
         if not isinstance(columns, dict):
             raise TypeError("'columns' must be a dictionary")
         if inplace:
@@ -510,7 +522,7 @@ class StyleFrame(object):
                 column.value = columns[column]
             return self
         else:
-            new_style_frame = deepcopy(self)
+            new_style_frame = StyleFrame(self)
             for column in new_style_frame.data_df.columns:
                 column.value = columns[column]
             return new_style_frame

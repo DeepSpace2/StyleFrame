@@ -1,5 +1,6 @@
 import unittest
 from StyleFrame import StyleFrame, Styler, utils
+import pandas as pd
 from functools import partial
 
 
@@ -23,6 +24,25 @@ class StyleFrameTest(unittest.TestCase):
     def export_and_get_default_sheet(self):
         self.sf.to_excel(excel_writer=self.ew)
         return self.ew.book.get_sheet_by_name('Sheet1')
+
+    def test_init_styler_obj(self):
+        self.sf = StyleFrame({'a': [1, 2, 3], 'b': [1, 2, 3]}, styler_obj=self.styler_obj)
+
+        self.assertTrue(all(self.sf.ix[index, 'a'].style == self.openpy_style_obj
+                            for index in self.sf.index))
+
+        sheet = self.export_and_get_default_sheet()
+
+        self.assertTrue(all(sheet.cell(row=i, column=j).style == self.openpy_style_obj
+                            for i in range(2, len(self.sf))
+                            for j in range(1, len(self.sf.columns))))
+
+    def test_init_dataframe(self):
+        self.assertIsInstance(StyleFrame(pd.DataFrame({'a': [1, 2, 3], 'b': [1, 2, 3]})), StyleFrame)
+        self.assertIsInstance(StyleFrame(pd.DataFrame()), StyleFrame)
+
+    def test_init_styleframe(self):
+        self.assertIsInstance(StyleFrame(StyleFrame({'a': [1, 2, 3]})), StyleFrame)
 
     def test_apply_column_style(self):
         self.apply_column_style(cols_to_style=['a'])
@@ -146,6 +166,8 @@ class StyleFrameTest(unittest.TestCase):
 
     def test_rename(self):
         names_dict = {'a': 'A', 'b': 'B'}
+
+        # testing rename with inplace = True
         self.sf.rename(columns=names_dict, inplace=True)
         self.assertTrue(all(new_col_name in self.sf.columns
                             for new_col_name in names_dict.values()))
@@ -154,6 +176,17 @@ class StyleFrameTest(unittest.TestCase):
         with self.assertRaises(KeyError):
             # noinspection PyStatementEffect
             self.sf['a']
+
+        # testing rename with inplace = False
+        names_dict = {v: k for k, v in names_dict.items()}
+        new_sf = self.sf.rename(columns=names_dict, inplace=False)
+        self.assertTrue(all(new_col_name in new_sf.columns
+                            for new_col_name in names_dict.values()))
+
+        # using the old name should raise a KeyError
+        with self.assertRaises(KeyError):
+            # noinspection PyStatementEffect
+            new_sf['A']
 
 
 def run():
