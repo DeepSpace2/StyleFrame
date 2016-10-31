@@ -34,6 +34,7 @@ class StyleFrame(object):
     """
 
     def __init__(self, obj, styler_obj=None):
+        from_another_styleframe = False
         if styler_obj:
             if not isinstance(styler_obj, Styler):
                 raise TypeError('styler_obj must be {}, got {} instead.'.format(Styler.__name__, type(styler_obj).__name__))
@@ -49,6 +50,7 @@ class StyleFrame(object):
             self.data_df = pd.DataFrame(obj).applymap(lambda x: Container(x, styler_obj) if not isinstance(x, Container) else x)
         elif isinstance(obj, StyleFrame):
             self.data_df = deepcopy(obj.data_df)
+            from_another_styleframe = True
         else:
             raise TypeError("{} __init__ doesn't support {}".format(type(self).__name__, type(obj).__name__))
         self.data_df.columns = [Container(col, styler_obj) if not isinstance(col, Container) else deepcopy(col)
@@ -56,9 +58,9 @@ class StyleFrame(object):
         self.data_df.index = [Container(index, styler_obj) if not isinstance(index, Container) else deepcopy(index)
                               for index in self.data_df.index]
 
-        self._columns_width = dict()
-        self._rows_height = dict()
-        self._custom_headers_style = False
+        self._columns_width = obj._columns_width if from_another_styleframe else {}
+        self._rows_height = obj._rows_height if from_another_styleframe else {}
+        self._custom_headers_style = obj._custom_headers_style if from_another_styleframe else False
 
     def __str__(self):
         return str(self.data_df)
@@ -506,25 +508,33 @@ class StyleFrame(object):
         :return: self if inplace=True, new StyleFrame object if inplace=False
         """
 
-        # FIXME doesn't currently work as expected
-
-        raise NotImplementedError
+        def rename_styleframe_columns(styleframe):
+            cols_as_list = list(styleframe.data_df.columns)
+            modified_indexes = []
+            new_cols = []
+            for old_col_name, new_col_name in columns.items():
+                try:
+                    index = cols_as_list.index(old_col_name)
+                    modified_indexes.append(index)
+                except ValueError:  # silently ignoring if a column in the columns dictionary doesn't exist in the dataframe
+                    continue
+                else:
+                    new_cols.append(Container(new_col_name, styleframe.data_df.columns[index].style))
+                    try:  # if this column's width has been changed, need to "rename" it in the columns_width dict too
+                        # noinspection PyProtectedMember
+                        styleframe._columns_width[new_col_name] = styleframe._columns_width.pop(old_col_name)
+                    except KeyError:
+                        continue
+            styleframe.data_df.columns = [new_cols[index] if index in modified_indexes else col
+                                          for index, col in enumerate(styleframe.data_df.columns)]
 
         if not isinstance(columns, dict):
             raise TypeError("'columns' must be a dictionary")
         if inplace:
-            for old_col_name, new_col_name in columns.items():
-                try:
-                    index = list(self.data_df.columns).index(old_col_name)
-                except ValueError:  # if a column in the columns dictionary doesn't exist in the dataframe
-                    continue
-                else:
-                    current_container_obj = self.data_df.columns[index]
-                    self.data_df.columns[index] = Container(new_col_name, current_container_obj.style)
+            rename_styleframe_columns(self)
             return self
 
         else:
             new_style_frame = StyleFrame(self)
-            for column in new_style_frame.data_df.columns:
-                column.value = columns[column]
+            rename_styleframe_columns(new_style_frame)
             return new_style_frame

@@ -170,30 +170,28 @@ class StyleFrameTest(unittest.TestCase):
                             for row in height_dict))
 
     def test_rename(self):
-        # FIXME the rename functionality is broken for now
-        with self.assertRaises(NotImplementedError):
-            names_dict = {'a': 'A', 'b': 'B'}
+        names_dict = {'a': 'A', 'b': 'B'}
 
-            # testing rename with inplace = True
-            self.sf.rename(columns=names_dict, inplace=True)
-            self.assertTrue(all(new_col_name in self.sf.columns
-                                for new_col_name in names_dict.values()))
+        # testing rename with inplace = True
+        self.sf.rename(columns=names_dict, inplace=True)
+        self.assertTrue(all(new_col_name in self.sf.columns
+                            for new_col_name in names_dict.values()))
 
-            # using the old name should raise a KeyError
-            with self.assertRaises(KeyError):
-                # noinspection PyStatementEffect
-                self.sf['a']
+        # using the old name should raise a KeyError
+        with self.assertRaises(KeyError):
+            # noinspection PyStatementEffect
+            self.sf['a']
 
-            # testing rename with inplace = False
-            names_dict = {v: k for k, v in names_dict.items()}
-            new_sf = self.sf.rename(columns=names_dict, inplace=False)
-            self.assertTrue(all(new_col_name in new_sf.columns
-                                for new_col_name in names_dict.values()))
+        # testing rename with inplace = False
+        names_dict = {v: k for k, v in names_dict.items()}
+        new_sf = self.sf.rename(columns=names_dict, inplace=False)
+        self.assertTrue(all(new_col_name in new_sf.columns
+                            for new_col_name in names_dict.values()))
 
-            # using the old name should raise a KeyError
-            with self.assertRaises(KeyError):
-                # noinspection PyStatementEffect
-                new_sf['A']
+        # using the old name should raise a KeyError
+        with self.assertRaises(KeyError):
+            # noinspection PyStatementEffect
+            new_sf['A']
 
 
 def run():
