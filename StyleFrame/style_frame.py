@@ -125,15 +125,15 @@ class StyleFrame(object):
                  header=True, index=False, index_label=None, startrow=0, startcol=0, merge_cells=True, encoding=None,
                  inf_rep='inf', allow_protection=False, right_to_left=False, columns_to_hide=None,
                  row_to_add_filters=None, columns_and_rows_to_freeze=None):
-        """
-        Saves the dataframe to excel and applies the styles.
+        """Saves the dataframe to excel and applies the styles.
+
         :param right_to_left: sets the sheet to be right to left.
         :param columns_to_hide: single column, list or tuple of columns to hide, may be column index (starts from 1)
                                 column name or column letter.
         :param allow_protection: allow to protect the sheet and the cells that specified as protected.
         :param row_to_add_filters: add filters to the given row, starts from zero (zero is to add filters to columns).
         :param columns_and_rows_to_freeze: column and row string to freeze for example: C3 will freeze columns: A,B and rows: 1,2.
-        Read Pandas' documentation about the other parameters
+            Read Pandas' documentation about the other parameters
         """
 
         def get_values(x):
@@ -176,7 +176,7 @@ class StyleFrame(object):
                                                                                 end_index=startrow + row_index + 1)
 
         if len(self.data_df) > 0:
-            export_df = self.data_df.applymap(lambda x: get_values(x))
+            export_df = self.data_df.applymap(get_values)
 
         else:
             export_df = deepcopy(self.data_df)
@@ -287,8 +287,8 @@ class StyleFrame(object):
     def apply_style_by_indexes(self, indexes_to_style, cols_to_style=None, styler_obj=None, bg_color=utils.colors.white,
                                bold=False, font='Arial', font_size=12, font_color=utils.colors.black, protection=False,
                                number_format=None, underline=None):
-        """
-        applies a certain style to the provided indexes in the dataframe in the provided columns
+        """Applies a certain style to the provided indexes in the dataframe in the provided columns
+
         :param indexes_to_style: indexes to apply the style to
         :param cols_to_style: the columns to apply the style to, if not provided all the columns will be styled
         :param bg_color: the color to use.
@@ -299,6 +299,7 @@ class StyleFrame(object):
         :param number_format: modify the number format
         :param underline: the type of text underline
         :return: self
+        :rtype: StyleFrame
         """
 
         if styler_obj:
@@ -346,8 +347,8 @@ class StyleFrame(object):
     def apply_column_style(self, cols_to_style, styler_obj=None, bg_color=utils.colors.white, font="Arial", bold=False, font_size=12, protection=False,
                            font_color=utils.colors.black, style_header=False, number_format=utils.number_formats.general,
                            underline=None):
-        """
-        apply style to a whole column
+        """apply style to a whole column
+
         :param cols_to_style: the columns to apply the style to
         :param bg_color:the color to use
         :param bold: bold or not
@@ -358,6 +359,7 @@ class StyleFrame(object):
         :param protection: to protect the column from changes or not
         :param underline: the type of text underline
         :return: self
+        :rtype: StyleFrame
         """
 
         if styler_obj:
@@ -397,8 +399,8 @@ class StyleFrame(object):
     def apply_headers_style(self, styler_obj=None, bg_color=utils.colors.white, bold=True, font="Arial", font_size=12,
                             font_color=utils.colors.black, protection=False, number_format=utils.number_formats.general,
                             underline=None):
-        """
-        apply style to the headers only
+        """Apply style to the headers only
+
         :param bg_color:the color to use
         :param bold: bold or not
         :param font_size: the font size
@@ -407,6 +409,7 @@ class StyleFrame(object):
         :param protection: to protect the column from changes or not
         :param underline: the type of text underline
         :return: self
+        :rtype: StyleFrame
         """
 
         if styler_obj:
@@ -426,11 +429,12 @@ class StyleFrame(object):
         return self
 
     def set_column_width(self, columns, width):
-        """
-        set the width of the given columns
+        """Set the width of the given columns
+
         :param columns: a single or a list/tuple of column name, index or letter to change their width
         :param width: numeric positive value of the new width
         :return: self
+        :rtype: StyleFrame
         """
         if not isinstance(columns, (set, list, tuple)):
             columns = [columns]
@@ -453,6 +457,7 @@ class StyleFrame(object):
         """
         :param col_width_dict: dictionary from tuple of columns to new width
         :return: self
+        :rtype: StyleFrame
         """
         for cols, width in col_width_dict.items():
             self.set_column_width(cols, width)
@@ -460,11 +465,12 @@ class StyleFrame(object):
         return self
 
     def set_row_height(self, rows, height):
-        """
-        set the height of the given rows
+        """ Set the height of the given rows
+
         :param rows: a single row index, list of indexes or tuple of indexes to change their height
         :param height: numeric positive value of the new height
         :return: self
+        :rtype: StyleFrame
         """
         if not isinstance(rows, (set, list, tuple)):
             rows = [rows]
@@ -490,6 +496,7 @@ class StyleFrame(object):
         :param row_height_dict: dictionary from tuple of rows to new height
         :type row_height_dict: dict
         :return: self
+        :rtype: StyleFrame
         """
         if not isinstance(row_height_dict, dict):
             raise TypeError("'row_height_dict' must be a dictionary")
@@ -500,8 +507,8 @@ class StyleFrame(object):
         return self
 
     def rename(self, columns=None, inplace=False):
-        """
-        rename the underlying dataframe's columns
+        """Renames the underlying dataframe's columns
+
         :param columns: a dictionary, old_col_name -> new_col_name
         :type columns: dict
         :param inplace: whether to rename the columns inplace or return a new StyleFrame object
