@@ -182,6 +182,7 @@ class StyleFrame(object):
             export_df = deepcopy(self.data_df)
 
         export_df.columns = [col.value for col in export_df.columns]
+        # noinspection PyTypeChecker
         export_df.index = [row_index.value for row_index in export_df.index]
 
         if isinstance(excel_writer, basestring if PY2 else str):
@@ -524,8 +525,8 @@ class StyleFrame(object):
         sf.data_df.columns = new_columns
 
         sf._columns_width.update({new_col_name: sf._columns_width.pop(old_col_name)
-                                          for old_col_name, new_col_name in columns.iteritems()
-                                          if old_col_name in sf._columns_width})
+                                  for old_col_name, new_col_name in columns.items()
+                                  if old_col_name in sf._columns_width})
 
         return sf
 
