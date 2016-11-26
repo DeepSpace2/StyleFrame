@@ -170,12 +170,19 @@ class StyleFrameTest(unittest.TestCase):
                             for row in height_dict))
 
     def test_rename(self):
-        names_dict = {'a': 'A', 'b': 'B'}
+        original_columns_name = list(self.sf.columns)
 
+        names_dict = {'a': 'A', 'b': 'B'}
         # testing rename with inplace = True
         self.sf.rename(columns=names_dict, inplace=True)
+
         self.assertTrue(all(new_col_name in self.sf.columns
                             for new_col_name in names_dict.values()))
+
+        new_columns_name = list(self.sf.columns)
+        # check that the columns index did not change after renaming
+        self.assertTrue(all(original_columns_name.index(old_col_name) == new_columns_name.index(new_col_name)
+                        for old_col_name, new_col_name in names_dict.iteritems()))
 
         # using the old name should raise a KeyError
         with self.assertRaises(KeyError):

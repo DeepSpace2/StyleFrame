@@ -514,22 +514,18 @@ class StyleFrame(object):
         :param inplace: whether to rename the columns inplace or return a new StyleFrame object
         :return: self if inplace=True, new StyleFrame object if inplace=False
         """
-        def rename_styleframe_columns(styleframe):
-            new_columns = [col if col not in columns else Container(columns[col], col.style)
-                           for col in styleframe.data_df.columns]
-            styleframe.data_df.columns = new_columns
-
-            styleframe._columns_width.update({new_col_name: styleframe._columns_width.pop(old_col_name)
-                                              for old_col_name, new_col_name in columns.iteritems()
-                                              if old_col_name in styleframe._columns_width})
-
         if not isinstance(columns, dict):
             raise TypeError("'columns' must be a dictionary")
-        if inplace:
-            rename_styleframe_columns(self)
-            return self
 
-        else:
-            new_style_frame = StyleFrame(self)
-            rename_styleframe_columns(new_style_frame)
-            return new_style_frame
+        sf = self if inplace else StyleFrame(self)
+
+        new_columns = [col if col not in columns else Container(columns[col], col.style)
+                       for col in sf.data_df.columns]
+        sf.data_df.columns = new_columns
+
+        sf._columns_width.update({new_col_name: sf._columns_width.pop(old_col_name)
+                                          for old_col_name, new_col_name in columns.iteritems()
+                                          if old_col_name in sf._columns_width})
+
+        return sf
+
