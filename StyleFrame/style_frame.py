@@ -514,26 +514,14 @@ class StyleFrame(object):
         :param inplace: whether to rename the columns inplace or return a new StyleFrame object
         :return: self if inplace=True, new StyleFrame object if inplace=False
         """
-
         def rename_styleframe_columns(styleframe):
-            cols_as_list = list(styleframe.data_df.columns)
-            modified_indexes = []
-            new_cols = []
-            for old_col_name, new_col_name in columns.items():
-                try:
-                    index = cols_as_list.index(old_col_name)
-                    modified_indexes.append(index)
-                except ValueError:  # silently ignoring if a column in the columns dictionary doesn't exist in the dataframe
-                    continue
-                else:
-                    new_cols.append(Container(new_col_name, styleframe.data_df.columns[index].style))
-                    try:  # if this column's width has been changed, need to "rename" it in the columns_width dict too
-                        # noinspection PyProtectedMember
-                        styleframe._columns_width[new_col_name] = styleframe._columns_width.pop(old_col_name)
-                    except KeyError:
-                        continue
-            styleframe.data_df.columns = [new_cols[index] if index in modified_indexes else col
-                                          for index, col in enumerate(styleframe.data_df.columns)]
+            new_columns = [col if col not in columns else Container(columns[col], col.style)
+                           for col in styleframe.data_df.columns]
+            styleframe.data_df.columns = new_columns
+
+            styleframe._columns_width.update({new_col_name: styleframe._columns_width.pop(old_col_name)
+                                              for old_col_name, new_col_name in columns.iteritems()
+                                              if old_col_name in styleframe._columns_width})
 
         if not isinstance(columns, dict):
             raise TypeError("'columns' must be a dictionary")
