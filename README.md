@@ -1,5 +1,5 @@
 # StyleFrame
-_Exporting DataFrame to designed excel file have never been so easy_
+_Exporting DataFrame to designed excel file has never been so easy_
 
 
 A library that wraps pandas and openpyxl and allows easy styling of dataframes in excel
@@ -57,7 +57,7 @@ sf.set_column_width_dict(col_width_dict={
 # excel rows starts from 1
 # row number 1 is the headers
 # len of StyleFrame (same as DataFrame) does not count the headers row
-all_rows = tuple(i for i in xrange(1, len(sf) + 2))
+all_rows = tuple(i for i in range(1, len(sf) + 2))
 sf.set_row_height_dict(row_height_dict={
     all_rows[0]: 45,
     all_rows[1:]: 25
@@ -77,6 +77,11 @@ sf.apply_column_style(cols_to_style='Percentage',
 
 sf.apply_column_style(cols_to_style=['Col A', 'Col B', 'Col C'],
                       styler_obj=Styler(number_format=utils.number_formats.thousands_comma_sep))
+                      
+# if using version < 0.2 you need to define the style with style specifiers
+sf.apply_column_style(cols_to_style=['Col A', 'Col B', 'Col C'],
+                      number_format=utils.number_formats.thousands_comma_sep)
+
 ```
 
 Next, let's change the background color of the maximum values to red and the font to white  
@@ -84,17 +89,24 @@ we will also protect those cells and prevent the ability to change their value
 ```python
 style = Styler(bg_color=utils.colors.red, bold=True, font_color=utils.colors.white, protection=True,
                underline=utils.underline.double, number_format=utils.number_formats.thousands_comma_sep)
-for row_index, col_name in rows_max_value.iteritems():
+for row_index, col_name in rows_max_value.items():
     sf[col_name][row_index].style = style.create_style()
 ```
 
 And change the font and the font size of Sum and Mean columns
 ```python
 sf.apply_column_style(cols_to_style=['Sum', 'Mean'],
+                      styler_obj=Styler(font_color='#40B5BF',
+                                        font_size=18,
+                                        bold=True),
+                      style_header=True)
+# if using version < 0.2 you need to define the style with style specifiers
+sf.apply_column_style(cols_to_style=['Sum', 'Mean'],
                       font_color='#40B5BF',
                       font_size=18,
                       bold=True,
                       style_header=True)
+
 ```
 
 Change the background of all rows where the date is after 14/1/2000 to green
@@ -102,6 +114,13 @@ Change the background of all rows where the date is after 14/1/2000 to green
 sf.apply_style_by_indexes(indexes_to_style=sf[sf['Date'] > date(2000, 1, 14)],
                           cols_to_style='Date',
                           styler_obj=Styler(bg_color='green', number_format=utils.number_formats.date, bold=True))
+# if using version < 0.2 you need to define the style with style specifiers
+sf.apply_style_by_indexes(indexes_to_style=sf[sf['Date'] > date(2000, 1, 14)],
+                          cols_to_style='Date',
+                          bg_color=utils.colors.green,
+                          number_format=utils.number_formats.date,
+                          bold=True)
+              
 ```
 
 Finally, let's export to Excel but not before we use more of StyleFrame's features:
@@ -121,13 +140,16 @@ sf.to_excel(excel_writer=ew,
 
 Adding another excel sheet
 ```python
-other_sheet_sf = StyleFrame(obj={'Dates': [date(2016, 10, 20), date(2016, 10, 21), date(2016, 10, 22)]},
+other_sheet_sf = StyleFrame({'Dates': [date(2016, 10, 20), date(2016, 10, 21), date(2016, 10, 22)]},
                             styler_obj=Styler(number_format=utils.number_formats.date))
+# if using version < 0.2 you need to define the style with style specifiers
+other_sheet_sf = StyleFrame({'Dates': [date(2016, 10, 20), date(2016, 10, 21), date(2016, 10, 22)]},
+                            number_format=utils.number_formats.date)
 
 other_sheet_sf.to_excel(excel_writer=ew, sheet_name='2')
 ```
 
-Don't forget to save ;)
+Don't forget to save
 ```python
 ew.save()
 ```

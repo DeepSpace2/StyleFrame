@@ -5,12 +5,8 @@
       - Added basic ability to read stylized excel into a stylized StyleFrame
         Currently doesn't support reading style from a subset of sheet (ie using startrow, startcol and the such.)
         Pass read_style=True to StyleFrame.read_excel
-      - Added ability to provide a default Styler object to StyleFrame init.
-
-      INTERNAL CHANGES:
-      - Moved number_formats and colors (also added borders and underline) and changed them to classes in utils.py
-        instead of custom ImmutableDict.
-      - Added deprecation message when not passing Styler object to "styling methods".
+      - Added ability to provide a default Styler object to StyleFrame init, and added deprecation message when not
+        passing Styler object to "styling methods".
 
 0.1.8:  - Added ability to run tests by code:
           `from StyleFrame import tests ; tests.run()`
