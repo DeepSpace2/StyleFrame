@@ -7,7 +7,7 @@ Installation:
 -------------
 ::
 
-    pip install styleframe
+    $ pip install styleframe
 
 
 Testing:
@@ -28,7 +28,7 @@ StyleFrame constructor supports all the ways you are used to initiate pandas dat
 An existing dataframe, a dictionary or a list of dictionaries:
 ::
 
-    from StyleFrame import StyleFrame
+    from StyleFrame import StyleFrame, Styler, utils
 
     sf = StyleFrame({'col_a': range(100)})
 
@@ -38,8 +38,10 @@ In this example all the cells in the `col_a` column with the value > 50 will hav
 blue background and a bold, sized 10 font:
 ::
 
+
     sf.apply_style_by_indexes(indexes_to_style=sf[sf['col_a'] > 50],
-                              cols_to_style=['col_a'], bg_color='blue', bold=True, font_size=10)
+                              cols_to_style=['col_a'],
+                              styler_obj=Styler(bg_color=utils.colors.blue, bold=True, font_size=10))
 
 Creating ExcelWriter used to save the excel:
 ::
@@ -51,7 +53,8 @@ Creating ExcelWriter used to save the excel:
 It is also possible to style a whole column or columns, and decide whether to style the headers or not:
 ::
 
-    sf.apply_column_style(cols_to_style=['a'], bg_color='green', style_header=True)
+    sf.apply_column_style(cols_to_style=['a'], styler_obj=Styler(bg_color=utils.colors.green),
+                          style_header=True)
 
 
 API documentation
@@ -62,9 +65,11 @@ Styling by indexes
 ^^^^^^^^^^^^^^^^^^
 ::
 
-    sf.apply_style_by_indexes(indexes_to_style=None, cols_to_style=None, bg_color=colors.white,
-                              bold=False, font_size=12, font_color=colors.black,
-                              number_format=number_formats.general, protection=False)
+    sf.apply_style_by_indexes(indexes_to_style=None, cols_to_style=None,
+                              styler_obj=Styler(bg_color=utils.colors.white,
+                              bold=False, font_size=12, font_color=utils.colors.black,
+                              number_format=number_formats.general),
+                              protection=False)
 
 Applies a certain style to the provided indexes in the dataframe to the provided columns.
 Parameters:
@@ -72,51 +77,42 @@ Parameters:
 
     indexes_to_style: indexes to apply the style to
     cols_to_style: the columns to apply the style to, if not provided all the columns will be styled
-    bg_color: the cell's background color to use
-    bold: bold or not
-    font_size: the font size
-    font_color: the font color
-    number_format: Excel's number format to use
+    styler_obj: a StyleFrame.Styler object
     protection: to protect the cell from changes or not
+   
 
 Styling by columns
 ^^^^^^^^^^^^^^^^^^
 ::
 
-    sf.apply_column_style(cols_to_style=None, bg_color=colors.white, bold=False, font_size=12,
-                          font_color=colors.black, style_header=False,
-                          number_format=number_formats.general, protection=False)
+    sf.apply_column_style(cols_to_style=None,
+                          styler_obj=Styler(bg_color=utils.colors.white, bold=False, font_size=12,
+                          font_color=utils.colors.black, style_header=False,
+                          number_format=number_formats.general),
+                          protection=False)
 
 Apply a style to a whole column.
 Parameters:
 ::
 
     cols_to_style: the columns to apply the style to
-    bg_color: the cell's background color to use
-    bold: bold or not
-    font_size: the font size
-    font_color: the font color
-    style_header: style the header or not
-    number_format: Excel's number format to use
+    styler_obj: a StyleFrame.Styler object
     protection: to protect the column from changes or not
 
 Styling headers only
 ^^^^^^^^^^^^^^^^^^^^
 ::
 
-    sf.apply_headers_style(bg_color=colors.white, bold=True, font_size=12, font_color=colors.black,
-                           number_format=number_formats.general, protection=False)
+    sf.apply_headers_style(styler_obj=Styler(bg_color=colors.white, bold=True, font_size=12, font_color=colors.black,
+                           number_format=number_formats.general), 
+                           protection=False)
 
 
 Apply style to the headers only.
 Parameters:
 ::
 
-        bg_color: the cell's background color to use
-        bold: bold or not
-        font_size: the font size
-        font_color: the font color
-        number_format: Excel's number format to use
+        styler_obj: a StyleFrame.Styler object
         protection: to protect the column from changes or not
 
 
