@@ -182,7 +182,7 @@ class StyleFrameTest(unittest.TestCase):
         new_columns_name = list(self.sf.columns)
         # check that the columns order did not change after renaming
         self.assertTrue(all(original_columns_name.index(old_col_name) == new_columns_name.index(new_col_name)
-                        for old_col_name, new_col_name in names_dict.iteritems()))
+                        for old_col_name, new_col_name in names_dict.items()))
 
         # using the old name should raise a KeyError
         with self.assertRaises(KeyError):
