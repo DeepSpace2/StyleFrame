@@ -1,1 +1,1 @@
-_version_ = '0.2dev-1'
+_version_ = '0.2'
