@@ -16,6 +16,8 @@ class BaseDefClass:
 
 class number_formats(BaseDefClass):
     general = 'General'
+    general_integer = '0'
+    general_float = '0.00'
     date = 'DD/MM/YY'
     percent = '0.0%'
     time_24_hours = 'HH:MM'
