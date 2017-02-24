@@ -2,13 +2,15 @@ import unittest
 from StyleFrame import StyleFrame, Styler, utils
 import pandas as pd
 from functools import partial
+import os
 
 
 class StyleFrameTest(unittest.TestCase):
+    TEST_FILENAME = 'styleframe_test.xlsx'
 
     @classmethod
     def setUpClass(cls):
-        cls.ew = StyleFrame.ExcelWriter('test.xlsx')
+        cls.ew = StyleFrame.ExcelWriter(StyleFrameTest.TEST_FILENAME)
         cls.style_kwargs = dict(bg_color=utils.colors.blue, bold=True, font='Impact',
                                 font_color=utils.colors.yellow, font_size=20,
                                 underline=utils.underline.single)
@@ -21,9 +23,18 @@ class StyleFrameTest(unittest.TestCase):
         self.apply_style_by_indexes = partial(self.sf.apply_style_by_indexes, **self.style_kwargs)
         self.apply_headers_style = partial(self.sf.apply_headers_style, **self.style_kwargs)
 
-    def export_and_get_default_sheet(self):
+    @classmethod
+    def tearDownClass(cls):
+        try:
+            os.remove(StyleFrameTest.TEST_FILENAME)
+        except (OSError, FileNotFoundError, PermissionError) as ex:
+            print(ex)
+
+    def export_and_get_default_sheet(self, save=False):
         self.sf.to_excel(excel_writer=self.ew, right_to_left=True, columns_to_hide=self.sf.columns[0],
                          row_to_add_filters=0, columns_and_rows_to_freeze='A2', allow_protection=True)
+        if save:
+            self.ew.save()
         return self.ew.book.get_sheet_by_name('Sheet1')
 
     def test_init_styler_obj(self):
@@ -51,7 +62,8 @@ class StyleFrameTest(unittest.TestCase):
 
     def test_apply_column_style(self):
         self.apply_column_style(cols_to_style=['a'])
-        self.assertTrue(all([self.sf.ix[index, 'a'].style == self.openpy_style_obj and self.sf.ix[index, 'b'].style != self.openpy_style_obj
+        self.assertTrue(all([self.sf.ix[index, 'a'].style == self.openpy_style_obj and self.sf.ix[
+            index, 'b'].style != self.openpy_style_obj
                              for index in self.sf.index]))
 
         sheet = self.export_and_get_default_sheet()
@@ -182,7 +194,7 @@ class StyleFrameTest(unittest.TestCase):
         new_columns_name = list(self.sf.columns)
         # check that the columns order did not change after renaming
         self.assertTrue(all(original_columns_name.index(old_col_name) == new_columns_name.index(new_col_name)
-                        for old_col_name, new_col_name in names_dict.items()))
+                            for old_col_name, new_col_name in names_dict.items()))
 
         # using the old name should raise a KeyError
         with self.assertRaises(KeyError):
@@ -200,10 +212,33 @@ class StyleFrameTest(unittest.TestCase):
             # noinspection PyStatementEffect
             new_sf['A']
 
+    def test_read_excel_no_style(self):
+        self.apply_headers_style()
+        self.export_and_get_default_sheet(save=True)
+        sf_from_excel = StyleFrame.read_excel(StyleFrameTest.TEST_FILENAME)
+        # making sure content is the same
+        self.assertTrue(all(list(self.sf[col]) == list(sf_from_excel[col]) for col in self.sf.columns))
+
+    def test_read_excel_style(self):
+        self.apply_headers_style()
+        self.export_and_get_default_sheet(save=True)
+        sf_from_excel = StyleFrame.read_excel(StyleFrameTest.TEST_FILENAME, read_style=True)
+        # making sure content is the same
+        self.assertTrue(all(list(self.sf[col]) == list(sf_from_excel[col]) for col in self.sf.columns))
+
+        rows_in_excel = sf_from_excel.data_df.itertuples()
+        rows_in_self = self.sf.data_df.itertuples()
+
+        # making sure styles are the same
+        self.assertTrue(all(excel_cell.value == self_cell.value
+                        for row_in_excel, row_in_self in zip(rows_in_excel, rows_in_self)
+                        for excel_cell, self_cell in zip(row_in_excel, row_in_self)))
+
 
 def run():
     suite = unittest.TestLoader().loadTestsFromTestCase(StyleFrameTest)
     unittest.TextTestRunner().run(suite)
+
 
 if __name__ == '__main__':
     unittest.main()

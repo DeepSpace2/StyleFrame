@@ -106,14 +106,15 @@ class StyleFrame(object):
     def read_excel(cls, path, sheetname='Sheet1', read_style=False, **kwargs):
         def _read_style():
             sheet = load_workbook(path).get_sheet_by_name(sheetname)
-            for row_index, sf_index in enumerate(sf.index, start=1):
-                for col_index, col_name in enumerate(sf.columns, start=1):
-                    sf.ix[sf_index - 1, col_name].style = sheet.cell(row=row_index, column=col_index).style
+            for col_index, col_name in enumerate(sf.columns, start=1):
+                sf.columns[col_index - 1].style = sheet.cell(row=1, column=col_index).style
+                for row_index, sf_index in enumerate(sf.index, start=2):
+                    sf.ix[sf_index, col_name].style = sheet.cell(row=row_index, column=col_index).style
 
         sf = StyleFrame(pd.read_excel(path, sheetname=sheetname, **kwargs))
-        if not read_style:
-            return sf
-        _read_style()
+        if read_style:
+            _read_style()
+            sf._custom_headers_style = True
         return sf
 
     # noinspection PyPep8Naming
