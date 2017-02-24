@@ -11,7 +11,7 @@ if sys.version_info < (3, 0):
     # noinspection PyUnresolvedReferences
     import utils
     # noinspection PyUnresolvedReferences,PyPackageRequirements
-    from version import _version_
+    from version import _version_, _versions_, _openpyxl_version_, _pandas_version_, _python_version_
 
 # Python 3
 else:
