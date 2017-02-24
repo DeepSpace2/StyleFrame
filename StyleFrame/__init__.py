@@ -19,7 +19,7 @@ else:
     from StyleFrame.container import Container
     from StyleFrame.styler import Styler
     from StyleFrame import utils
-    from StyleFrame.version import _version_
+    from StyleFrame.version import _version_, _versions_, _openpyxl_version_, _pandas_version_, _python_version_
 
 from StyleFrame import warnings_conf
 
