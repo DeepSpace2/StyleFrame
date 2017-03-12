@@ -1,6 +1,8 @@
 0.2.1: - Added 2 general styles to utils.number_formats: '0' as utils.number_formats.general_integer
          and '0.00' as utils.number_formats.general_float
 
+       - Fixed a bug with a DeprecationWarning unnecessarily showing.
+
 0.2:  - Added ability to change font
       - Added ability to change cell border type
       - Added 'style_obj' arg to all "styling methods" to accept Styler object so styles can be reused.

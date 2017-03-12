@@ -293,6 +293,8 @@ class StyleFrame(object):
 
         :param indexes_to_style: indexes to apply the style to
         :param cols_to_style: the columns to apply the style to, if not provided all the columns will be styled
+        :param styler_obj: the styler object that contains the style to be applied
+        :type styler_obj: Styler
         :param bg_color: the color to use.
         :param bold: bold or not
         :param font_size: the font size
@@ -352,6 +354,8 @@ class StyleFrame(object):
         """apply style to a whole column
 
         :param cols_to_style: the columns to apply the style to
+        :param styler_obj: the styler object that contains the style to be applied
+        :type styler_obj: Styler
         :param bg_color:the color to use
         :param bold: bold or not
         :param font_size: the font size
@@ -398,11 +402,13 @@ class StyleFrame(object):
                                                                       underline=underline).create_style()
         return self
 
-    def apply_headers_style(self, styler_obj=None, bg_color=utils.colors.white, bold=True, font="Arial", font_size=12,
-                            font_color=utils.colors.black, protection=False, number_format=utils.number_formats.general,
+    def apply_headers_style(self, styler_obj=None, bg_color=None, bold=None, font=None, font_size=None,
+                            font_color=None, protection=None, number_format=None,
                             underline=None):
         """Apply style to the headers only
 
+        :param styler_obj: the styler object that contains the style to be applied
+        :type styler_obj: Styler
         :param bg_color:the color to use
         :param bold: bold or not
         :param font_size: the font size
@@ -420,8 +426,19 @@ class StyleFrame(object):
                     'styler_obj must be {}, got {} instead.'.format(Styler.__name__, type(styler_obj).__name__))
 
             styler_obj = styler_obj.create_style()
-        else:
+        elif any((bg_color, bold, font, font_size, font_color, protection, number_format, underline)):
             warnings.warn(DEPRECATION_MSG, DeprecationWarning)
+
+        # applying "default" header style. TODO: Delete when removing support for directly passing style specifiers
+        # see issue #24: https://github.com/DeepSpace2/StyleFrame/issues/24
+        bg_color = bg_color or utils.colors.white
+        bold = bold or True
+        font = font or "Arial"
+        font_size = font_size or 12
+        font_color = font_color or utils.colors.black
+        protection = protection or False
+        number_format = number_format or utils.number_formats.general
+        underline = underline or None
 
         for column in self.data_df.columns:
             column.style = styler_obj or Styler(bg_color=bg_color, bold=bold, font=font, font_size=font_size,
