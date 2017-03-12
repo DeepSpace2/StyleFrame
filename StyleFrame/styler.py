@@ -11,31 +11,26 @@ class Styler(object):
     """
     Creates openpyxl Style to be applied
     """
-    def __init__(self, bg_color=utils.colors.white, bold=False, font="Arial", font_size=12, font_color=utils.colors.black,
+    def __init__(self, bg_color=None, bold=False, font="Arial", font_size=12, font_color=None,
                  number_format=utils.number_formats.general, protection=False, underline=None,
                  border_type=utils.borders.thin):
+
+        def get_color_from_string(color_str, default_color=None):
+            if color_str and color_str.startswith('#'):
+                color_str = color_str[1:]
+            if not utils.is_hex_color_string(hex_string=color_str):
+                color_str = utils.colors.get(color_str, default_color)
+            return color_str
+
         self.bold = bold
         self.font = font
         self.font_size = font_size
-        self.font_color = font_color
         self.number_format = number_format
         self.protection = protection
         self.underline = underline
         self.border_type = border_type
-
-        if bg_color.startswith('#'):
-            bg_color = bg_color[1:]
-        if utils.is_string_is_hex_color_code(hex_string=bg_color):
-            self.bg_color = bg_color
-        else:
-            self.bg_color = utils.colors.get(bg_color, utils.colors.white)
-
-        if font_color.startswith('#'):
-            font_color = font_color[1:]
-        if utils.is_string_is_hex_color_code(hex_string=font_color):
-            self.font_color = font_color
-        else:
-            self.font_color = utils.colors.get(self.font_color, utils.colors.black)
+        self.bg_color = get_color_from_string(bg_color, default_color=utils.colors.white)
+        self.font_color = get_color_from_string(font_color, default_color=utils.colors.black)
 
     def create_style(self):
         side = Side(border_style=self.border_type, color=utils.colors.black)
