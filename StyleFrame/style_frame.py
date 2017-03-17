@@ -5,9 +5,6 @@ import numpy as np
 from openpyxl import cell, load_workbook
 from copy import deepcopy
 import datetime as dt
-import warnings
-
-DEPRECATION_MSG = "Directly passing style specifiers\n('bg_color', 'bold', etc.) is deprecated.\nPass a StyleFrame.Styler object instead as styler_obj."
 
 PY2 = sys.version_info[0] == 2
 
@@ -111,7 +108,7 @@ class StyleFrame(object):
                 for row_index, sf_index in enumerate(sf.index, start=2):
                     sf.ix[sf_index, col_name].style = sheet.cell(row=row_index, column=col_index).style
 
-        sf = StyleFrame(pd.read_excel(path, sheetname=sheetname, **kwargs))
+        sf = cls(pd.read_excel(path, sheetname=sheetname, **kwargs))
         if read_style:
             _read_style()
             sf._custom_headers_style = True
@@ -206,7 +203,7 @@ class StyleFrame(object):
             startcol += 1
 
         if header and not self._custom_headers_style:
-            self.apply_headers_style()
+            self.apply_headers_style(Styler.default_header_style())
 
         # Iterating over the dataframe's elements and applying their styles
         # openpyxl's rows and cols start from 1,1 while the dataframe is 0,0
@@ -286,95 +283,68 @@ class StyleFrame(object):
 
         return excel_writer
 
-    def apply_style_by_indexes(self, indexes_to_style, cols_to_style=None, styler_obj=None, bg_color=utils.colors.white,
-                               bold=False, font='Arial', font_size=12, font_color=utils.colors.black, protection=False,
-                               number_format=None, underline=None):
+    def apply_style_by_indexes(self, indexes_to_style, styler_obj, cols_to_style=None):
         """Applies a certain style to the provided indexes in the dataframe in the provided columns
 
         :param indexes_to_style: indexes to apply the style to
         :param cols_to_style: the columns to apply the style to, if not provided all the columns will be styled
         :param styler_obj: the styler object that contains the style to be applied
         :type styler_obj: Styler
-        :param bg_color: the color to use.
-        :param bold: bold or not
-        :param font_size: the font size
-        :param font_color: the font color
-        :param protection: to protect the cell from changes or not
-        :param number_format: modify the number format
-        :param underline: the type of text underline
         :return: self
         :rtype: StyleFrame
         """
 
-        if styler_obj:
-            if not isinstance(styler_obj, Styler):
-                raise TypeError(
-                    'styler_obj must be {}, got {} instead.'.format(Styler.__name__, type(styler_obj).__name__))
-            styler_obj = styler_obj.create_style()
-        else:
-            warnings.warn(DEPRECATION_MSG, DeprecationWarning)
+        if not isinstance(styler_obj, Styler):
+            raise TypeError('styler_obj must be {}, got {} instead.'.format(Styler.__name__, type(styler_obj).__name__))
 
         default_number_formats = {pd.tslib.Timestamp: 'DD/MM/YY HH:MM',
                                   dt.date: 'DD/MM/YY',
                                   dt.time: 'HH:MM'}
 
-        indexes_number_format = number_format
-        values_number_format = number_format
+        indexes_number_format = styler_obj.number_format
+        values_number_format = styler_obj.number_format
 
         if cols_to_style and not isinstance(cols_to_style, (list, tuple)):
             cols_to_style = [cols_to_style]
         elif not cols_to_style:
             cols_to_style = list(self.data_df.columns)
             for i in indexes_to_style:
-                if not number_format:
+                if styler_obj.number_format == utils.number_formats.general:
                     indexes_number_format = default_number_formats.get(type(i.value), utils.number_formats.general)
 
-                i.style = styler_obj or Styler(bg_color=bg_color, bold=bold, font=font, font_size=font_size,
-                                               font_color=font_color, protection=protection,
-                                               number_format=indexes_number_format, underline=underline).create_style()
+                styler_obj.number_format = indexes_number_format
+                i.style = styler_obj.create_style()
 
         if not isinstance(indexes_to_style, (list, tuple, pd.Index)):
             indexes_to_style = [indexes_to_style]
 
         for index in indexes_to_style:
             for col in cols_to_style:
-                if not number_format:
-                    values_number_format = default_number_formats.get(type(self.ix[index.value, col].value), utils.number_formats.general)
+                if styler_obj.number_format == utils.number_formats.general:
+                    values_number_format = default_number_formats.get(type(self.ix[index.value, col].value),
+                                                                      utils.number_formats.general)
 
-                self.ix[index.value, col].style = styler_obj or Styler(bg_color=bg_color, bold=bold, font=font,
-                                                                       font_size=font_size, font_color=font_color,
-                                                                       protection=protection,
-                                                                       number_format=values_number_format,
-                                                                       underline=underline).create_style()
+                styler_obj.number_format = values_number_format
+                self.ix[index.value, col].style = styler_obj.create_style()
+
         return self
 
-    def apply_column_style(self, cols_to_style, styler_obj=None, bg_color=utils.colors.white, font="Arial", bold=False, font_size=12, protection=False,
-                           font_color=utils.colors.black, style_header=False, number_format=utils.number_formats.general,
-                           underline=None):
+    def apply_column_style(self, cols_to_style, styler_obj, style_header=False, use_default_formats=True):
         """apply style to a whole column
 
         :param cols_to_style: the columns to apply the style to
         :param styler_obj: the styler object that contains the style to be applied
         :type styler_obj: Styler
-        :param bg_color:the color to use
-        :param bold: bold or not
-        :param font_size: the font size
-        :param font_color: the font color
-        :param style_header: style the header or not
-        :param number_format: style the number format
-        :param protection: to protect the column from changes or not
-        :param underline: the type of text underline
+        :param style_header: if True, style the headers as well
+        :type style_header: bool
+        :param use_default_formats: if True, use predefined styles for dates and times
+        :type use_default_formats: bool
         :return: self
         :rtype: StyleFrame
         """
 
-        if styler_obj:
-            if not isinstance(styler_obj, Styler):
-                raise TypeError(
-                    'styler_obj must be {}, got {} instead.'.format(Styler.__name__, type(styler_obj).__name__))
-            styler_obj = styler_obj.create_style()
-        else:
-            warnings.warn(DEPRECATION_MSG, DeprecationWarning)
+        if not isinstance(styler_obj, Styler):
+            raise TypeError('styler_obj must be {}, got {} instead.'.format(Styler.__name__, type(styler_obj).__name__))
 
         if not isinstance(cols_to_style, (list, tuple)):
             cols_to_style = [cols_to_style]
@@ -382,68 +352,37 @@ class StyleFrame(object):
             raise KeyError("one of the columns in {} wasn't found".format(cols_to_style))
         for col_name in cols_to_style:
             if style_header:
-                self.columns[self.columns.get_loc(col_name)].style = styler_obj or Styler(bg_color=bg_color, bold=bold,
-                                                                                          font=font, font_size=font_size,
-                                                                                          font_color=font_color,
-                                                                                          protection=protection,
-                                                                                          number_format=number_format,
-                                                                                          underline=underline).create_style()
+                self.columns[self.columns.get_loc(col_name)].style = styler_obj.create_style()
                 self._custom_headers_style = True
             for index in self.index:
-                if isinstance(self.ix[index, col_name].value, pd.tslib.Timestamp):
-                    number_format = utils.number_formats.date_time
-                elif isinstance(self.ix[index, col_name].value, dt.date):
-                    number_format = utils.number_formats.date
-                elif isinstance(self.ix[index, col_name].value, dt.time):
-                    number_format = utils.number_formats.time_24_hours
-                self.ix[index, col_name].style = styler_obj or Styler(bg_color=bg_color, bold=bold, font=font,
-                                                                      font_size=font_size, protection=protection,
-                                                                      font_color=font_color, number_format=number_format,
-                                                                      underline=underline).create_style()
+                if use_default_formats:
+                    if isinstance(self.ix[index, col_name].value, pd.tslib.Timestamp):
+                        styler_obj.number_format = utils.number_formats.date_time
+                    elif isinstance(self.ix[index, col_name].value, dt.date):
+                        styler_obj.number_format = utils.number_formats.date
+                    elif isinstance(self.ix[index, col_name].value, dt.time):
+                        styler_obj.number_format = utils.number_formats.time_24_hours
+
+                self.ix[index, col_name].style = styler_obj.create_style()
+
         return self
 
-    def apply_headers_style(self, styler_obj=None, bg_color=None, bold=None, font=None, font_size=None,
-                            font_color=None, protection=None, number_format=None,
-                            underline=None):
+    def apply_headers_style(self, styler_obj):
         """Apply style to the headers only
 
         :param styler_obj: the styler object that contains the style to be applied
         :type styler_obj: Styler
-        :param bg_color:the color to use
-        :param bold: bold or not
-        :param font_size: the font size
-        :param font_color: the font color
-        :param number_format: openpy_style_obj the number format
-        :param protection: to protect the column from changes or not
-        :param underline: the type of text underline
         :return: self
         :rtype: StyleFrame
         """
 
-        if styler_obj:
-            if not isinstance(styler_obj, Styler):
-                raise TypeError(
-                    'styler_obj must be {}, got {} instead.'.format(Styler.__name__, type(styler_obj).__name__))
+        if not isinstance(styler_obj, Styler):
+            raise TypeError('styler_obj must be {}, got {} instead.'.format(Styler.__name__, type(styler_obj).__name__))
 
-            styler_obj = styler_obj.create_style()
-        elif any((bg_color, bold, font, font_size, font_color, protection, number_format, underline)):
-            warnings.warn(DEPRECATION_MSG, DeprecationWarning)
-
-        # applying "default" header style. TODO: Delete when removing support for directly passing style specifiers
-        # see issue #24: https://github.com/DeepSpace2/StyleFrame/issues/24
-        bg_color = bg_color or utils.colors.white
-        bold = bold or True
-        font = font or "Arial"
-        font_size = font_size or 12
-        font_color = font_color or utils.colors.black
-        protection = protection or False
-        number_format = number_format or utils.number_formats.general
-        underline = underline or None
+        styler_obj = styler_obj.create_style()
 
         for column in self.data_df.columns:
-            column.style = styler_obj or Styler(bg_color=bg_color, bold=bold, font=font, font_size=font_size,
-                                                font_color=font_color, protection=protection, number_format=number_format,
-                                                underline=underline).create_style()
+            column.style = styler_obj
         self._custom_headers_style = True
         return self
 

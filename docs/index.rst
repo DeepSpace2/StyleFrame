@@ -68,8 +68,8 @@ Styling by indexes
     sf.apply_style_by_indexes(indexes_to_style=None, cols_to_style=None,
                               styler_obj=Styler(bg_color=utils.colors.white,
                               bold=False, font_size=12, font_color=utils.colors.black,
-                              number_format=number_formats.general),
-                              protection=False)
+                              number_format=utils.number_formats.general,
+                              protection=False))
 
 Applies a certain style to the provided indexes in the dataframe to the provided columns.
 Parameters:
@@ -78,7 +78,6 @@ Parameters:
     indexes_to_style: indexes to apply the style to
     cols_to_style: the columns to apply the style to, if not provided all the columns will be styled
     styler_obj: a StyleFrame.Styler object
-    protection: to protect the cell from changes or not
    
 
 Styling by columns
@@ -88,8 +87,8 @@ Styling by columns
     sf.apply_column_style(cols_to_style=None,
                           styler_obj=Styler(bg_color=utils.colors.white, bold=False, font_size=12,
                           font_color=utils.colors.black, style_header=False,
-                          number_format=number_formats.general),
-                          protection=False)
+                          number_format=utils.number_formats.general,
+                          protection=False), use_default_formats=True)
 
 Apply a style to a whole column.
 Parameters:
@@ -97,15 +96,14 @@ Parameters:
 
     cols_to_style: the columns to apply the style to
     styler_obj: a StyleFrame.Styler object
-    protection: to protect the column from changes or not
+    use_default_formats: if True, use predefined styles for dates and times
 
 Styling headers only
 ^^^^^^^^^^^^^^^^^^^^
 ::
 
-    sf.apply_headers_style(styler_obj=Styler(bg_color=colors.white, bold=True, font_size=12, font_color=colors.black,
-                           number_format=number_formats.general), 
-                           protection=False)
+    sf.apply_headers_style(styler_obj=Styler(bg_color=colors.white, bold=True, font_size=12, font_color=utils.colors.black,
+                           number_format=utils.number_formats.general, protection=False))
 
 
 Apply style to the headers only.
@@ -113,7 +111,6 @@ Parameters:
 ::
 
         styler_obj: a StyleFrame.Styler object
-        protection: to protect the column from changes or not
 
 
 Renaming columns
@@ -146,7 +143,7 @@ Parameters:
 
 ::
 
-    set_column_width_dict(self, col_width_dict)
+    sf.set_column_width_dict(self, col_width_dict)
 
 Parameters:
 ::
@@ -170,11 +167,25 @@ Parameters:
 
 ::
 
-    sf.set_column_width_dict(self, col_width_dict)
+    sf.set_row_height_dict(self, row_height_dict)
 
 Parameters:
 ::
 
-    sf.set_row_height_dict: a dictionary from tuples of rows to the desired height
+    row_height_dict: a dictionary from tuples of rows to the desired height
 
+Reading existing Excel file
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+::
+
+    sf.read_excel(path, sheetname='Sheet1', read_style=False, **kwargs)
+
+Reads an Excel file and returns a StyleFrame object
+Parameters:
+::
+
+    path: file's path
+    sheetname: the sheetname to read from
+    read_style: if True the returned StyleFrame object will have the same style the Excel sheet has
+    **kwargs: the same kwargs and pandas.read_excel expects
 

@@ -32,6 +32,10 @@ class Styler(object):
         self.bg_color = get_color_from_string(bg_color, default_color=utils.colors.white)
         self.font_color = get_color_from_string(font_color, default_color=utils.colors.black)
 
+    @classmethod
+    def default_header_style(cls):
+        return cls(bold=True)
+
     def create_style(self):
         side = Side(border_style=self.border_type, color=utils.colors.black)
         border = Border(left=side, right=side, top=side, bottom=side)
