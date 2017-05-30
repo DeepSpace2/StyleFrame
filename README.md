@@ -89,7 +89,7 @@ we will also protect those cells and prevent the ability to change their value
 ```python
 style = Styler(bg_color=utils.colors.red, bold=True, font_color=utils.colors.white, protection=True,
                underline=utils.underline.double, number_format=utils.number_formats.thousands_comma_sep).create_style()
-for row_index, col_name in rows_max_value.items():
+for row_index, col_name in rows_max_value.iteritems():
     sf[col_name][row_index].style = style
 ```
 
