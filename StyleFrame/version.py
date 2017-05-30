@@ -13,7 +13,7 @@ def get_openpyxl_version():
     return 'openpyxl {}'.format(openpyxl_version)
 
 
-_version_ = '0.3'
+_version_ = '1.0'
 _python_version_ = get_python_version()
 _pandas_version_ = get_pandas_version()
 _openpyxl_version_ = get_openpyxl_version()
