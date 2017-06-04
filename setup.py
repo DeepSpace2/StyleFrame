@@ -18,9 +18,12 @@ setup(
     author='DeepSpace',
     author_email='deepspace2@gmail.com',
 
+    entry_points={
+        'console_scripts': ['styleframe = StyleFrame.commandline:execute_from_command_line']
+    },
+
     # Choose your license
     # license='MIT',
-
     # See https://pypi.python.org/pypi?%3Aaction=list_classifiers
     classifiers=[
         # How mature is this project? Common values are

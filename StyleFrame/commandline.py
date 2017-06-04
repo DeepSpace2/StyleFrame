@@ -9,10 +9,10 @@ Options:
 
 """
 import docopt
-import version
+from StyleFrame import version
 import json
 import pandas as pd
-from style_frame import StyleFrame, Container, Styler
+from StyleFrame import StyleFrame, Container, Styler
 
 
 class CommandLineInterface(object):
@@ -25,24 +25,39 @@ class CommandLineInterface(object):
         self._save()
 
     def _load_from_json(self):
-        with open(self.input_path) as f:
-            input_json = json.load(f)
+        with open(self.input_path) as j:
+            sheets = json.load(j)
 
-            if not isinstance(input_json, list):
-                input_json = [input_json]
+            if not isinstance(sheets, list):
+                sheets = list(sheets)
 
-            for sheet in input_json:
+            for sheet in sheets:
                 self._load_single_sheet(sheet)
 
     def _load_single_sheet(self, sheet):
-        default_style = Styler(**sheet.get('default_style', {}))
-        data = {col_name: [Container(item['value'], Styler(**item['style']).create_style())
-                           if 'style' in item else Container(item['value'], default_style.create_style())
-                           for item in items]
-                for col_name, items in sheet['sheet_data'].iteritems()}
+        default_style = Styler(**sheet.get('default_style', {})).create_style()
+        data = {col_name: [Container(cell['value'],
+                                     Styler(**cell['style']).create_style() if 'style' in cell else default_style)
+                           for cell in cells]
+                for col_name, cells in sheet['sheet_data'].items()}
 
-        df = pd.DataFrame(data=data, columns=[item['value'] for item in sheet['sheet_columns']])
+        df = pd.DataFrame(data=data, columns=[column['value'] for column in sheet['sheet_columns']])
         sf = StyleFrame(df)
+
+        if 'default_columns_style' in sheet:
+            default_columns_style = sheet['default_columns_style']
+            if 'width' in default_columns_style:
+                sf.set_column_width(columns=list(sf.columns), width=default_columns_style.pop('width'))
+
+            if default_columns_style:
+                style = Styler(**default_columns_style)
+                sf.apply_column_style(cols_to_style=list(sf.columns), styler_obj=style)
+
+        if 'default_header_style' in sheet:
+            sf.apply_headers_style(styler_obj=Styler(**sheet['default_header_style']))
+
+        for column in filter(lambda col: 'width' in col, sheet['sheet_columns']):
+            sf.set_column_width(columns=column['value'], width=column['width'])
 
         sf.to_excel(excel_writer=self.excel_writer,
                     sheet_name=sheet['sheet_name'],
@@ -52,7 +67,9 @@ class CommandLineInterface(object):
         self.excel_writer.save()
 
 
-if __name__ == "__main__":
+def execute_from_command_line():
     argv = docopt.docopt(doc=__doc__, version=version._version_)
-    print argv
     CommandLineInterface(input_path=argv['<json_file_path>'], output_path=argv['--output_path']).parse_as_json()
+
+if __name__ == '__main__':
+    execute_from_command_line()

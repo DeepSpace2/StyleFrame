@@ -4,7 +4,7 @@
     "default_style": {
       "bold": true,
       "font": "ariel",
-      "font_size": 25,
+      "font_size": 14,
       "bg_color": "00333300"
     },
     "sheet_data": {
@@ -99,10 +99,23 @@
         }
       ]
     },
+    "default_columns_style": {
+      "bold": true,
+      "font": "ariel",
+      "font_size": 20,
+      "bg_color": "00333300",
+      "width": 20
+    },
+    "default_header_style": {
+      "bold": true,
+      "font": "ariel",
+      "font_size": 20,
+      "bg_color": "00FFFF00"
+    },
     "sheet_columns": [
       {
         "value": "Col A",
-        "width": 15.5
+        "width": 50
       },
       {
         "value": "Col B"
