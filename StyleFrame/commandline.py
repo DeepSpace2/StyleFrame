@@ -58,13 +58,13 @@ class CommandLineInterface(object):
 
 def get_cli_args():
     parser = argparse.ArgumentParser('Command-line interface for StyleFrame library')
-    version_group = parser.add_mutually_exclusive_group()
-    version_group.add_argument('-v', '--version', action='store_true', default=False,
-                               help='print versions of the Python interpreter, openpyxl, pandas and StyleFrame\n'
-                                    'then quit')
-    op_group = parser.add_mutually_exclusive_group()
-    op_group.add_argument('--json_path', help='path to json file which defines the Excel file')
-    op_group.add_argument('--output_path', help='path of output Excel file, defaults to output.xlsx', default='output.xlsx')
+    group = parser.add_mutually_exclusive_group()
+
+    group.add_argument('-v', '--version', action='store_true', default=False,
+                       help='print versions of the Python interpreter, openpyxl, pandas and StyleFrame then quit')
+    group.add_argument('--json_path', help='path to json file which defines the Excel file')
+
+    parser.add_argument('--output_path', help='path of output Excel file, defaults to output.xlsx', default='output.xlsx')
 
     cli_args = parser.parse_args()
 
