@@ -1,18 +1,8 @@
-"""Command-line interface for StyleFrame library.
-
-Usage:
-    styleframe <json_file_path> [--output_path=<path>]
-    styleframe (-h | --help | --version)
-
-Options:
-    --output_path=<path> The path of the output file [default: output.xlsx]
-
-"""
-import docopt
-from StyleFrame import version
+import argparse
 import json
 import pandas as pd
-from StyleFrame import StyleFrame, Container, Styler
+
+from StyleFrame import StyleFrame, Container, Styler, version
 
 
 class CommandLineInterface(object):
@@ -41,8 +31,7 @@ class CommandLineInterface(object):
                            for cell in cells]
                 for col_name, cells in sheet['sheet_data'].items()}
 
-        df = pd.DataFrame(data=data, columns=[column['value'] for column in sheet['sheet_columns']])
-        sf = StyleFrame(df)
+        sf = StyleFrame(pd.DataFrame(data=data, columns=[column['value'] for column in sheet['sheet_columns']]))
 
         if 'default_columns_style' in sheet:
             default_columns_style = sheet['default_columns_style']
@@ -67,9 +56,30 @@ class CommandLineInterface(object):
         self.excel_writer.save()
 
 
+def get_cli_args():
+    parser = argparse.ArgumentParser('Command-line interface for StyleFrame library')
+    version_group = parser.add_mutually_exclusive_group()
+    version_group.add_argument('-v', '--version', action='store_true', default=False,
+                               help='print versions of the Python interpreter, openpyxl, pandas and StyleFrame\n'
+                                    'then quit')
+    op_group = parser.add_mutually_exclusive_group()
+    op_group.add_argument('--json_path', help='path to json file which defines the Excel file')
+    op_group.add_argument('--output_path', help='path of output Excel file, defaults to output.xlsx', default='output.xlsx')
+
+    cli_args = parser.parse_args()
+
+    if not cli_args.version and not cli_args.json_path:
+        parser.error('--json_path is required when not using -v.')
+
+    return cli_args
+
+
 def execute_from_command_line():
-    argv = docopt.docopt(doc=__doc__, version=version._version_)
-    CommandLineInterface(input_path=argv['<json_file_path>'], output_path=argv['--output_path']).parse_as_json()
+    cli_args = get_cli_args()
+    if cli_args.version:
+        print(version.get_all_versions())
+        return
+    CommandLineInterface(input_path=cli_args.json_path, output_path=cli_args.output_path).parse_as_json()
 
 if __name__ == '__main__':
     execute_from_command_line()
