@@ -53,7 +53,7 @@ Before you start to style your StyleFrame, take a look in the utils module.
 You may find there very useful things such as number formats, colors, borders and more!
 
 
-* ***Containers***: 
+* ***Container***: 
 ```python
 __init__(self, value, styler=None)
 ```
@@ -98,12 +98,16 @@ sf = StyleFrame(df, styler_obj=Styler(**defaults))
 # Set the background color to green where the test marked as 'passed'
 sf.apply_style_by_indexes(indexes_to_style=sf[sf['Pass/Fail'] == 'Passed'],
                           cols_to_style='Pass/Fail',
-                          styler_obj=Styler(bg_color=utils.colors.green, font_color=utils.colors.white, **defaults))
+                          styler_obj=Styler(bg_color=utils.colors.green,
+                          font_color=utils.colors.white,
+                          **defaults))
 
 # Set the background color to red where the test marked as 'failed'
 sf.apply_style_by_indexes(indexes_to_style=sf[sf['Pass/Fail'] == 'Failed'],
                           cols_to_style='Pass/Fail',
-                          styler_obj=Styler(bg_color=utils.colors.red, font_color=utils.colors.white, **defaults))
+                          styler_obj=Styler(bg_color=utils.colors.red,
+                          font_color=utils.colors.white,
+                          **defaults))
 
 sf.apply_headers_style(styler_obj=Styler(bold=True, font_size=18))
 
