@@ -8,4 +8,5 @@ python:
 # command to install dependencies
 install: "pip install -r requirements.txt"
 # command to run tests
+before_script: chmod +x StyleFrame/tests/style_frame_tests.py
 script: StyleFrame/tests/style_frame_tests.py
