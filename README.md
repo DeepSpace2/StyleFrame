@@ -10,14 +10,13 @@ You can read the documentation at http://styleframe.readthedocs.org/en/latest/
 
 ---
 
-## Introduction
-   
-* [Rationale] (#rationale)
-* [Basics] (#basics)
-* [Usage Examples] (#usage-examples)
-&nbsp;&nbsp;&nbsp;&nbsp;-[Simple Example] (#simaple-example)
-&nbsp;&nbsp;&nbsp;&nbsp;- [Advance Example] (#advance-example)
-* [Commandline Interface] (#commandline-interface)
+## Table Of Contents
+1. [Rationale](#rationale)
+2. [Basics](#basics)
+3. [Usage Examples](#usage-examples)    
+&nbsp;&nbsp;&nbsp;&nbsp;-[Simple Example](#simple-example)    
+&nbsp;&nbsp;&nbsp;&nbsp;-[Advance Example](#advance-example)   
+4. [Commandline Interface](#commandline-interface)
 
 
 ## Rationale
