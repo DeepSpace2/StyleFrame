@@ -5,7 +5,7 @@
       "bold": true,
       "font": "ariel",
       "font_size": 14,
-      "bg_color": "00333300"
+      "bg_color": "#00333300"
     },
     "sheet_data": {
       "Col A": [
@@ -68,7 +68,7 @@
       "bold": true,
       "font": "ariel",
       "font_size": 25,
-      "bg_color": "00333300"
+      "bg_color": "#00333300"
     },
     "sheet_data": {
       "Col A": [
@@ -109,14 +109,14 @@
       "bold": true,
       "font": "ariel",
       "font_size": 20,
-      "bg_color": "00333300",
+      "bg_color": "#00333300",
       "width": 20
     },
     "default_header_style": {
       "bold": true,
       "font": "ariel",
       "font_size": 20,
-      "bg_color": "00FFFF00"
+      "bg_color": "#00FFFF00"
     },
     "sheet_columns": [
       {

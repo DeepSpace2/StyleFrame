@@ -1,4 +1,4 @@
-# StyleFrame
+# StyleFrame v1.0
 _Exporting DataFrame to designed excel file has never been so easy_
 
 
@@ -8,8 +8,77 @@ $ pip install styleframe
 ```
 You can read the documentation at http://styleframe.readthedocs.org/en/latest/
 
+---
+
+## Introduction
+   
+* [Rationale] (#rationale)
+* [Basics] (#basics)
+* [Usage Examples] (#usage-examples)
+&nbsp;&nbsp;&nbsp;&nbsp;-[Simple Example] (#simaple-example)
+&nbsp;&nbsp;&nbsp;&nbsp;- [Advance Example] (#advance-example)
+* [Commandline Interface] (#commandline-interface)
+
+
+## Rationale
+
+Pandas's DataFrame is great.
+Dealing with a lot of data is not easy and DataFrame helps us to manage it in the besy way possible.
+ 
+There are many ways to present the output and one of them is excel files.
+Excel files are easy to understand, can be viewed offline, can be sent over the email
+and a large percentage of the population familiar it.
+That is why many times we would choose excel files as our output.
+
+StyleFrame package allows us to design the excel file on the data in a similar way to DataFrame api.
+It saves us the trouble of working with excel workbook and the suffering of trying to match it with the data stored in our DataFrame.
+
+
+## Basics
+
+* Styler:
+```python
+def __init__(self, bg_color=None, bold=False, font="Arial", font_size=12, font_color=None,
+             number_format=utils.number_formats.general, protection=False, underline=None,
+             border_type=utils.borders.thin)
+```
+Object that represents the style of a cell in our excel file.
+Styler is responsible of storing the style of single cell.
+Once the style is ready, ```.create_style()``` method is called.
+
+* utils:
+```python
+from StyleFrame import utils
+```
+Before you start to style your StyleFrame, take a look in the utils module.
+You may find there very useful things such as number formats, colors, borders and more!
+
+
+* Containers: 
+```python
+def __init__(self, value, styler=None)
+```
+Object that represents cell in our excel file.
+ it contains two variables:    
+&nbsp;&nbsp;&nbsp;&nbsp;- value which may be anything you wish to put in the cell as long as excel file support its format.
+&nbsp;&nbsp;&nbsp;&nbsp;- style which is the style of the cell- created by ```Styler(...).create_style()```
+
+And finally:
+
+* StyleFrame:
+```python
+def __init__(self, obj, styler_obj=None):
+```
+StyleFrame is the main object we will be dealing with.
+It contains self DataFrame which is based on the given obj.
+Each item of the self DataFrame is wrapped by a Container object to store the given data and its` style.
+StyleFrame (usually referred as sf) reveals a very easy api for styling.
 
 ## Usage Examples
+
+### Simple Example
+
+### Advance Example
 
 First, let us create a DataFrame that contains data we would like to export to an .xlsx file 
 ```python
@@ -156,3 +225,6 @@ ew.save()
 
 **_the result:_**
 <img src="https://s10.postimg.org/ppt8gt5m1/Untitled.png">
+
+
+## Commandline Interface
