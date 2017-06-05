@@ -9,5 +9,5 @@ install: "pip install -r requirements.txt"
 before_script:
 - cd StyleFrame/tests/
 - chmod +x style_frame_tests.py
-  
+- pwd
 script: python style_frame_tests.py
