@@ -1,9 +1,12 @@
 import unittest
-from StyleFrame import StyleFrame, Styler, utils
 import pandas as pd
-from functools import partial
 import os
 
+from functools import partial
+try:
+    from StyleFrame import StyleFrame, Styler, utils
+except ImportError:
+    from . import StyleFrame, Style, utils
 
 class StyleFrameTest(unittest.TestCase):
     TEST_FILENAME = 'styleframe_test.xlsx'
