@@ -6,7 +6,7 @@ from functools import partial
 try:
     from StyleFrame import StyleFrame, Styler, utils
 except ImportError:
-    from . import StyleFrame, Style, utils
+    import StyleFrame, Style, utils
 
 class StyleFrameTest(unittest.TestCase):
     TEST_FILENAME = 'styleframe_test.xlsx'
