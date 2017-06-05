@@ -14,8 +14,8 @@ You can read the documentation at http://styleframe.readthedocs.org/en/latest/
 1. [Rationale](#rationale)
 2. [Basics](#basics)
 3. [Usage Examples](#usage-examples)    
-&nbsp;&nbsp;&nbsp;&nbsp;-[Simple Example](#simple-example)    
-&nbsp;&nbsp;&nbsp;&nbsp;-[Advance Example](#advance-example)   
+&nbsp;&nbsp;&nbsp;&nbsp;- [Simple Example](#simple-example)    
+&nbsp;&nbsp;&nbsp;&nbsp;- [Advance Example](#advance-example)   
 4. [Commandline Interface](#commandline-interface)
 
 
@@ -35,7 +35,7 @@ It saves us the trouble of working with excel workbook and the suffering of tryi
 
 ## Basics
 
-* Styler:
+* ***Styler***:
 ```python
 __init__(self, bg_color=None, bold=False, font="Arial", font_size=12, font_color=None,
              number_format=utils.number_formats.general, protection=False, underline=None,
@@ -45,7 +45,7 @@ Object that represents the style of a cell in our excel file.
 Styler is responsible of storing the style of single cell.
 Once the style is ready, ```.create_style()``` method is called.
 
-* utils:
+* ***utils***:
 ```python
 from StyleFrame import utils
 ```
@@ -53,18 +53,18 @@ Before you start to style your StyleFrame, take a look in the utils module.
 You may find there very useful things such as number formats, colors, borders and more!
 
 
-* Containers: 
+* ***Containers***: 
 ```python
 __init__(self, value, styler=None)
 ```
 Object that represents cell in our excel file.
- it contains two variables:    
-&nbsp;&nbsp;&nbsp;&nbsp;- value which may be anything you wish to put in the cell as long as excel file support its format.
+ it contains two variables:          
+&nbsp;&nbsp;&nbsp;&nbsp;- value which may be anything you wish to put in the cell as long as excel file support its format.   
 &nbsp;&nbsp;&nbsp;&nbsp;- style which is the style of the cell- created by ```Styler(...).create_style()```
 
 And finally:
 
-* StyleFrame:
+* ***StyleFrame***:
 ```python
 __init__(self, obj, styler_obj=None):
 ```
@@ -76,6 +76,47 @@ StyleFrame (usually referred as sf) reveals a very easy api for styling.
 ## Usage Examples
 
 ### Simple Example
+
+```python
+import pandas as pd
+import time
+
+from StyleFrame import StyleFrame, Styler, utils
+
+
+df = pd.DataFrame({
+    'Time': [time.time() for i in xrange(5)],
+    'Expect': 'Hey how are you today?'.split(),
+    'Actual': 'Hello how are u today?'.split(),
+    'Pass/Fail': ['Failed', 'Passed', 'Passed', 'Failed', 'Passed']
+    },
+    columns=['Time', 'Expect', 'Actual', 'Pass/Fail'])
+
+defaults = {'font': 'Aharoni', 'font_size': 14}
+sf = StyleFrame(df, styler_obj=Styler(**defaults))
+
+# Set the background color to green where the test marked as 'passed'
+sf.apply_style_by_indexes(indexes_to_style=sf[sf['Pass/Fail'] == 'Passed'],
+                          cols_to_style='Pass/Fail',
+                          styler_obj=Styler(bg_color=utils.colors.green, font_color=utils.colors.white, **defaults))
+
+# Set the background color to red where the test marked as 'failed'
+sf.apply_style_by_indexes(indexes_to_style=sf[sf['Pass/Fail'] == 'Failed'],
+                          cols_to_style='Pass/Fail',
+                          styler_obj=Styler(bg_color=utils.colors.red, font_color=utils.colors.white, **defaults))
+
+sf.apply_headers_style(styler_obj=Styler(bold=True, font_size=18))
+
+sf.set_column_width(columns=list(sf.columns), width=20)
+
+all_rows = [index + 1 for index in sf.index] + [sf.index[-1] + 2]
+sf.set_row_height(rows=all_rows, height=25)
+
+sf.to_excel('output.xlsx',
+            row_to_add_filters=0,
+            columns_and_rows_to_freeze='A2').save()
+
+```
 
 ### Advance Example
 
