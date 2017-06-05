@@ -10,6 +10,6 @@ install: "pip install -r requirements.txt"
 # command to run tests
 before_script:
 - cd StyleFrame/tests/
-- chmod +x Sstyle_frame_tests.py
+- chmod +x style_frame_tests.py
   
 script: python style_frame_tests.py
