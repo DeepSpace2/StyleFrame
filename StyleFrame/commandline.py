@@ -33,6 +33,18 @@ class CommandLineInterface(object):
 
         sf = StyleFrame(pd.DataFrame(data=data, columns=[column['value'] for column in sheet['sheet_columns']]))
 
+        self._apply_style(sf, sheet)
+
+        sf.to_excel(excel_writer=self.excel_writer,
+                    sheet_name=sheet['sheet_name'],
+                    **sheet['extra_features'])
+
+    def _apply_style(self, sf, sheet):
+        self._apply_default_style(sf, sheet)
+        self._apply_default_header_style(sf, sheet)
+        self._apply_specific_cols_and_rows_dimensions(sf, sheet)
+
+    def _apply_default_style(self, sf, sheet):
         if 'default_columns_style' in sheet:
             default_columns_style = sheet['default_columns_style']
             if 'width' in default_columns_style:
@@ -42,15 +54,16 @@ class CommandLineInterface(object):
                 style = Styler(**default_columns_style)
                 sf.apply_column_style(cols_to_style=list(sf.columns), styler_obj=style)
 
+    def _apply_default_header_style(self, sf, sheet):
         if 'default_header_style' in sheet:
             sf.apply_headers_style(styler_obj=Styler(**sheet['default_header_style']))
 
+    def _apply_specific_cols_and_rows_dimensions(self, sf, sheet):
         for column in filter(lambda col: 'width' in col, sheet['sheet_columns']):
             sf.set_column_width(columns=column['value'], width=column['width'])
 
-        sf.to_excel(excel_writer=self.excel_writer,
-                    sheet_name=sheet['sheet_name'],
-                    **sheet['extra_features'])
+        for row in filter(lambda r: 'height' in r, sheet.get('sheet_rows', [])):
+            sf.set_row_height(rows=row['index'], height=row['height'])
 
     def _save(self):
         self.excel_writer.save()

@@ -51,6 +51,12 @@
         "value": "Col B"
       }
     ],
+    "sheet_rows": [
+      {
+        "index": 5,
+        "height": 100.5
+      }
+    ],
     "extra_features": {
       "row_to_add_filters": 0,
       "columns_and_rows_to_freeze": "B2"
@@ -119,6 +125,12 @@
       },
       {
         "value": "Col B"
+      }
+    ],
+    "sheet_rows": [
+      {
+        "index": 2,
+        "height": 30
       }
     ],
     "extra_features": {
