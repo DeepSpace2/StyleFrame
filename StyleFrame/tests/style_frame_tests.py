@@ -3,10 +3,7 @@ import pandas as pd
 import os
 
 from functools import partial
-try:
-    from StyleFrame import StyleFrame, Styler, utils
-except ImportError:
-    import StyleFrame, Style, utils
+from StyleFrame import StyleFrame, Styler, utils
 
 class StyleFrameTest(unittest.TestCase):
     TEST_FILENAME = 'styleframe_test.xlsx'
