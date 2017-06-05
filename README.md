@@ -27,7 +27,7 @@ Dealing with a lot of data is not easy and DataFrame helps us to manage it in th
  
 There are many ways to present the output and one of them is excel files.
 Excel files are easy to understand, can be viewed offline, can be sent over the email
-and a large percentage of the population familiar it.
+and a large percentage of the population familiar with it.
 That is why many times we would choose excel files as our output.
 
 StyleFrame package allows us to design the excel file on the data in a similar way to DataFrame api.
@@ -38,7 +38,7 @@ It saves us the trouble of working with excel workbook and the suffering of tryi
 
 * Styler:
 ```python
-def __init__(self, bg_color=None, bold=False, font="Arial", font_size=12, font_color=None,
+__init__(self, bg_color=None, bold=False, font="Arial", font_size=12, font_color=None,
              number_format=utils.number_formats.general, protection=False, underline=None,
              border_type=utils.borders.thin)
 ```
@@ -56,7 +56,7 @@ You may find there very useful things such as number formats, colors, borders an
 
 * Containers: 
 ```python
-def __init__(self, value, styler=None)
+__init__(self, value, styler=None)
 ```
 Object that represents cell in our excel file.
  it contains two variables:    
@@ -67,7 +67,7 @@ And finally:
 
 * StyleFrame:
 ```python
-def __init__(self, obj, styler_obj=None):
+__init__(self, obj, styler_obj=None):
 ```
 StyleFrame is the main object we will be dealing with.
 It contains self DataFrame which is based on the given obj.
