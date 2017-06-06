@@ -8,7 +8,7 @@ $ pip install styleframe
 ```
 You can read the documentation at http://styleframe.readthedocs.org/en/latest/
 
-<img src=https://s.faketrumptweet.com/j3kkdbjj_1vtght_m1uf0.png width=295px height=120px/>    
+<img src=https://s.faketrumptweet.com/j3kkdbjj_1vtght_m1uf0.png width=365px height=150px/>    
 
 ---
 
@@ -96,6 +96,7 @@ df = pd.DataFrame({
     'Pass/Fail': pass_or_failed
     },
     columns=['Time', 'Expect', 'Actual', 'Pass/Fail'])
+    
 """Our DataFrame looks like this:
 
            Time  Expect  Actual Pass/Fail
@@ -141,7 +142,10 @@ sf.to_excel('output.xlsx',
             row_to_add_filters=0, 
             # Freeze the columns before column 'A' (=None) and rows above '2' (=1).
             columns_and_rows_to_freeze='A2').save()
-```
+```    
+The final output saved under output.xlsx:    
+<img src=https://s9.postimg.org/dncq273hr/Screenshot_from_2017-06-05_21_58_26.png />
+
 
 ### Advance Example
 
