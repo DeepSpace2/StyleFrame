@@ -121,7 +121,7 @@ class StyleFrame(object):
 
     @property
     def row_indexes(self):
-        return tuple(i for i in range(1, len(self) + 2))
+        return tuple(range(1, len(self) + 2))
 
     def to_excel(self, excel_writer='output.xlsx', sheet_name='Sheet1', na_rep='', float_format=None, columns=None,
                  header=True, index=False, index_label=None, startrow=0, startcol=0, merge_cells=True, encoding=None,
@@ -249,7 +249,7 @@ class StyleFrame(object):
             sheet.column_dimensions[column_letter].width = self._columns_width[column]
 
         for row in self._rows_height:
-            if row in sheet.row_dimensions:
+            if row + startrow in sheet.row_dimensions:
                 sheet.row_dimensions[startrow + row].height = self._rows_height[row]
             else:
                 raise IndexError('row: {} is out of range'.format(row))
@@ -287,13 +287,13 @@ class StyleFrame(object):
 
         return excel_writer
 
-    def apply_style_by_indexes(self, indexes_to_style, styler_obj, height=None, cols_to_style=None):
+    def apply_style_by_indexes(self, indexes_to_style, styler_obj, cols_to_style=None, height=None,):
         """Applies a certain style to the provided indexes in the dataframe in the provided columns
 
         :param indexes_to_style: indexes to apply the style to (based on sf.index)
-        :param cols_to_style: the columns to apply the style to, if not provided all the columns will be styled
         :param styler_obj: the styler object that contains the style to be applied
         :type styler_obj: Styler
+        :param cols_to_style: the columns to apply the style to, if not provided all the columns will be styled
         :param height: non-default height for the given rows
         :return: self
         :rtype: StyleFrame
@@ -301,6 +301,8 @@ class StyleFrame(object):
 
         if not isinstance(styler_obj, Styler):
             raise TypeError('styler_obj must be {}, got {} instead.'.format(Styler.__name__, type(styler_obj).__name__))
+        if not isinstance(indexes_to_style, pd.Index):
+            indexes_to_style = pd.Index([indexes_to_style])
 
         default_number_formats = {pd.tslib.Timestamp: 'DD/MM/YY HH:MM',
                                   dt.date: 'DD/MM/YY',
@@ -338,17 +340,17 @@ class StyleFrame(object):
 
         return self
 
-    def apply_column_style(self, cols_to_style, styler_obj, width=None, style_header=False, use_default_formats=True):
+    def apply_column_style(self, cols_to_style, styler_obj, style_header=False, use_default_formats=True, width=None):
         """apply style to a whole column
 
         :param cols_to_style: the columns to apply the style to
         :param styler_obj: the styler object that contains the style to be applied
         :type styler_obj: Styler
-        :param width: non-default width for the given columns
         :param style_header: if True, style the headers as well
         :type style_header: bool
         :param use_default_formats: if True, use predefined styles for dates and times
         :type use_default_formats: bool
+        :param width: non-default width for the given columns
         :return: self
         :rtype: StyleFrame
         """

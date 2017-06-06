@@ -50,8 +50,8 @@
     },
     "extra_features": {
       "row_to_add_filters": 0,
-      "columns_and_rows_to_freeze": "A3",
-      "startrow": 1
+      "columns_and_rows_to_freeze": "A7",
+      "startrow": 5
     }
   }
 ]

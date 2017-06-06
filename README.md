@@ -24,7 +24,7 @@ You can read the documentation at http://styleframe.readthedocs.org/en/latest/
 ## Rationale
 
 Pandas's DataFrame is great.   
-Dealing with a lot of data is not easy and DataFrame helps us to manage it in the besy way possible.   
+Dealing with a lot of data is not easy and DataFrame helps us to manage it in the best way possible.   
  
 There are many ways to present the output and one of them is excel files.   
 Excel files are easy to understand, can be viewed offline, can be sent over the email
@@ -90,7 +90,7 @@ actual = 'Hello how are u today?'.split()
 passed_or_failed = ['Passed' if e == a else 'Failed' for e, a in zip(expected, actual)]
 
 df = pd.DataFrame({
-    'Time': [time.time() for i in xrange(5)],
+    'Time': [time.time() for _ in xrange(5)],
     'Expect': expected,
     'Actual': actual,
     'Pass/Fail': passed_or_failed

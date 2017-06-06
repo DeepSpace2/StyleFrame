@@ -39,11 +39,11 @@ class CommandLineInterface(object):
                                                                          or {})).create_style()))
         sf = StyleFrame(pd.DataFrame(data=data))
 
-        self.apply_headers_style(sf, sheet)
+        self._apply_headers_style(sf, sheet)
         self._apply_cols_and_rows_dimensions(sf, sheet)
         sf.to_excel(excel_writer=self.excel_writer, sheet_name=sheet_name, **sheet['extra_features'])
 
-    def apply_headers_style(self, sf, sheet):
+    def _apply_headers_style(self, sf, sheet):
         sf.apply_headers_style(styler_obj=Styler(**(sheet.get('default_styles', {}).get('headers') or {})))
 
     def _apply_cols_and_rows_dimensions(self, sf, sheet):
