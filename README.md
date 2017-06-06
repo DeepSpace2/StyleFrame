@@ -8,7 +8,8 @@ $ pip install styleframe
 ```
 You can read the documentation at http://styleframe.readthedocs.org/en/latest/
 
-<img src=https://s.faketrumptweet.com/j3kkdbjj_1vtght_m1uf0.png width=295px height=120px/>
+<img src=https://s.faketrumptweet.com/j3kkdbjj_1vtght_m1uf0.png width=295px height=120px/>    
+
 ---
 
 ## Contents
@@ -22,15 +23,15 @@ You can read the documentation at http://styleframe.readthedocs.org/en/latest/
 
 ## Rationale
 
-Pandas's DataFrame is great.
-Dealing with a lot of data is not easy and DataFrame helps us to manage it in the besy way possible.
+Pandas's DataFrame is great.   
+Dealing with a lot of data is not easy and DataFrame helps us to manage it in the besy way possible.   
  
-There are many ways to present the output and one of them is excel files.
+There are many ways to present the output and one of them is excel files.   
 Excel files are easy to understand, can be viewed offline, can be sent over the email
-and a large percentage of the population familiar with it.
-That is why many times we would choose excel files as our output.
+and a large percentage of the population familiar with it.   
+That is why many times we would choose excel files as our output.   
 
-StyleFrame package allows us to design the excel file on the data in a similar way to DataFrame api.
+StyleFrame package allows us to design the excel file on the data in a similar way to DataFrame api.   
 It saves us the trouble of working with excel workbook and the suffering of trying to match it with the data stored in our DataFrame.
 
 
@@ -95,7 +96,18 @@ df = pd.DataFrame({
     'Pass/Fail': pass_or_failed
     },
     columns=['Time', 'Expect', 'Actual', 'Pass/Fail'])
+"""Our DataFrame looks like this:
 
+           Time  Expect  Actual Pass/Fail
+0  1.496728e+09     Hey   Hello    Failed
+1  1.496728e+09     how     how    Passed
+2  1.496728e+09     are     are    Passed
+3  1.496728e+09     you       u    Failed
+4  1.496728e+09  today?  today?    Passed
+
+"""
+
+# Create StyleFrame object that wrap our DataFrame and assign default style.
 defaults = {'font': 'Aharoni', 'font_size': 14}
 sf = StyleFrame(df, styler_obj=Styler(**defaults))
 
@@ -125,7 +137,9 @@ all_rows = tuple(i for i in range(1, len(sf) + 2))
 sf.set_row_height(rows=all_rows, height=25)
 
 sf.to_excel('output.xlsx',
-            row_to_add_filters=0,
+            # Add filters in row 0 to each column.
+            row_to_add_filters=0, 
+            # Freeze the columns before column 'A' (=None) and rows above '2' (=1).
             columns_and_rows_to_freeze='A2').save()
 ```
 
