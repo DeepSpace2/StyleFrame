@@ -336,7 +336,8 @@ class StyleFrame(object):
 
         if height:
             # Add offset 2 since rows do not include the headers and they starts from 1 (not 0).
-            self.set_row_height(rows=indexes_to_style + 2, height=height)
+            rows_indexes_for_height_change = [self.index.get_loc(idx) + 2 for idx in indexes_to_style]
+            self.set_row_height(rows=rows_indexes_for_height_change, height=height)
 
         return self
 
