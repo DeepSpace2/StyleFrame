@@ -8,9 +8,10 @@ $ pip install styleframe
 ```
 You can read the documentation at http://styleframe.readthedocs.org/en/latest/
 
+<img src=https://s.faketrumptweet.com/j3kkdbjj_1vtght_m1uf0.png width=295px height=120px/>
 ---
 
-## Table Of Contents
+## Contents
 1. [Rationale](#rationale)
 2. [Basics](#basics)
 3. [Usage Examples](#usage-examples)    
@@ -38,8 +39,8 @@ It saves us the trouble of working with excel workbook and the suffering of tryi
 * ***Styler***:
 ```python
 __init__(self, bg_color=None, bold=False, font="Arial", font_size=12, font_color=None,
-             number_format=utils.number_formats.general, protection=False, underline=None,
-             border_type=utils.borders.thin)
+         number_format=utils.number_formats.general, protection=False, underline=None,
+         border_type=utils.borders.thin)
 ```
 Object that represents the style of a cell in our excel file.
 Styler is responsible of storing the style of single cell.
@@ -83,43 +84,49 @@ import time
 
 from StyleFrame import StyleFrame, Styler, utils
 
+expected = 'Hey how are you today?'.split()
+actual = 'Hello how are u today?'.split()
+pass_or_failed = ['Passed' if e == a else 'Failed' for e, a in zip(expected, actual)]
 
 df = pd.DataFrame({
     'Time': [time.time() for i in xrange(5)],
-    'Expect': 'Hey how are you today?'.split(),
-    'Actual': 'Hello how are u today?'.split(),
-    'Pass/Fail': ['Failed', 'Passed', 'Passed', 'Failed', 'Passed']
+    'Expect': expected,
+    'Actual': actual,
+    'Pass/Fail': pass_or_failed
     },
     columns=['Time', 'Expect', 'Actual', 'Pass/Fail'])
 
 defaults = {'font': 'Aharoni', 'font_size': 14}
 sf = StyleFrame(df, styler_obj=Styler(**defaults))
 
+# Style the headers of the table
+header_style = Styler(bold=True, font_size=18)
+sf.apply_headers_style(styler_obj=header_style)
+
 # Set the background color to green where the test marked as 'passed'
+passed_style = Styler(bg_color=utils.colors.green, font_color=utils.colors.white, **defaults)
 sf.apply_style_by_indexes(indexes_to_style=sf[sf['Pass/Fail'] == 'Passed'],
                           cols_to_style='Pass/Fail',
-                          styler_obj=Styler(bg_color=utils.colors.green,
-                          font_color=utils.colors.white,
-                          **defaults))
+                          styler_obj=passed_style)
 
 # Set the background color to red where the test marked as 'failed'
+failed_style = Styler(bg_color=utils.colors.red, font_color=utils.colors.white, **defaults)
 sf.apply_style_by_indexes(indexes_to_style=sf[sf['Pass/Fail'] == 'Failed'],
                           cols_to_style='Pass/Fail',
-                          styler_obj=Styler(bg_color=utils.colors.red,
-                          font_color=utils.colors.white,
-                          **defaults))
+                          styler_obj=failed_style)
 
-sf.apply_headers_style(styler_obj=Styler(bold=True, font_size=18))
 
 sf.set_column_width(columns=list(sf.columns), width=20)
 
-all_rows = [index + 1 for index in sf.index] + [sf.index[-1] + 2]
+# excel rows starts from 1
+# row number 1 is the headers
+# len of StyleFrame (same as DataFrame) does not count the headers row
+all_rows = tuple(i for i in range(1, len(sf) + 2))
 sf.set_row_height(rows=all_rows, height=25)
 
 sf.to_excel('output.xlsx',
             row_to_add_filters=0,
             columns_and_rows_to_freeze='A2').save()
-
 ```
 
 ### Advance Example
@@ -189,12 +196,7 @@ sf.apply_column_style(cols_to_style='Percentage',
                       styler_obj=Styler(number_format=utils.number_formats.percent))
 
 sf.apply_column_style(cols_to_style=['Col A', 'Col B', 'Col C'],
-                      styler_obj=Styler(number_format=utils.number_formats.thousands_comma_sep))
-                      
-# if using version < 0.2 you need to define the style with style specifiers
-sf.apply_column_style(cols_to_style=['Col A', 'Col B', 'Col C'],
-                      number_format=utils.number_formats.thousands_comma_sep)
-
+                      styler_obj=Styler(number_format=utils.number_formats.thousands_comma_sep))                     
 ```
 
 Next, let's change the background color of the maximum values to red and the font to white  
@@ -213,13 +215,6 @@ sf.apply_column_style(cols_to_style=['Sum', 'Mean'],
                                         font_size=18,
                                         bold=True),
                       style_header=True)
-# if using version < 0.2 you need to define the style with style specifiers
-sf.apply_column_style(cols_to_style=['Sum', 'Mean'],
-                      font_color='#40B5BF',
-                      font_size=18,
-                      bold=True,
-                      style_header=True)
-
 ```
 
 Change the background of all rows where the date is after 14/1/2000 to green
@@ -227,13 +222,6 @@ Change the background of all rows where the date is after 14/1/2000 to green
 sf.apply_style_by_indexes(indexes_to_style=sf[sf['Date'] > date(2000, 1, 14)],
                           cols_to_style='Date',
                           styler_obj=Styler(bg_color='green', number_format=utils.number_formats.date, bold=True))
-# if using version < 0.2 you need to define the style with style specifiers
-sf.apply_style_by_indexes(indexes_to_style=sf[sf['Date'] > date(2000, 1, 14)],
-                          cols_to_style='Date',
-                          bg_color=utils.colors.green,
-                          number_format=utils.number_formats.date,
-                          bold=True)
-              
 ```
 
 Finally, let's export to Excel but not before we use more of StyleFrame's features:
@@ -255,11 +243,6 @@ Adding another excel sheet
 ```python
 other_sheet_sf = StyleFrame({'Dates': [date(2016, 10, 20), date(2016, 10, 21), date(2016, 10, 22)]},
                             styler_obj=Styler(number_format=utils.number_formats.date))
-# if using version < 0.2 you need to define the style with style specifiers
-other_sheet_sf = StyleFrame({'Dates': [date(2016, 10, 20), date(2016, 10, 21), date(2016, 10, 22)]},
-                            number_format=utils.number_formats.date)
-
-other_sheet_sf.to_excel(excel_writer=ew, sheet_name='2')
 ```
 
 Don't forget to save
