@@ -87,13 +87,13 @@ from StyleFrame import StyleFrame, Styler, utils
 
 expected = 'Hey how are you today?'.split()
 actual = 'Hello how are u today?'.split()
-pass_or_failed = ['Passed' if e == a else 'Failed' for e, a in zip(expected, actual)]
+passed_or_failed = ['Passed' if e == a else 'Failed' for e, a in zip(expected, actual)]
 
 df = pd.DataFrame({
     'Time': [time.time() for i in xrange(5)],
     'Expect': expected,
     'Actual': actual,
-    'Pass/Fail': pass_or_failed
+    'Pass/Fail': passed_or_failed
     },
     columns=['Time', 'Expect', 'Actual', 'Pass/Fail'])
     
@@ -128,14 +128,9 @@ sf.apply_style_by_indexes(indexes_to_style=sf[sf['Pass/Fail'] == 'Failed'],
                           cols_to_style='Pass/Fail',
                           styler_obj=failed_style)
 
-
-sf.set_column_width(columns=list(sf.columns), width=20)
-
-# excel rows starts from 1
-# row number 1 is the headers
-# len of StyleFrame (same as DataFrame) does not count the headers row
-all_rows = tuple(i for i in range(1, len(sf) + 2))
-sf.set_row_height(rows=all_rows, height=25)
+# Change the columns width and the rows height
+sf.set_column_width(columns=sf.columns, width=20)
+sf.set_row_height(rows=sf.row_indexes, height=25)
 
 sf.to_excel('output.xlsx',
             # Add filters in row 0 to each column.
@@ -195,7 +190,7 @@ sf.set_column_width_dict(col_width_dict={
 # excel rows starts from 1
 # row number 1 is the headers
 # len of StyleFrame (same as DataFrame) does not count the headers row
-all_rows = tuple(i for i in range(1, len(sf) + 2))
+all_rows = sf.row_indexes
 sf.set_row_height_dict(row_height_dict={
     all_rows[0]: 45,
     all_rows[1:]: 25

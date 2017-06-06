@@ -119,6 +119,10 @@ class StyleFrame(object):
     def ExcelWriter(cls, path):
         return pd.ExcelWriter(path, engine='openpyxl')
 
+    @property
+    def row_indexes(self):
+        return tuple(i for i in range(1, len(self) + 2))
+
     def to_excel(self, excel_writer='output.xlsx', sheet_name='Sheet1', na_rep='', float_format=None, columns=None,
                  header=True, index=False, index_label=None, startrow=0, startcol=0, merge_cells=True, encoding=None,
                  inf_rep='inf', allow_protection=False, right_to_left=False, columns_to_hide=None,
@@ -346,7 +350,7 @@ class StyleFrame(object):
         if not isinstance(styler_obj, Styler):
             raise TypeError('styler_obj must be {}, got {} instead.'.format(Styler.__name__, type(styler_obj).__name__))
 
-        if not isinstance(cols_to_style, (list, tuple)):
+        if not isinstance(cols_to_style, (list, tuple, pd.Index)):
             cols_to_style = [cols_to_style]
         if not all(col in self.columns for col in cols_to_style):
             raise KeyError("one of the columns in {} wasn't found".format(cols_to_style))
@@ -394,7 +398,7 @@ class StyleFrame(object):
         :return: self
         :rtype: StyleFrame
         """
-        if not isinstance(columns, (set, list, tuple)):
+        if not isinstance(columns, (set, list, tuple, pd.Index)):
             columns = [columns]
         try:
             width = float(width)
@@ -430,7 +434,7 @@ class StyleFrame(object):
         :return: self
         :rtype: StyleFrame
         """
-        if not isinstance(rows, (set, list, tuple)):
+        if not isinstance(rows, (set, list, tuple, pd.Index)):
             rows = [rows]
         try:
             height = float(height)
