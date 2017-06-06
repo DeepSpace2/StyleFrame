@@ -235,7 +235,7 @@ Change the background of all rows where the date is after 14/1/2000 to green
 sf.apply_style_by_indexes(indexes_to_style=sf[sf['Date'] > date(2000, 1, 14)],
                           cols_to_style='Date',
                           tyler_obj=Styler(bg_color='green',
-                          number_format=utils.number_formats.date,
+                                           number_format=utils.number_formats.date,
                           bold=True))
 ```
 
