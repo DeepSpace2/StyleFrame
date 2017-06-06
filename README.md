@@ -236,7 +236,7 @@ sf.apply_style_by_indexes(indexes_to_style=sf[sf['Date'] > date(2000, 1, 14)],
                           cols_to_style='Date',
                           tyler_obj=Styler(bg_color='green',
                                            number_format=utils.number_formats.date,
-                          bold=True))
+                                           bold=True))
 ```
 
 Finally, let's export to Excel but not before we use more of StyleFrame's features:
