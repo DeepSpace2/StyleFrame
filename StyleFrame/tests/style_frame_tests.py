@@ -5,6 +5,7 @@ import os
 from functools import partial
 from StyleFrame import StyleFrame, Styler, utils
 
+
 class StyleFrameTest(unittest.TestCase):
     TEST_FILENAME = 'styleframe_test.xlsx'
 

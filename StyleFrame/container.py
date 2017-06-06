@@ -97,3 +97,10 @@ class Container(object):
 
     def __pow__(self, power, modulo=None):
         return self.value ** power
+
+    def __int__(self):
+        return int(self.value)
+
+    def __float__(self):
+        return float(self.value)
+

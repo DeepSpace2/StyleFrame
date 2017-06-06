@@ -287,13 +287,14 @@ class StyleFrame(object):
 
         return excel_writer
 
-    def apply_style_by_indexes(self, indexes_to_style, styler_obj, cols_to_style=None):
+    def apply_style_by_indexes(self, indexes_to_style, styler_obj, height=None, cols_to_style=None):
         """Applies a certain style to the provided indexes in the dataframe in the provided columns
 
-        :param indexes_to_style: indexes to apply the style to
+        :param indexes_to_style: indexes to apply the style to (based on sf.index)
         :param cols_to_style: the columns to apply the style to, if not provided all the columns will be styled
         :param styler_obj: the styler object that contains the style to be applied
         :type styler_obj: Styler
+        :param height: non-default height for the given rows
         :return: self
         :rtype: StyleFrame
         """
@@ -331,14 +332,19 @@ class StyleFrame(object):
                 styler_obj.number_format = values_number_format
                 self.ix[index.value, col].style = styler_obj.create_style()
 
+        if height:
+            # Add offset 2 since rows do not include the headers and they starts from 1 (not 0).
+            self.set_row_height(rows=indexes_to_style + 2, height=height)
+
         return self
 
-    def apply_column_style(self, cols_to_style, styler_obj, style_header=False, use_default_formats=True):
+    def apply_column_style(self, cols_to_style, styler_obj, width=None, style_header=False, use_default_formats=True):
         """apply style to a whole column
 
         :param cols_to_style: the columns to apply the style to
         :param styler_obj: the styler object that contains the style to be applied
         :type styler_obj: Styler
+        :param width: non-default width for the given columns
         :param style_header: if True, style the headers as well
         :type style_header: bool
         :param use_default_formats: if True, use predefined styles for dates and times
@@ -368,6 +374,9 @@ class StyleFrame(object):
                         styler_obj.number_format = utils.number_formats.time_24_hours
 
                 self.ix[index, col_name].style = styler_obj.create_style()
+
+        if width:
+            self.set_column_width(columns=cols_to_style, width=width)
 
         return self
 
