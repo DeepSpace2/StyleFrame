@@ -10,3 +10,7 @@ before_script:
 - cd StyleFrame/tests/
 - chmod +x style_frame_tests.py
 script: python style_frame_tests.py
+notifications:
+  email:
+    on_success: change
+    on_failure: always
