@@ -1,5 +1,7 @@
 import argparse
 import json
+from collections import defaultdict
+
 import pandas as pd
 
 from StyleFrame import StyleFrame, Container, Styler, version
@@ -9,6 +11,7 @@ class CommandLineInterface(object):
     def __init__(self, input_path, output_path):
         self.input_path = input_path
         self.excel_writer = StyleFrame.ExcelWriter(output_path)
+        self.col_names_to_width = defaultdict(dict)
 
     def parse_as_json(self):
         self._load_from_json()
@@ -17,53 +20,37 @@ class CommandLineInterface(object):
     def _load_from_json(self):
         with open(self.input_path) as j:
             sheets = json.load(j)
-
             if not isinstance(sheets, list):
                 sheets = list(sheets)
-
             for sheet in sheets:
-                self._load_single_sheet(sheet)
+                self._load_sheet(sheet)
 
-    def _load_single_sheet(self, sheet):
-        default_style = Styler(**sheet.get('default_style', {})).create_style()
-        data = {col_name: [Container(cell['value'],
-                                     Styler(**cell['style']).create_style() if 'style' in cell else default_style)
-                           for cell in cells]
-                for col_name, cells in sheet['sheet_data'].items()}
+    def _load_sheet(self, sheet):
+        sheet_name = sheet['sheet_name']
+        data = defaultdict(list)
+        for col in sheet['columns']:
+            col_name = col['col_name']
+            col_width = col.get('width')
+            if col_width:
+                self.col_names_to_width[sheet_name][col_name] = col_width
+            for cell in col['cells']:
+                data[col_name].append(Container(cell['value'], Styler(**(cell.get('style')
+                                                                         or col.get('style')
+                                                                         or {})).create_style()))
+        sf = StyleFrame(pd.DataFrame(data=data))
 
-        sf = StyleFrame(pd.DataFrame(data=data, columns=[column['value'] for column in sheet['sheet_columns']]))
+        self.apply_headers_style(sf, sheet)
+        self._apply_cols_and_rows_dimensions(sf, sheet)
+        sf.to_excel(excel_writer=self.excel_writer, sheet_name=sheet_name, **sheet['extra_features'])
 
-        self._apply_style(sf, sheet)
+    def apply_headers_style(self, sf, sheet):
+        sf.apply_headers_style(styler_obj=Styler(**(sheet.get('default_styles', {}).get('headers') or {})))
 
-        sf.to_excel(excel_writer=self.excel_writer,
-                    sheet_name=sheet['sheet_name'],
-                    **sheet['extra_features'])
-
-    def _apply_style(self, sf, sheet):
-        self._apply_default_style(sf, sheet)
-        self._apply_default_header_style(sf, sheet)
-        self._apply_specific_cols_and_rows_dimensions(sf, sheet)
-
-    def _apply_default_style(self, sf, sheet):
-        if 'default_columns_style' in sheet:
-            default_columns_style = sheet['default_columns_style']
-            if 'width' in default_columns_style:
-                sf.set_column_width(columns=list(sf.columns), width=default_columns_style.pop('width'))
-
-            if default_columns_style:
-                style = Styler(**default_columns_style)
-                sf.apply_column_style(cols_to_style=list(sf.columns), styler_obj=style)
-
-    def _apply_default_header_style(self, sf, sheet):
-        if 'default_header_style' in sheet:
-            sf.apply_headers_style(styler_obj=Styler(**sheet['default_header_style']))
-
-    def _apply_specific_cols_and_rows_dimensions(self, sf, sheet):
-        for column in filter(lambda col: 'width' in col, sheet['sheet_columns']):
-            sf.set_column_width(columns=column['value'], width=column['width'])
-
-        for row in filter(lambda r: 'height' in r, sheet.get('sheet_rows', [])):
-            sf.set_row_height(rows=row['index'], height=row['height'])
+    def _apply_cols_and_rows_dimensions(self, sf, sheet):
+        sf.set_column_width_dict(self.col_names_to_width[sheet['sheet_name']])
+        row_heights = sheet.get('row_heights')
+        if row_heights:
+            sf.set_row_height_dict(row_heights)
 
     def _save(self):
         self.excel_writer.save()
@@ -77,7 +64,8 @@ def get_cli_args():
                        help='print versions of the Python interpreter, openpyxl, pandas and StyleFrame then quit')
     group.add_argument('--json_path', help='path to json file which defines the Excel file')
 
-    parser.add_argument('--output_path', help='path of output Excel file, defaults to output.xlsx', default='output.xlsx')
+    parser.add_argument('--output_path', help='path of output Excel file, defaults to output.xlsx',
+                        default='output.xlsx')
 
     cli_args = parser.parse_args()
 
@@ -93,6 +81,7 @@ def execute_from_command_line():
         print(version.get_all_versions())
         return
     CommandLineInterface(input_path=cli_args.json_path, output_path=cli_args.output_path).parse_as_json()
+
 
 if __name__ == '__main__':
     execute_from_command_line()
