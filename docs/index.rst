@@ -32,7 +32,6 @@ An existing dataframe, a dictionary or a list of dictionaries:
 
     sf = StyleFrame({'col_a': range(100)})
 
-
 Applying a style to rows that meet a condition using pandas selecting syntax.
 In this example all the cells in the `col_a` column with the value > 50 will have
 blue background and a bold, sized 10 font:
@@ -56,7 +55,6 @@ It is also possible to style a whole column or columns, and decide whether to st
     sf.apply_column_style(cols_to_style=['a'], styler_obj=Styler(bg_color=utils.colors.green),
                           style_header=True)
 
-
 API documentation
 -----------------
 Given that `sf = StyleFrame(...)` :
@@ -69,7 +67,7 @@ Styling by indexes
                               styler_obj=Styler(bg_color=utils.colors.white,
                               bold=False, font_size=12, font_color=utils.colors.black,
                               number_format=utils.number_formats.general,
-                              protection=False))
+                              protection=False), height=None)
 
 Applies a certain style to the provided indexes in the dataframe to the provided columns.
 Parameters:
@@ -78,7 +76,7 @@ Parameters:
     indexes_to_style: indexes to apply the style to
     cols_to_style: the columns to apply the style to, if not provided all the columns will be styled
     styler_obj: a StyleFrame.Styler object
-   
+    height: if None, use default excel height otherwise use the given height value for the chosen rows
 
 Styling by columns
 ^^^^^^^^^^^^^^^^^^
@@ -88,7 +86,7 @@ Styling by columns
                           styler_obj=Styler(bg_color=utils.colors.white, bold=False, font_size=12,
                           font_color=utils.colors.black, style_header=False,
                           number_format=utils.number_formats.general,
-                          protection=False), use_default_formats=True)
+                          protection=False), use_default_formats=True, width=None)
 
 Apply a style to a whole column.
 Parameters:
@@ -97,6 +95,7 @@ Parameters:
     cols_to_style: the columns to apply the style to
     styler_obj: a StyleFrame.Styler object
     use_default_formats: if True, use predefined styles for dates and times
+    width: if None, use default excel width otherwise use the given width value for the chosen columns
 
 Styling headers only
 ^^^^^^^^^^^^^^^^^^^^
@@ -105,13 +104,11 @@ Styling headers only
     sf.apply_headers_style(styler_obj=Styler(bg_color=colors.white, bold=True, font_size=12, font_color=utils.colors.black,
                            number_format=utils.number_formats.general, protection=False))
 
-
 Apply style to the headers only.
 Parameters:
 ::
 
         styler_obj: a StyleFrame.Styler object
-
 
 Renaming columns
 ^^^^^^^^^^^^^^^^
@@ -126,7 +123,6 @@ Parameters:
         columns: a dictionary, old_col_name -> new_col_name
         inplace: whether to rename the columns inplace or return a new StyleFrame object
         return: None if inplace=True, StyleFrame if inplace=False
-
 
 Setting columns width
 ^^^^^^^^^^^^^^^^^^^^^
@@ -150,13 +146,11 @@ Parameters:
 
         col_width_dict: a dictionary from tuples of columns to the desired width
 
-
 Setting rows height
 ^^^^^^^^^^^^^^^^^^^
 ::
 
     sf.set_row_height(rows, height)
-
 
 Set the height of the given rows.
 Parameters:

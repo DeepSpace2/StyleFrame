@@ -18,12 +18,13 @@ class number_formats(BaseDefClass):
     general = 'General'
     general_integer = '0'
     general_float = '0.00'
-    date = 'DD/MM/YY'
     percent = '0.0%'
+    thousands_comma_sep = '#,##0'
+    date = 'DD/MM/YY'
     time_24_hours = 'HH:MM'
     time_12_hours = 'h:MM AM/PM'
     date_time = 'DD/MM/YY HH:MM'
-    thousands_comma_sep = '#,##0'
+    date_time_with_seconds = 'DD/MM/YY HH:MM:SS'
 
 
 class colors(BaseDefClass):
@@ -42,17 +43,17 @@ class colors(BaseDefClass):
 
 
 class fonts(BaseDefClass):
-    arial = 'Arial'
-    calibri = 'Calibri'
-    aharoni = 'Aharoni CLM'
-    david = 'David CLM'
-    ellinia = 'Ellinia CLM'
-    dejavu_sans = 'DejaVu Sans'
     aegean = 'Aegean'
     aegyptus = 'Aegyptus'
+    aharoni = 'Aharoni CLM'
     anaktoria = 'Anaktoria'
     analecta = 'Analecta'
     anatolian = 'Anatolian'
+    arial = 'Arial'
+    calibri = 'Calibri'
+    david = 'David CLM'
+    dejavu_sans = 'DejaVu Sans'
+    ellinia = 'Ellinia CLM'
 
 
 class borders(BaseDefClass):
