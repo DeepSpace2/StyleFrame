@@ -414,7 +414,7 @@ class StyleFrame(object):
             columns = [columns]
         try:
             width = float(width)
-        except TypeError:
+        except ValueError:
             raise TypeError('columns width must be numeric value')
 
         if width <= 0:
@@ -430,9 +430,12 @@ class StyleFrame(object):
     def set_column_width_dict(self, col_width_dict):
         """
         :param col_width_dict: dictionary from tuple of columns to new width
+        :type col_width_dict: dict
         :return: self
         :rtype: StyleFrame
         """
+        if not isinstance(col_width_dict, dict):
+            raise TypeError("'col_width_dict' must be a dictionary")
         for cols, width in col_width_dict.items():
             self.set_column_width(cols, width)
 
@@ -450,7 +453,7 @@ class StyleFrame(object):
             rows = [rows]
         try:
             height = float(height)
-        except TypeError:
+        except ValueError:
             raise TypeError('rows height must be numeric value')
 
         if height <= 0:
@@ -475,8 +478,6 @@ class StyleFrame(object):
         if not isinstance(row_height_dict, dict):
             raise TypeError("'row_height_dict' must be a dictionary")
         for rows, height in row_height_dict.items():
-            if not isinstance(height, (int, float)) or height <= 0:
-                raise ValueError('rows height must be positive value')
             self.set_row_height(rows, height)
         return self
 
