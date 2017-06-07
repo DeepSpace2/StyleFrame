@@ -195,45 +195,47 @@ class ContainerTest(unittest.TestCase):
     def setUp(self):
         self.cont_1 = Container(1)
         self.cont_2 = Container(2)
-        self.num_3 = 3
 
     def test__gt__(self):
         self.assertTrue(self.cont_2 > self.cont_1)
-        self.assertTrue(4 > self.num_3)
+        self.assertTrue(self.cont_2 > 1)
 
     def test__ge__(self):
         self.assertTrue(self.cont_1 >= self.cont_1)
         self.assertTrue(self.cont_2 > self.cont_1)
         self.assertTrue(not self.cont_1 >= self.cont_2)
-        self.assertTrue(not self.cont_1 >= self.num_3)
+        self.assertTrue(not self.cont_1 >= 3)
 
     def test__lt__(self):
         self.assertTrue(self.cont_1 < self.cont_2)
         self.assertTrue(not self.cont_2 < self.cont_1)
-        self.assertTrue(self.cont_2 < self.num_3)
+        self.assertTrue(self.cont_2 < 3)
 
     def test__le__(self):
         self.assertTrue(self.cont_1 <= self.cont_1)
         self.assertTrue(not self.cont_2 < self.cont_1)
         self.assertTrue(self.cont_1 <= self.cont_2)
-        self.assertTrue(self.cont_1 <= self.num_3)
+        self.assertTrue(self.cont_1 <= 3)
 
     def test__add__(self):
         self.assertTrue(self.cont_1 + self.cont_1 == self.cont_2)
+        self.assertTrue(self.cont_1 + 1 == self.cont_2)
 
     def test__sub__(self):
         self.assertTrue(self.cont_2 - self.cont_1 == self.cont_1)
+        self.assertTrue(self.cont_2 - 1 == self.cont_1)
 
     def test__div__(self):
         self.assertTrue(self.cont_2 / self.cont_2 == self.cont_1)
         self.assertTrue(self.cont_2 / self.cont_1 == self.cont_2)
-        self.assertTrue(self.cont_2 / self.num_3 == Container(2/3))
+        self.assertTrue(self.cont_2 / 3 == Container(2/3))
 
     def test__mul__(self):
         self.assertTrue(self.cont_1 * self.cont_1 == self.cont_1)
-        self.assertTrue(self.cont_2 * self.cont_1 == self.cont_2)
+        self.assertTrue(self.cont_2 * 1 == self.cont_2)
 
     def test__mod__(self):
+        self.assertTrue(self.cont_2 % self.cont_1 == Container(0))
         self.assertTrue(self.cont_2 % 1 == Container(0))
 
     def test__pow__(self):
