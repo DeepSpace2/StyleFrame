@@ -109,7 +109,7 @@ df = pd.DataFrame({
 """
 
 # Create StyleFrame object that wrap our DataFrame and assign default style.
-defaults = {'font': 'Aharoni', 'font_size': 14}
+defaults = {'font': utils.fonts.aharoni, 'font_size': 14}
 sf = StyleFrame(df, styler_obj=Styler(**defaults))
 
 # Style the headers of the table
@@ -146,6 +146,7 @@ The final output saved under output.xlsx:
 
 First, let us create a DataFrame that contains data we would like to export to an .xlsx file 
 ```python
+from datetime import date
 import pandas as pd
 
 
@@ -163,6 +164,15 @@ rows_max_value = only_values_df.idxmax(axis=1)
 
 df['Sum'] = only_values_df.sum(axis=1)
 df['Mean'] = only_values_df.mean(axis=1)
+
+"""Our DataFrame looks like this:
+
+         Date  Col A  Col B  Col C  Percentage   Sum        Mean
+0  1995-09-05      1     15     33       0.113    49   16.333333
+1  1947-11-29   2004      3     -6       0.504  2001  667.000000
+2  2000-01-15     -3    116      9       0.005   122   40.666667
+
+"""
 ```
 
 Now, once we have the DataFrame ready, lets create a StyleFrame object
@@ -203,7 +213,9 @@ from StyleFrame import Styler, utils
 
 
 sf.apply_column_style(cols_to_style='Date',
-                      styler_obj=Styler(number_format=utils.number_formats.date, font='Calibri', bold=True))
+                      styler_obj=Styler(number_format=utils.number_formats.date,
+                                        font=utils.fonts.calibri,
+                                        bold=True))
 
 sf.apply_column_style(cols_to_style='Percentage',
                       styler_obj=Styler(number_format=utils.number_formats.percent))
@@ -215,8 +227,13 @@ sf.apply_column_style(cols_to_style=['Col A', 'Col B', 'Col C'],
 Next, let's change the background color of the maximum values to red and the font to white  
 we will also protect those cells and prevent the ability to change their value
 ```python
-style = Styler(bg_color=utils.colors.red, bold=True, font_color=utils.colors.white, protection=True,
-               underline=utils.underline.double, number_format=utils.number_formats.thousands_comma_sep).create_style()
+style = Styler(bg_color=utils.colors.red,
+               bold=True,
+               font_color=utils.colors.white,
+               protection=True,
+               underline=utils.underline.double,
+               number_format=utils.number_formats.thousands_comma_sep).create_style()
+        
 for row_index, col_name in rows_max_value.iteritems():
     sf[col_name][row_index].style = style
 ```
@@ -224,19 +241,19 @@ for row_index, col_name in rows_max_value.iteritems():
 And change the font and the font size of Sum and Mean columns
 ```python
 sf.apply_column_style(cols_to_style=['Sum', 'Mean'],
+                      style_header=True,
                       styler_obj=Styler(font_color='#40B5BF',
                                         font_size=18,
-                                        bold=True),
-                      style_header=True)
+                                        bold=True))
 ```
 
 Change the background of all rows where the date is after 14/1/2000 to green
 ```python                 
 sf.apply_style_by_indexes(indexes_to_style=sf[sf['Date'] > date(2000, 1, 14)],
                           cols_to_style='Date',
-                          tyler_obj=Styler(bg_color='green',
-                                           number_format=utils.number_formats.date,
-                                           bold=True))
+                          styler_obj=Styler(bg_color=utils.colors.green,
+                                            number_format=utils.number_formats.date,
+                                            bold=True))
 ```
 
 Finally, let's export to Excel but not before we use more of StyleFrame's features:

@@ -41,6 +41,20 @@ class colors(BaseDefClass):
     grey = 'D3D3D3'
 
 
+class fonts(BaseDefClass):
+    arial = 'Arial'
+    calibri = 'Calibri'
+    aharoni = 'Aharoni CLM'
+    david = 'David CLM'
+    ellinia = 'Ellinia CLM'
+    dejavu_sans = 'DejaVu Sans'
+    aegean = 'Aegean'
+    aegyptus = 'Aegyptus'
+    anaktoria = 'Anaktoria'
+    analecta = 'Analecta'
+    anatolian = 'Anatolian'
+
+
 class borders(BaseDefClass):
     dash_dot = 'dashDot'
     dash_dot_dot = 'dashDotDot'
