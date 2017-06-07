@@ -5,14 +5,13 @@ python:
   - "3.4"
   - "3.5"
   - "3.6"
-before_install:
-  - "pip install codecov"
 install:
   - "pip install -r requirements.txt"
+  - "pip install codecov"
 before_script:
 - cd StyleFrame/tests/
 - chmod +x style_frame_tests.py
-script: python style_frame_tests.py
+script: coverage run style_frame_tests.py
 notifications:
   email:
     on_success: change
