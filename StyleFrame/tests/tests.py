@@ -3,7 +3,7 @@ import pandas as pd
 import os
 
 from functools import partial
-from StyleFrame import StyleFrame, Styler, utils
+from StyleFrame import Container, StyleFrame, Styler, utils
 
 
 class StyleFrameTest(unittest.TestCase):
@@ -191,9 +191,66 @@ class StyleFrameTest(unittest.TestCase):
                         for excel_cell, self_cell in zip(row_in_excel, row_in_self)))
 
 
+class ContainerTest(unittest.TestCase):
+    def setUp(self):
+        self.cont_1 = Container(1)
+        self.cont_2 = Container(2)
+        self.num_3 = 3
+
+    def test__gt__(self):
+        self.assertTrue(self.cont_2 > self.cont_1)
+        self.assertTrue(4 > self.num_3)
+
+    def test__ge__(self):
+        self.assertTrue(self.cont_1 >= self.cont_1)
+        self.assertTrue(self.cont_2 > self.cont_1)
+        self.assertTrue(not self.cont_1 >= self.cont_2)
+        self.assertTrue(not self.cont_1 >= self.num_3)
+
+    def test__lt__(self):
+        self.assertTrue(self.cont_1 < self.cont_2)
+        self.assertTrue(not self.cont_2 < self.cont_1)
+        self.assertTrue(self.cont_2 < self.num_3)
+
+    def test__le__(self):
+        self.assertTrue(self.cont_1 <= self.cont_1)
+        self.assertTrue(not self.cont_2 < self.cont_1)
+        self.assertTrue(self.cont_1 <= self.cont_2)
+        self.assertTrue(self.cont_1 <= self.num_3)
+
+    def test__add__(self):
+        self.assertTrue(self.cont_1 + self.cont_1 == self.cont_2)
+
+    def test__sub__(self):
+        self.assertTrue(self.cont_2 - self.cont_1 == self.cont_1)
+
+    def test__div__(self):
+        self.assertTrue(self.cont_2 / self.cont_2 == self.cont_1)
+        self.assertTrue(self.cont_2 / self.cont_1 == self.cont_2)
+        self.assertTrue(self.cont_2 / self.num_3 == Container(2/3))
+
+    def test__mul__(self):
+        self.assertTrue(self.cont_1 * self.cont_1 == self.cont_1)
+        self.assertTrue(self.cont_2 * self.cont_1 == self.cont_2)
+
+    def test__mod__(self):
+        self.assertTrue(self.cont_2 % 1 == Container(0))
+
+    def test__pow__(self):
+        self.assertTrue(self.cont_2 ** 2 == Container(4))
+
+    def test__int__(self):
+        self.assertTrue(int(self.cont_2) == 2)
+
+    def test__float__(self):
+        self.assertTrue(float(self.cont_1) == 1.0)
+
+
 def run():
-    suite = unittest.TestLoader().loadTestsFromTestCase(StyleFrameTest)
-    unittest.TextTestRunner().run(suite)
+    test_classes = [ContainerTest, StyleFrameTest]
+    for test_class in test_classes:
+        suite = unittest.TestLoader().loadTestsFromTestCase(test_class)
+        unittest.TextTestRunner().run(suite)
 
 
 if __name__ == '__main__':

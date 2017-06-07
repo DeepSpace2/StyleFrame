@@ -85,6 +85,16 @@ class Container(object):
             return self.value / other.value
         return self.value / other
 
+    def __truediv__(self, other):
+        if isinstance(other, self.__class__):
+            return self.value / other.value
+        return self.value / other
+
+    def __floordiv__(self, other):
+        if isinstance(other, self.__class__):
+            return self.value // other.value
+        return self.value // other
+
     def __mul__(self, other):
         if isinstance(other, self.__class__):
             return self.value * other.value

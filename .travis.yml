@@ -10,8 +10,8 @@ install:
   - "pip install codecov"
 before_script:
 - cd StyleFrame/tests/
-- chmod +x style_frame_tests.py
-script: coverage run style_frame_tests.py
+- chmod +x tests.py
+script: coverage run tests.py
 notifications:
   email:
     on_success: change

@@ -24,4 +24,4 @@ else:
 from StyleFrame import warnings_conf
 
 if 'utrunner' not in sys.argv[0]:
-    from StyleFrame.tests import style_frame_tests as tests
+    from StyleFrame.tests import tests
