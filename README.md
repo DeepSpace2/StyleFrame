@@ -202,7 +202,7 @@ sf.set_column_width_dict(col_width_dict={
 # len of StyleFrame (same as DataFrame) does not count the headers row
 all_rows = sf.row_indexes
 sf.set_row_height_dict(row_height_dict={
-    all_rows[0]: 45,
+    all_rows[0]: 45,  # headers row
     all_rows[1:]: 25
 })
 ```
