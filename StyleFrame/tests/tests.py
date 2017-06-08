@@ -3,15 +3,16 @@ import pandas as pd
 import os
 
 from functools import partial
-from StyleFrame import Container, StyleFrame, Styler, utils
+from StyleFrame import Container, StyleFrame, Styler, CommandLineInterface, utils
+
+TEST_FILENAME = 'styleframe_test.xlsx'
+TEST_JSON = 'test_json.json'
 
 
 class StyleFrameTest(unittest.TestCase):
-    TEST_FILENAME = 'styleframe_test.xlsx'
-
     @classmethod
     def setUpClass(cls):
-        cls.ew = StyleFrame.ExcelWriter(StyleFrameTest.TEST_FILENAME)
+        cls.ew = StyleFrame.ExcelWriter(TEST_FILENAME)
         cls.styler_obj = Styler(bg_color=utils.colors.blue, bold=True, font='Impact', font_color=utils.colors.yellow,
                                 font_size=20, underline=utils.underline.single)
         cls.openpy_style_obj = cls.styler_obj.create_style()
@@ -25,7 +26,7 @@ class StyleFrameTest(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         try:
-            os.remove(StyleFrameTest.TEST_FILENAME)
+            os.remove(TEST_FILENAME)
         except OSError as ex:
             print(ex)
 
@@ -69,11 +70,11 @@ class StyleFrameTest(unittest.TestCase):
         self.assertTrue(str(self), str(self.sf.data_df))
 
     def test__get_item__(self):
-        self.assertTrue(self.sf['a'].tolist(), self.sf.data_df['a'].tolist())
-        self.assertTrue(self.sf[['a', 'b']], self.sf.data_df[['a', 'b']])
+        self.assertEqual(self.sf['a'].tolist(), self.sf.data_df['a'].tolist())
+        self.assertTrue(self.sf.data_df[['a', 'b']].equals(self.sf[['a', 'b']].data_df))
 
     def test__getattr__(self):
-        self.assertTrue(self.sf.fillna, self.sf.data_df.fillna)
+        self.assertEqual(self.sf.fillna, self.sf.data_df.fillna)
 
         with self.assertRaises(AttributeError):
             self.sf.non_exisiting_method()
@@ -94,7 +95,7 @@ class StyleFrameTest(unittest.TestCase):
 
         sheet = self.export_and_get_default_sheet()
 
-        self.assertTrue(sheet.column_dimensions['A'].width, 10)
+        self.assertEqual(sheet.column_dimensions['A'].width, 10)
 
         # range starts from 2 since we don't want to check the header's style
         self.assertTrue(all(sheet.cell(row=i, column=1).style == self.openpy_style_obj for i in range(2, len(self.sf))))
@@ -230,14 +231,14 @@ class StyleFrameTest(unittest.TestCase):
     def test_read_excel_no_style(self):
         self.apply_headers_style()
         self.export_and_get_default_sheet(save=True)
-        sf_from_excel = StyleFrame.read_excel(StyleFrameTest.TEST_FILENAME)
+        sf_from_excel = StyleFrame.read_excel(TEST_FILENAME)
         # making sure content is the same
         self.assertTrue(all(list(self.sf[col]) == list(sf_from_excel[col]) for col in self.sf.columns))
 
     def test_read_excel_style(self):
         self.apply_headers_style()
         self.export_and_get_default_sheet(save=True)
-        sf_from_excel = StyleFrame.read_excel(StyleFrameTest.TEST_FILENAME, read_style=True)
+        sf_from_excel = StyleFrame.read_excel(TEST_FILENAME, read_style=True)
         # making sure content is the same
         self.assertTrue(all(list(self.sf[col]) == list(sf_from_excel[col]) for col in self.sf.columns))
 
@@ -250,7 +251,7 @@ class StyleFrameTest(unittest.TestCase):
                         for excel_cell, self_cell in zip(row_in_excel, row_in_self)))
 
     def test_row_indexes(self):
-        self.assertTrue(self.sf.row_indexes, (1, 2, 3, 4, 5))
+        self.assertEqual(self.sf.row_indexes, (1, 2, 3, 4))
 
 
 class ContainerTest(unittest.TestCase):
@@ -259,59 +260,82 @@ class ContainerTest(unittest.TestCase):
         self.cont_2 = Container(2)
 
     def test__gt__(self):
-        self.assertTrue(self.cont_2 > self.cont_1)
-        self.assertTrue(self.cont_2 > 1)
+        self.assertGreater(self.cont_2, self.cont_1)
+        self.assertGreater(self.cont_2, 1)
 
     def test__ge__(self):
-        self.assertTrue(self.cont_1 >= self.cont_1)
-        self.assertTrue(self.cont_2 > self.cont_1)
-        self.assertTrue(not self.cont_1 >= self.cont_2)
-        self.assertTrue(not self.cont_1 >= 3)
+        self.assertGreaterEqual(self.cont_1, self.cont_1)
+        self.assertGreaterEqual(self.cont_2, self.cont_1)
+        self.assertFalse(self.cont_1 >= self.cont_2)
+        self.assertFalse(self.cont_1 >= 3)
 
     def test__lt__(self):
-        self.assertTrue(self.cont_1 < self.cont_2)
-        self.assertTrue(not self.cont_2 < self.cont_1)
-        self.assertTrue(self.cont_2 < 3)
+        self.assertLess(self.cont_1, self.cont_2)
+        self.assertLess(self.cont_2, 3)
+        self.assertFalse(self.cont_2 < self.cont_1)
 
     def test__le__(self):
-        self.assertTrue(self.cont_1 <= self.cont_1)
-        self.assertTrue(not self.cont_2 < self.cont_1)
-        self.assertTrue(self.cont_1 <= self.cont_2)
-        self.assertTrue(self.cont_1 <= 3)
+        self.assertLessEqual(self.cont_1, self.cont_1)
+        self.assertLessEqual(self.cont_1, self.cont_2)
+        self.assertLessEqual(self.cont_1, 3)
+        self.assertFalse(self.cont_2 < self.cont_1)
 
     def test__add__(self):
-        self.assertTrue(self.cont_1 + self.cont_1 == self.cont_2)
-        self.assertTrue(self.cont_1 + 1 == self.cont_2)
+        self.assertEqual(self.cont_1 + self.cont_1, self.cont_2)
+        self.assertEqual(self.cont_1 + 1, self.cont_2)
 
     def test__sub__(self):
-        self.assertTrue(self.cont_2 - self.cont_1 == self.cont_1)
-        self.assertTrue(self.cont_2 - 1 == self.cont_1)
+        self.assertEqual(self.cont_2 - self.cont_1, self.cont_1)
+        self.assertEqual(self.cont_2 - 1, self.cont_1)
 
     def test__div__(self):
-        self.assertTrue(self.cont_2 / self.cont_2 == self.cont_1)
-        self.assertTrue(self.cont_2 / self.cont_1 == self.cont_2)
-        self.assertTrue(self.cont_2 / 3 == Container(2/3))
+        self.assertEqual(self.cont_2 / self.cont_2, self.cont_1)
+        self.assertEqual(self.cont_2 / self.cont_1, self.cont_2)
+        self.assertEqual(self.cont_2 / 3, Container(2/3))
 
     def test__mul__(self):
-        self.assertTrue(self.cont_1 * self.cont_1 == self.cont_1)
-        self.assertTrue(self.cont_2 * 1 == self.cont_2)
+        self.assertEqual(self.cont_1 * self.cont_1, self.cont_1)
+        self.assertEqual(self.cont_2 * 1, self.cont_2)
 
     def test__mod__(self):
-        self.assertTrue(self.cont_2 % self.cont_1 == Container(0))
-        self.assertTrue(self.cont_2 % 1 == Container(0))
+        self.assertEqual(self.cont_2 % self.cont_1, Container(0))
+        self.assertEqual(self.cont_2 % 1, Container(0))
 
     def test__pow__(self):
-        self.assertTrue(self.cont_2 ** 2 == Container(4))
+        self.assertEqual(self.cont_2 ** 2, Container(4))
 
     def test__int__(self):
-        self.assertTrue(int(self.cont_2) == 2)
+        self.assertEqual(int(self.cont_2), 2)
 
     def test__float__(self):
-        self.assertTrue(float(self.cont_1) == 1.0)
+        self.assertEqual(float(self.cont_1), 1.0)
+
+
+class CommandlineInterfaceTest(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.cli = CommandLineInterface(TEST_JSON, TEST_FILENAME)
+        cls.sheet_1_col_a_style = Styler(bg_color=utils.colors.blue, font_color=utils.colors.yellow).create_style()
+        cls.sheet_1_col_a_cell_2_style = Styler(bold=True, font=utils.fonts.arial, font_size=30, font_color=utils.colors.green,
+                                                border_type=utils.borders.double).create_style()
+        cls.sheet_1_col_b_cell_4_style = Styler(bold=True, font=utils.fonts.arial, font_size=16).create_style()
+
+    @classmethod
+    def tearDownClass(cls):
+        try:
+            os.remove(TEST_FILENAME)
+        except OSError as ex:
+            print(ex)
+
+    def test_parse_as_json(self):
+        self.cli.parse_as_json()
+        self.assertEqual(self.cli.Sheet1_sf.ix[0, 'col_a'].style, self.sheet_1_col_a_style)
+        self.assertEqual(self.cli.Sheet1_sf.ix[1, 'col_a'].style, self.sheet_1_col_a_cell_2_style)
+        self.assertEqual(self.cli.Sheet1_sf.ix[1, 'col_b'].style, self.sheet_1_col_b_cell_4_style)
 
 
 def run():
-    test_classes = [ContainerTest, StyleFrameTest]
+    test_classes = [ContainerTest, StyleFrameTest, CommandlineInterfaceTest]
     for test_class in test_classes:
         suite = unittest.TestLoader().loadTestsFromTestCase(test_class)
         unittest.TextTestRunner().run(suite)

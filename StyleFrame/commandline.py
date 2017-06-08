@@ -42,6 +42,7 @@ class CommandLineInterface(object):
         self._apply_headers_style(sf, sheet)
         self._apply_cols_and_rows_dimensions(sf, sheet)
         sf.to_excel(excel_writer=self.excel_writer, sheet_name=sheet_name, **sheet['extra_features'])
+        setattr(self, '{}_sf'.format(sheet_name), sf)
 
     def _apply_headers_style(self, sf, sheet):
         sf.apply_headers_style(styler_obj=Styler(**(sheet.get('default_styles', {}).get('headers') or {})))
