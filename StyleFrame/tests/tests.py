@@ -321,10 +321,10 @@ class CommandlineInterfaceTest(unittest.TestCase):
                                                 border_type=utils.borders.double).create_style()
         cls.sheet_1_col_b_cell_4_style = Styler(bold=True, font=utils.fonts.arial, font_size=16).create_style()
 
-    def tearDown(self):
+    @classmethod
+    def tearDownClass(cls):
         try:
-            if os.path.exists(TEST_FILENAME):
-                os.remove(TEST_FILENAME)
+            os.remove(TEST_FILENAME)
         except OSError as ex:
             print(ex)
 
@@ -333,11 +333,6 @@ class CommandlineInterfaceTest(unittest.TestCase):
         self.assertEqual(self.cli.Sheet1_sf.ix[0, 'col_a'].style, self.sheet_1_col_a_style)
         self.assertEqual(self.cli.Sheet1_sf.ix[1, 'col_a'].style, self.sheet_1_col_a_cell_2_style)
         self.assertEqual(self.cli.Sheet1_sf.ix[1, 'col_b'].style, self.sheet_1_col_b_cell_4_style)
-
-    def test_command_line_api(self):
-        os.system('styleframe --json_path {json_path} --output_path {output_path}'.format(json_path=TEST_JSON,
-                                                                                          output_path=TEST_FILENAME))
-        self.assertTrue(os.path.exists(TEST_FILENAME))
 
 
 def run():
