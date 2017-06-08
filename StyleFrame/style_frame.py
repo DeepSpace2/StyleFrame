@@ -121,6 +121,15 @@ class StyleFrame(object):
 
     @property
     def row_indexes(self):
+        """Excel row indexes.
+
+        StyleFrame row indexes (including the headers) according to the excel file format.
+        Mostly used to set rows height.
+        Excel indexes format starts from index 1.
+
+        :rtype: tuple
+        """
+
         return tuple(range(1, len(self) + 2))
 
     def to_excel(self, excel_writer='output.xlsx', sheet_name='Sheet1', na_rep='', float_format=None, columns=None,
@@ -290,7 +299,7 @@ class StyleFrame(object):
     def apply_style_by_indexes(self, indexes_to_style, styler_obj, cols_to_style=None, height=None,):
         """Applies a certain style to the provided indexes in the dataframe in the provided columns
 
-        :param indexes_to_style: indexes to apply the style to (based on sf.index)
+        :param indexes_to_style: indexes to apply the style to
         :param styler_obj: the styler object that contains the style to be applied
         :type styler_obj: Styler
         :param cols_to_style: the columns to apply the style to, if not provided all the columns will be styled
@@ -301,7 +310,10 @@ class StyleFrame(object):
 
         if not isinstance(styler_obj, Styler):
             raise TypeError('styler_obj must be {}, got {} instead.'.format(Styler.__name__, type(styler_obj).__name__))
-        if not isinstance(indexes_to_style, pd.Index):
+
+        if isinstance(indexes_to_style, (list, tuple)):
+            indexes_to_style = pd.Index(indexes_to_style)
+        elif isinstance(indexes_to_style, Container):
             indexes_to_style = pd.Index([indexes_to_style])
 
         default_number_formats = {pd.tslib.Timestamp: 'DD/MM/YY HH:MM',
@@ -321,9 +333,6 @@ class StyleFrame(object):
 
                 styler_obj.number_format = indexes_number_format
                 i.style = styler_obj.create_style()
-
-        if not isinstance(indexes_to_style, (list, tuple, pd.Index)):
-            indexes_to_style = [indexes_to_style]
 
         for index in indexes_to_style:
             for col in cols_to_style:
@@ -410,6 +419,7 @@ class StyleFrame(object):
         :return: self
         :rtype: StyleFrame
         """
+
         if not isinstance(columns, (set, list, tuple, pd.Index)):
             columns = [columns]
         try:
@@ -434,6 +444,7 @@ class StyleFrame(object):
         :return: self
         :rtype: StyleFrame
         """
+
         if not isinstance(col_width_dict, dict):
             raise TypeError("'col_width_dict' must be a dictionary")
         for cols, width in col_width_dict.items():
@@ -449,6 +460,7 @@ class StyleFrame(object):
         :return: self
         :rtype: StyleFrame
         """
+
         if not isinstance(rows, (set, list, tuple, pd.Index)):
             rows = [rows]
         try:
@@ -475,6 +487,7 @@ class StyleFrame(object):
         :return: self
         :rtype: StyleFrame
         """
+
         if not isinstance(row_height_dict, dict):
             raise TypeError("'row_height_dict' must be a dictionary")
         for rows, height in row_height_dict.items():
@@ -489,6 +502,7 @@ class StyleFrame(object):
         :param inplace: whether to rename the columns inplace or return a new StyleFrame object
         :return: self if inplace=True, new StyleFrame object if inplace=False
         """
+
         if not isinstance(columns, dict):
             raise TypeError("'columns' must be a dictionary")
 
