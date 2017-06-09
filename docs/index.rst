@@ -11,3 +11,4 @@ Contents:
    installation
    usage_examples
    api_documentation
+   commandline_interface
