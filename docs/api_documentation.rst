@@ -18,7 +18,9 @@ utils.number_formats
    thousands_comma_sep = '#,##0'
    date = 'DD/MM/YY'
    time_24_hours = 'HH:MM'
+   time_24_hours_with_seconds = 'HH:MM:SS'
    time_12_hours = 'h:MM AM/PM'
+   time_12_hours_with_seconds = 'h:MM:SS AM/PM'
    date_time = 'DD/MM/YY HH:MM'
    date_time_with_seconds = 'DD/MM/YY HH:MM:SS'
 
