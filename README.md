@@ -80,23 +80,6 @@ StyleFrame (usually referred as sf) reveals a very easy api for styling.
 ### Simple Example
 
 ```python
-import pandas as pd
-import time
-
-from StyleFrame import StyleFrame, Styler, utils
-
-expected = 'Hey how are you today?'.split()
-actual = 'Hello how are u today?'.split()
-passed_or_failed = ['Passed' if e == a else 'Failed' for e, a in zip(expected, actual)]
-
-df = pd.DataFrame({
-    'Time': [time.time() for _ in xrange(5)],
-    'Expect': expected,
-    'Actual': actual,
-    'Pass/Fail': passed_or_failed
-    },
-    columns=['Time', 'Expect', 'Actual', 'Pass/Fail'])
-    
 """Our DataFrame looks like this:
 
            Time  Expect  Actual Pass/Fail

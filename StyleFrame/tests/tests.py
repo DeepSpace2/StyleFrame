@@ -120,8 +120,8 @@ class StyleFrameTest(unittest.TestCase):
     def test_apply_style_by_indexes_all_cols(self):
         self.apply_style_by_indexes(self.sf[self.sf['a'] == 2])
 
-        self.assertTrue(all([self.sf.ix[index, 'a'].style == self.openpy_style_obj
-                             for index in self.sf.index if self.sf.ix[index, 'a'] == 2]))
+        self.assertTrue(all(self.sf.ix[index, 'a'].style == self.openpy_style_obj
+                            for index in self.sf.index if self.sf.ix[index, 'a'] == 2))
 
         sheet = self.export_and_get_default_sheet()
 
@@ -129,6 +129,31 @@ class StyleFrameTest(unittest.TestCase):
                             for i in range(1, len(self.sf))
                             for j in range(1, len(self.sf.columns))
                             if sheet.cell(row=i, column=1).value == 2))
+
+    def test_apply_style_by_indexes_with_single_index(self):
+        self.apply_style_by_indexes(self.sf.index[0])
+
+        self.assertTrue(all(self.sf.ix[0, col].style == self.openpy_style_obj
+                            for col in self.sf.columns))
+
+        sheet = self.export_and_get_default_sheet()
+
+        # row=2 since sheet start from row 1 and the headers are row 1
+        self.assertTrue(all(sheet.cell(row=2, column=col).style == self.openpy_style_obj
+                            for col in range(1, len(self.sf.columns))))
+
+    def test_apply_style_by_indexes_all_cols_with_multiple_indexes(self):
+        self.apply_style_by_indexes([1, 2])
+
+        self.assertTrue(all(self.sf.ix[index, col].style == self.openpy_style_obj
+                            for index in [1, 2]
+                            for col in self.sf.columns))
+
+        sheet = self.export_and_get_default_sheet()
+
+        self.assertTrue(all(sheet.cell(row=i, column=j).style == self.openpy_style_obj
+                            for i in [3, 4]  # sheet start from row 1 and headers are row 1
+                            for j in range(1, len(self.sf.columns))))
 
     def test_apply_headers_style(self):
         self.apply_headers_style()
