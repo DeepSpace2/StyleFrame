@@ -1,66 +1,10 @@
-StyleFrame
-==========
+API Documentation
+=================
 
-A library that wraps pandas and openpyxl and allows easy styling of dataframes in excel.
-
-Installation:
--------------
-::
-
-    $ pip install styleframe
-
-
-Testing:
---------
-
-You can make sure everything works as expected by running StyleFrame's unittests:
-::
-
-    from StyleFrame import tests
-
-    tests.run()
-
-
-Some usage examples
--------------------
-
-StyleFrame constructor supports all the ways you are used to initiate pandas dataframe.
-An existing dataframe, a dictionary or a list of dictionaries:
-::
-
-    from StyleFrame import StyleFrame, Styler, utils
-
-    sf = StyleFrame({'col_a': range(100)})
-
-Applying a style to rows that meet a condition using pandas selecting syntax.
-In this example all the cells in the `col_a` column with the value > 50 will have
-blue background and a bold, sized 10 font:
-::
-
-
-    sf.apply_style_by_indexes(indexes_to_style=sf[sf['col_a'] > 50],
-                              cols_to_style=['col_a'],
-                              styler_obj=Styler(bg_color=utils.colors.blue, bold=True, font_size=10))
-
-Creating ExcelWriter used to save the excel:
-::
-
-    ew = StyleFrame.ExcelWriter(r'C:\my_excel.xlsx')
-    sf.to_excel(ew)
-    ew.save()
-
-It is also possible to style a whole column or columns, and decide whether to style the headers or not:
-::
-
-    sf.apply_column_style(cols_to_style=['a'], styler_obj=Styler(bg_color=utils.colors.green),
-                          style_header=True)
-
-API documentation
------------------
 Given that `sf = StyleFrame(...)` :
 
 Styling by indexes
-^^^^^^^^^^^^^^^^^^
+------------------
 ::
 
     sf.apply_style_by_indexes(indexes_to_style=None, cols_to_style=None,
@@ -79,7 +23,7 @@ Parameters:
     height: if None, use default excel height otherwise use the given height value for the chosen rows
 
 Styling by columns
-^^^^^^^^^^^^^^^^^^
+------------------
 ::
 
     sf.apply_column_style(cols_to_style=None,
@@ -98,7 +42,7 @@ Parameters:
     width: if None, use default excel width otherwise use the given width value for the chosen columns
 
 Styling headers only
-^^^^^^^^^^^^^^^^^^^^
+--------------------
 ::
 
     sf.apply_headers_style(styler_obj=Styler(bg_color=colors.white, bold=True, font_size=12, font_color=utils.colors.black,
@@ -111,7 +55,7 @@ Parameters:
         styler_obj: a StyleFrame.Styler object
 
 Renaming columns
-^^^^^^^^^^^^^^^^
+----------------
 ::
 
         sf.rename(columns=None, inplace=False)
@@ -125,7 +69,7 @@ Parameters:
         return: None if inplace=True, StyleFrame if inplace=False
 
 Setting columns width
-^^^^^^^^^^^^^^^^^^^^^
+---------------------
 ::
 
     sf.set_column_width(columns, width)
@@ -147,7 +91,7 @@ Parameters:
         col_width_dict: a dictionary from tuples of columns to the desired width
 
 Setting rows height
-^^^^^^^^^^^^^^^^^^^
+-------------------
 ::
 
     sf.set_row_height(rows, height)
@@ -169,7 +113,7 @@ Parameters:
     row_height_dict: a dictionary from tuples of rows to the desired height
 
 Reading existing Excel file
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+---------------------------
 ::
 
     sf.read_excel(path, sheetname='Sheet1', read_style=False, **kwargs)
