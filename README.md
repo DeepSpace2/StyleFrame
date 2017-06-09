@@ -331,7 +331,9 @@ Required keys:
 
 Optional keys:
 
-`"style"` - The `style` entity for this cell.
+`"style"` - The `style` entity for this cell. 
+If not provided, the `style` provided to the `coloumn` entity will be used.
+If that was not provided as well, the default `Styler.__init__()` values will be used.  
 
 `{"value": 42, "style": {"border": "double"}}`
 
