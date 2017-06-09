@@ -376,5 +376,8 @@ Currently only `headers` is supported as an item.
 
 `"extra_features"` - A JSON that contains the same arguments as the
 `to_excel` method, such as `"row_to_add_filters"`, `"columns_and_rows_to_freeze"`,
-`"startrow"`, `"right_to_left"` and more. Refer to the [documentation](http://styleframe.readthedocs.org/en/latest/)
-for the complete list.
+`"columns_to_hide"`, `"right_to_left"` and `"allow_protection"`. 
+You can also use other arguments that Pandas' `"to_excel"` accepts.
+
+Refer to the [documentation](http://styleframe.readthedocs.org/en/latest/)
+for more information.

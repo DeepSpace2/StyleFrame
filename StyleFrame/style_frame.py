@@ -144,7 +144,8 @@ class StyleFrame(object):
         :param allow_protection: allow to protect the sheet and the cells that specified as protected.
         :param row_to_add_filters: add filters to the given row, starts from zero (zero is to add filters to columns).
         :param columns_and_rows_to_freeze: column and row string to freeze for example: C3 will freeze columns: A,B and rows: 1,2.
-            Read Pandas' documentation about the other parameters
+
+        See Pandas' to_excel documentation about the other parameters
         """
 
         def get_values(x):
