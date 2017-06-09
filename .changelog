@@ -1,3 +1,7 @@
+1.1:   - Added commandline interface that supports json to xlsx
+       - Added utils.fonts
+       - Added "width" and "height" to relevant styling methods
+
 1.0:   - Removed support for individual style specifiers when calling styling methods.
 
 0.2.1: - Added 2 general styles to utils.number_formats: '0' as utils.number_formats.general_integer
