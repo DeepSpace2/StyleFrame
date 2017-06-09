@@ -114,8 +114,7 @@ create_style
 """"""""""""
 
 :arguments: None
-
-Returns `openpyxl` style object.
+:returns: `openpyxl` style object.
 
 
 StyleFrame Class
@@ -131,7 +130,7 @@ Init Arguments
 
 :obj: Any object that pandas' dataframe can be initialized with: an existing dataframe, a dictionary,
       a list of dictionaries or another StylerFrame.
-:styler_obj: A Styler object. Will be used as the default style of all cells.
+:styler_obj: (Styler) A Styler object. Will be used as the default style of all cells.
 
 Methods
 ^^^^^^^
@@ -145,14 +144,85 @@ apply_style_by_indexes
    :styler_obj: (Styler) The `Styler` object that represent the style
    :cols_to_style=None: (str | list | tuple) The column names to apply the provided style to. If ``None`` all columns will be styled.
    :height=None: (int) If provided, the new height for the matched indexes.
+:returns: self
 
 apply_column_style
 """"""""""""""""""
 
 :arguments:
-   :cols_to_style: (str | list | tuple) The column names to styles.
-   :styler_obj: (Styler) The `Styler` object that represent the style.
+   :cols_to_style: (str | list | tuple) The column names to style.
+   :styler_obj: (Styler) A `Styler` object.
    :style_header=False: (bool) If True, the column(s) header will also be styled.
    :use_default_formats=True: (bool) If True, the default formats for date and times will be used.
    :width=None: (int) If provided, the new width for the specified columns.
+:returns: self
 
+apply_headers_style
+"""""""""""""""""""
+
+:arguments:
+   :styler_obj: (Styler) A `Styler` object.
+:returns: self
+
+rename
+""""""
+
+:arguments:
+   :columns=None: (dict) A dictionary from old columns names to new columns names.
+   :inplace=False: (bool) If False, a new StyleFrame object will be returned. If True, renames the columns inplace.
+:returns: self if inplace is `True`, new StyleFrame object is `False`
+
+set_column_width
+""""""""""""""""
+
+:arguments:
+    :columns: (str | list| tuple) Column name(s).
+    :width: (int) The new width for the specified columns.
+:returns: self
+
+set_column_width_dict
+"""""""""""""""""""""
+
+:arguments:
+   :col_width_dict: (dict) A dictionary from column names to width.
+:returns: self
+
+set_row_height
+""""""""""""""
+
+:arguments:
+   :rows: (int| list | tuple) Row(s) index.
+   :height: (int) The new height for the specified indexes.
+:returns: self
+
+set_row_height_dict
+"""""""""""""""""""
+
+:arguments:
+    :row_height_dict: (dict) A dictionary from row indexes to height.
+:returns: self
+
+read_excel
+""""""""""
+
+:arguments:
+   :path: (str) The path to the Excel file to read.
+   :sheetname: (str) The sheet name to read from.
+   :read_style=False: (bool) If `True` the sheet's style will be loaded to the returned StyleFrame object.
+   :kwargs: Any keyword argument pandas' `read_excel` supports.
+:returns: StyleFrame object
+
+A classmethod used to create a StyleFrame object from an existing Excel.
+
+to_excel
+========
+
+:arguments:
+   :allow_protection=False: (bool) Allow to protect the cells that specified as protected. If used ``protection=True``
+                             in a Styler object this must be set to `True`.
+   :right_to_left=False: (bool) Makes the sheet right-to-left.
+   :columns_to_hide=None: (str | list | tuple) Columns names to hide.
+   :row_to_add_filters=None: (int) Add filters to the given row index, starts from 0 (which will add filters to header row).
+   :columns_and_rows_to_freeze=None: (str) Column and row string to freeze.
+                                     For example "C3" will freeze columns: A, B and rows: 1, 2.
+:returns: self
