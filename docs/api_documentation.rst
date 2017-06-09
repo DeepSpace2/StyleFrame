@@ -5,7 +5,7 @@ utils
 -----
 
 The utils module contains the most widely used values for styling elements such as colors and border types for convenience.
-It is possible to directly use a value that is not present in the utils module as long as Excel recognise it.
+It is possible to directly use a value that is not present in the utils module as long as Excel recognises it.
 
 utils.number_formats
 ^^^^^^^^^^^^^^^^^^^^
@@ -21,3 +21,56 @@ utils.number_formats
     :date_time: 'DD/MM/YY HH:MM'
     :date_time_with_seconds: 'DD/MM/YY HH:MM:SS'
 
+
+utils.colors
+^^^^^^^^^^^^
+    :white: op_colors.WHITE
+    :blue: op_colors.BLUE
+    :dark_blue: op_colors.DARKBLUE
+    :yellow: op_colors.YELLOW
+    :dark_yellow: op_colors.DARKYELLOW
+    :green: op_colors.GREEN
+    :dark_green: op_colors.DARKGREEN
+    :black: op_colors.BLACK
+    :red: op_colors.RED
+    :dark_red: op_colors.DARKRED
+    :purple: '800080'
+    :grey: 'D3D3D3'
+
+
+utils.fonts
+^^^^^^^^^^^
+    :aegean: 'Aegean'
+    :aegyptus: 'Aegyptus'
+    :aharoni: 'Aharoni CLM'
+    :anaktoria: 'Anaktoria'
+    :analecta: 'Analecta'
+    :anatolian: 'Anatolian'
+    :arial: 'Arial'
+    :calibri: 'Calibri'
+    :david: 'David CLM'
+    :dejavu_sans: 'DejaVu Sans'
+    :ellinia: 'Ellinia CLM'
+
+
+utils.borders
+^^^^^^^^^^^^^
+    :dash_dot: 'dashDot'
+    :dash_dot_dot: 'dashDotDot'
+    :dashed: 'dashed'
+    :dotted: 'dotted'
+    :double: 'double'
+    :hair: 'hair'
+    :medium: 'medium'
+    :medium_dash_dot: 'mediumDashDot'
+    :medium_dash_dot_dot: 'mediumDashDotDot'
+    :medium_dashed: 'mediumDashed'
+    :slant_dash_dot: 'slantDashDot'
+    :thick: 'thick'
+    :thin: 'thin'
+
+
+utils.underline
+^^^^^^^^^^^^^^^
+    :single: 'single'
+    :double: 'double'
