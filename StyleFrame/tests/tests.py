@@ -6,7 +6,8 @@ from functools import partial
 from StyleFrame import Container, StyleFrame, Styler, CommandLineInterface, utils
 
 TEST_FILENAME = 'styleframe_test.xlsx'
-TEST_JSON = 'test_json.json'
+TEST_JSON_FILE = 'test_json.json'
+TEST_JSON_STRING_FILE = 'test_json_string.json'
 
 
 class StyleFrameTest(unittest.TestCase):
@@ -340,14 +341,13 @@ class ContainerTest(unittest.TestCase):
 class CommandlineInterfaceTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.cli = CommandLineInterface(TEST_JSON, TEST_FILENAME)
+        cls.cli = CommandLineInterface(TEST_JSON_FILE, TEST_FILENAME)
         cls.sheet_1_col_a_style = Styler(bg_color=utils.colors.blue, font_color=utils.colors.yellow).create_style()
         cls.sheet_1_col_a_cell_2_style = Styler(bold=True, font=utils.fonts.arial, font_size=30, font_color=utils.colors.green,
                                                 border_type=utils.borders.double).create_style()
         cls.sheet_1_col_b_cell_4_style = Styler(bold=True, font=utils.fonts.arial, font_size=16).create_style()
 
-    @classmethod
-    def tearDownClass(cls):
+    def tearDown(self):
         try:
             os.remove(TEST_FILENAME)
         except OSError as ex:
@@ -358,6 +358,15 @@ class CommandlineInterfaceTest(unittest.TestCase):
         self.assertEqual(self.cli.Sheet1_sf.ix[0, 'col_a'].style, self.sheet_1_col_a_style)
         self.assertEqual(self.cli.Sheet1_sf.ix[1, 'col_a'].style, self.sheet_1_col_a_cell_2_style)
         self.assertEqual(self.cli.Sheet1_sf.ix[1, 'col_b'].style, self.sheet_1_col_b_cell_4_style)
+
+    def test_init_with_json_string(self):
+        with open(TEST_JSON_STRING_FILE) as f:
+            json_string = f.read()
+        cli = CommandLineInterface(input_json=json_string, output_path=TEST_FILENAME)
+        cli.parse_as_json()
+        self.assertEqual(cli.Sheet1_sf.ix[0, 'col_a'].style, self.sheet_1_col_a_style)
+        self.assertEqual(cli.Sheet1_sf.ix[1, 'col_a'].style, self.sheet_1_col_a_cell_2_style)
+        self.assertEqual(cli.Sheet1_sf.ix[1, 'col_b'].style, self.sheet_1_col_b_cell_4_style)
 
 
 def run():

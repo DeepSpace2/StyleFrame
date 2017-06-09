@@ -8,22 +8,32 @@ from StyleFrame import StyleFrame, Container, Styler, version
 
 
 class CommandLineInterface(object):
-    def __init__(self, input_path, output_path):
+    def __init__(self, input_path=None, output_path=None, input_json=None):
         self.input_path = input_path
+        self.input_json = input_json
         self.excel_writer = StyleFrame.ExcelWriter(output_path)
         self.col_names_to_width = defaultdict(dict)
 
     def parse_as_json(self):
-        self._load_from_json()
+        try:
+            self._load_from_json()
+        except TypeError as ex:
+            print('Got the following error:\n{}\nExiting.'.format(ex))
+            return
         self._save()
 
     def _load_from_json(self):
-        with open(self.input_path) as j:
-            sheets = json.load(j)
-            if not isinstance(sheets, list):
-                sheets = list(sheets)
-            for sheet in sheets:
-                self._load_sheet(sheet)
+        if self.input_json:
+            sheets = json.loads(self.input_json)
+        elif self.input_path:
+            with open(self.input_path) as f:
+                sheets = json.load(f)
+        else:
+            raise TypeError('Neither --json nor --json_path were provided.')
+        if not isinstance(sheets, list):
+            raise TypeError('JSON must contain a list of sheets.')
+        for sheet in sheets:
+            self._load_sheet(sheet)
 
     def _load_sheet(self, sheet):
         sheet_name = sheet['sheet_name']
@@ -45,7 +55,9 @@ class CommandLineInterface(object):
         setattr(self, '{}_sf'.format(sheet_name), sf)
 
     def _apply_headers_style(self, sf, sheet):
-        sf.apply_headers_style(styler_obj=Styler(**(sheet.get('default_styles', {}).get('headers') or {})))
+        default_headers_style = sheet.get('default_styles', {}).get('headers')
+        if default_headers_style:
+            sf.apply_headers_style(styler_obj=Styler(**default_headers_style))
 
     def _apply_cols_and_rows_dimensions(self, sf, sheet):
         sf.set_column_width_dict(self.col_names_to_width[sheet['sheet_name']])
@@ -64,14 +76,14 @@ def get_cli_args():
     group.add_argument('-v', '--version', action='store_true', default=False,
                        help='print versions of the Python interpreter, openpyxl, pandas and StyleFrame then quit')
     group.add_argument('--json_path', help='path to json file which defines the Excel file')
-
+    group.add_argument('--json', help='json string which defines the Excel file')
     parser.add_argument('--output_path', help='path of output Excel file, defaults to output.xlsx',
                         default='output.xlsx')
 
     cli_args = parser.parse_args()
 
-    if not cli_args.version and not cli_args.json_path:
-        parser.error('--json_path is required when not using -v.')
+    if not cli_args.version and not any((cli_args.json_path, cli_args.json)):
+        parser.error('Either --json_path or --json are required when not using -v.')
 
     return cli_args
 
@@ -81,7 +93,8 @@ def execute_from_command_line():
     if cli_args.version:
         print(version.get_all_versions())
         return
-    CommandLineInterface(input_path=cli_args.json_path, output_path=cli_args.output_path).parse_as_json()
+    CommandLineInterface(input_path=cli_args.json_path, input_json=cli_args.json,
+                         output_path=cli_args.output_path).parse_as_json()
 
 
 if __name__ == '__main__':
