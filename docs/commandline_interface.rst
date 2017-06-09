@@ -28,7 +28,67 @@ The input JSON should be thought of as an hierarchy of predefined entities,
 some of which correspond to a Python class used by StyleFrame.
 The top-most level should be a list of ``sheet`` entities (see below).
 
-An example JSON is available <a href="examples/json_example.json" target="_blank">here</a>.
+An example JSON:
+
+::
+
+   [
+     {
+       "sheet_name": "Sheet1",
+       "default_styles": {
+         "headers": {
+           "font_size": 17,
+           "bg_color": "yellow"
+         }
+       },
+       "columns": [
+         {
+           "col_name": "col_a",
+           "style": {"bg_color": "blue", "font_color": "yellow"},
+           "width": 30,
+           "cells": [
+             {
+               "value": 1
+             },
+             {
+               "value": 2,
+               "style": {
+                 "bold": true,
+                 "font": "Arial",
+                 "font_size": 30,
+                 "font_color": "green",
+                 "border_type": "double"
+               }
+             }
+           ]
+         },
+         {
+           "col_name": "col_b",
+           "cells": [
+             {
+               "value": 3
+             },
+             {
+               "value": 4,
+               "style": {
+                 "bold": true,
+                 "font": "Arial",
+                 "font_size": 16
+               }
+             }
+           ]
+         }
+       ],
+       "row_heights": {
+         "3": 40
+       },
+       "extra_features": {
+         "row_to_add_filters": 0,
+         "columns_and_rows_to_freeze": "A7",
+         "startrow": 5
+       }
+     }
+   ]
 
 style
 ^^^^^
