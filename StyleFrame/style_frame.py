@@ -311,9 +311,10 @@ class StyleFrame(object):
         if not isinstance(styler_obj, Styler):
             raise TypeError('styler_obj must be {}, got {} instead.'.format(Styler.__name__, type(styler_obj).__name__))
 
-        if isinstance(indexes_to_style, (list, tuple)):
-            indexes_to_style = pd.Index(indexes_to_style)
-        elif isinstance(indexes_to_style, Container):
+        if isinstance(indexes_to_style, (list, tuple, int)):
+            indexes_to_style = self.index[indexes_to_style]
+
+        if isinstance(indexes_to_style, Container):
             indexes_to_style = pd.Index([indexes_to_style])
 
         default_number_formats = {pd.tslib.Timestamp: 'DD/MM/YY HH:MM',
