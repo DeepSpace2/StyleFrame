@@ -215,7 +215,7 @@ read_excel
 A classmethod used to create a StyleFrame object from an existing Excel.
 
 to_excel
-========
+""""""""
 
 :arguments:
    :allow_protection=False: (bool) Allow to protect the cells that specified as protected. If used ``protection=True``
