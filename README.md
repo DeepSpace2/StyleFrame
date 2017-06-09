@@ -312,6 +312,8 @@ The input JSON should be thought of as an hierarchy of predefined entities,
 some of which correspond to a Python class used by StyleFrame.
 The top-most level should be a list of `sheet` entities (see below).
 
+An example JSON is available [here](examples/json_example.json).
+
 * ***style:***
 
 Corresponds to: Styler class.
@@ -376,7 +378,3 @@ Currently only `headers` is supported as an item.
 `to_excel` method, such as `"row_to_add_filters"`, `"columns_and_rows_to_freeze"`,
 `"startrow"`, `"right_to_left"` and more. Refer to the [documentation](http://styleframe.readthedocs.org/en/latest/)
 for the complete list.
-
-
-An example JSON is available [here](examples/json_example.json).
-
