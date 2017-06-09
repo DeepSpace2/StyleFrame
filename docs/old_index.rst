@@ -1,3 +1,13 @@
+.. toctree::
+   :maxdepth: 2
+
+   Installation
+   Testing
+   Usage Examples
+   API Documentation
+
+
+
 StyleFrame
 ==========
 
