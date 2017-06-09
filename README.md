@@ -295,7 +295,7 @@ The input JSON should be thought of as an hierarchy of predefined entities,
 some of which correspond to a Python class used by StyleFrame.
 The top-most level should be a list of `sheet` entities (see below).
 
-An example JSON is available [here](examples/json_example.json).
+An example JSON is available <a href="examples/json_example.json" target="_blank">here</a>.
 
 * ***style:***
 
@@ -362,5 +362,5 @@ Currently only `headers` is supported as an item.
 `"columns_to_hide"`, `"right_to_left"` and `"allow_protection"`. 
 You can also use other arguments that Pandas' `"to_excel"` accepts.
 
-Refer to the [documentation](http://styleframe.readthedocs.org/en/latest/)
+Refer to the <a href="http://styleframe.readthedocs.org/en/latest/" target="_blank">documentation</a>
 for more information.
