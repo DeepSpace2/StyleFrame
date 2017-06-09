@@ -140,7 +140,7 @@ apply_style_by_indexes
 
 :arguments:
    :indexes_to_style: The StyleFrame indexes to style. This usually passed as pandas selecting syntax.
-                      For example, ``sf[sf['some_col'] = 20``
+                      For example, ``sf[sf['some_col'] = 20]``
    :styler_obj: (Styler) The `Styler` object that represent the style
    :cols_to_style=None: (str | list | tuple) The column names to apply the provided style to. If ``None`` all columns will be styled.
    :height=None: (int) If provided, the new height for the matched indexes.

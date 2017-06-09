@@ -1,3 +1,6 @@
+<img src=https://codecov.io/gh/DeepSpace2/StyleFrame/branch/master/graph/badge.svg> <img src=https://api.travis-ci.org/DeepSpace2/StyleFrame.svg?branch=master>
+
+
 # StyleFrame
 _Exporting DataFrame to designed excel file has never been so easy_
 
