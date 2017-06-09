@@ -9,68 +9,77 @@ It is possible to directly use a value that is not present in the utils module a
 
 utils.number_formats
 ^^^^^^^^^^^^^^^^^^^^
+::
 
-    :general: 'General'
-    :general_integer: '0'
-    :general_float: '0.00'
-    :percent: '0.0%'
-    :thousands_comma_sep: '#,##0'
-    :date: 'DD/MM/YY'
-    :time_24_hours: 'HH:MM'
-    :time_12_hours: 'h:MM AM/PM'
-    :date_time: 'DD/MM/YY HH:MM'
-    :date_time_with_seconds: 'DD/MM/YY HH:MM:SS'
+    general = 'General'
+    general_integer = '0'
+    general_float = '0.00'
+    percent = '0.0%'
+    thousands_comma_sep = '#,##0'
+    date = 'DD/MM/YY'
+    time_24_hours = 'HH:MM'
+    time_12_hours = 'h:MM AM/PM'
+    date_time = 'DD/MM/YY HH:MM'
+    date_time_with_seconds = 'DD/MM/YY HH:MM:SS'
 
 
 utils.colors
 ^^^^^^^^^^^^
-    :white: op_colors.WHITE
-    :blue: op_colors.BLUE
-    :dark_blue: op_colors.DARKBLUE
-    :yellow: op_colors.YELLOW
-    :dark_yellow: op_colors.DARKYELLOW
-    :green: op_colors.GREEN
-    :dark_green: op_colors.DARKGREEN
-    :black: op_colors.BLACK
-    :red: op_colors.RED
-    :dark_red: op_colors.DARKRED
-    :purple: '800080'
-    :grey: 'D3D3D3'
+::
+
+    white = op_colors.WHITE
+    blue = op_colors.BLUE
+    dark_blue = op_colors.DARKBLUE
+    yellow = op_colors.YELLOW
+    dark_yellow = op_colors.DARKYELLOW
+    green = op_colors.GREEN
+    dark_green = op_colors.DARKGREEN
+    black = op_colors.BLACK
+    red = op_colors.RED
+    dark_red = op_colors.DARKRED
+    purple = '800080'
+    grey = 'D3D3D3'
 
 
 utils.fonts
 ^^^^^^^^^^^
-    :aegean: 'Aegean'
-    :aegyptus: 'Aegyptus'
-    :aharoni: 'Aharoni CLM'
-    :anaktoria: 'Anaktoria'
-    :analecta: 'Analecta'
-    :anatolian: 'Anatolian'
-    :arial: 'Arial'
-    :calibri: 'Calibri'
-    :david: 'David CLM'
-    :dejavu_sans: 'DejaVu Sans'
-    :ellinia: 'Ellinia CLM'
+::
+
+    aegean = 'Aegean'
+    aegyptus = 'Aegyptus'
+    aharoni = 'Aharoni CLM'
+    anaktoria = 'Anaktoria'
+    analecta = 'Analecta'
+    anatolian = 'Anatolian'
+    arial = 'Arial'
+    calibri = 'Calibri'
+    david = 'David CLM'
+    dejavu_sans = 'DejaVu Sans'
+    ellinia = 'Ellinia CLM'
 
 
 utils.borders
 ^^^^^^^^^^^^^
-    :dash_dot: 'dashDot'
-    :dash_dot_dot: 'dashDotDot'
-    :dashed: 'dashed'
-    :dotted: 'dotted'
-    :double: 'double'
-    :hair: 'hair'
-    :medium: 'medium'
-    :medium_dash_dot: 'mediumDashDot'
-    :medium_dash_dot_dot: 'mediumDashDotDot'
-    :medium_dashed: 'mediumDashed'
-    :slant_dash_dot: 'slantDashDot'
-    :thick: 'thick'
-    :thin: 'thin'
+::
+
+    dash_dot = 'dashDot'
+    dash_dot_dot = 'dashDotDot'
+    dashed = 'dashed'
+    dotted = 'dotted'
+    double = 'double'
+    hair = 'hair'
+    medium = 'medium'
+    medium_dash_dot = 'mediumDashDot'
+    medium_dash_dot_dot = 'mediumDashDotDot'
+    medium_dashed = 'mediumDashed'
+    slant_dash_dot = 'slantDashDot'
+    thick = 'thick'
+    thin = 'thin'
 
 
 utils.underline
 ^^^^^^^^^^^^^^^
-    :single: 'single'
-    :double: 'double'
+::
+
+    single = 'single'
+    double = 'double'
