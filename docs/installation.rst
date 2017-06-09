@@ -7,4 +7,5 @@ To make sure everything works as expected, run StyleFrame's unittests:
 ::
 
    from StyleFrame import tests
+
    tests.run()
