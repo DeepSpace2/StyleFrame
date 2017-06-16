@@ -5,12 +5,18 @@
       "headers": {
         "font_size": 17,
         "bg_color": "yellow"
+      },
+      "cells": {
+        "bg_color": "red"
       }
     },
     "columns": [
       {
         "col_name": "col_a",
-        "style": {"bg_color": "blue", "font_color": "yellow"},
+        "style": {
+          "bg_color": "blue",
+          "font_color": "yellow"
+        },
         "width": 30,
         "cells": [
           {

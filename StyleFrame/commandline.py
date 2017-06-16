@@ -37,6 +37,7 @@ class CommandLineInterface(object):
 
     def _load_sheet(self, sheet):
         sheet_name = sheet['sheet_name']
+        default_cell_style = sheet.get('default_styles', {}).get('cells')
         data = defaultdict(list)
         for col in sheet['columns']:
             col_name = col['col_name']
@@ -46,6 +47,7 @@ class CommandLineInterface(object):
             for cell in col['cells']:
                 data[col_name].append(Container(cell['value'], Styler(**(cell.get('style')
                                                                          or col.get('style')
+                                                                         or default_cell_style
                                                                          or {})).create_style()))
         sf = StyleFrame(pd.DataFrame(data=data))
 

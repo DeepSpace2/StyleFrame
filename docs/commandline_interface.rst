@@ -39,6 +39,9 @@ An example JSON:
          "headers": {
            "font_size": 17,
            "bg_color": "yellow"
+         },
+         "cells": {
+           "bg_color": "red"
          }
        },
        "columns": [
@@ -137,18 +140,18 @@ Optional keys:
 sheet
 ^^^^^
 
-This entity represents the whole sheet.
+This entity represents the entire sheet.
 
 Required keys:
 
-````"sheet_name"```` - The sheet's name.
+``"sheet_name"`` - The sheet's name.
 
 ``"columns"`` - A list of ``column`` entities.
 
 Optional keys:
 
 ``"default_styles"`` - A JSON object with items as keys and ``style`` entities as values.
-Currently only ``headers`` is supported as an item.
+Currently supported items: ``headers`` and ``cells``.
 
 ``"default_styles": {"headers": {"bg_color": "blue"}}``
  
