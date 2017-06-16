@@ -13,6 +13,8 @@ if PY2:
     # noinspection PyUnresolvedReferences
     from container import Container
     # noinspection PyUnresolvedReferences
+    from series import Series
+    # noinspection PyUnresolvedReferences
     from styler import Styler
     # noinspection PyUnresolvedReferences
     import utils
@@ -21,6 +23,7 @@ if PY2:
 else:
     from StyleFrame.container import Container
     from StyleFrame.styler import Styler
+    from StyleFrame.series import Series
     from StyleFrame import utils
 
 
@@ -76,7 +79,7 @@ class StyleFrame(object):
         elif isinstance(item, list):
             return StyleFrame(self.data_df.__getitem__(item))
         else:
-            return self.data_df.__getitem__(item)
+            return Series(self.data_df.__getitem__(item))
 
     def __setitem__(self, key, value):
         if isinstance(value, pd.Series):

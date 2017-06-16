@@ -3,7 +3,7 @@ import pandas as pd
 import os
 
 from functools import partial
-from StyleFrame import Container, StyleFrame, Styler, CommandLineInterface, utils
+from StyleFrame import CommandLineInterface, Container, StyleFrame, Styler, Series, utils
 
 TEST_FILENAME = 'styleframe_test.xlsx'
 TEST_JSON_FILE = 'test_json.json'
@@ -369,8 +369,23 @@ class CommandlineInterfaceTest(unittest.TestCase):
         self.assertEqual(cli.Sheet1_sf.ix[1, 'col_b'].style, self.sheet_1_col_b_cell_4_style)
 
 
+class SeriesTest(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.pandas_series = pd.Series((None, 1))
+        cls.sf_series = Series((Container(None), Container(1)))
+
+    def test_isnull(self):
+        self.assertTrue(all(p_val == sf_val
+                            for p_val, sf_val in zip(self.pandas_series.isnull(), self.sf_series.isnull())))
+
+    def test_notnull(self):
+        self.assertTrue(all(p_val == sf_val
+                            for p_val, sf_val in zip(self.pandas_series.notnull(), self.sf_series.notnull())))
+
+
 def run():
-    test_classes = [ContainerTest, StyleFrameTest, CommandlineInterfaceTest]
+    test_classes = [ContainerTest, StyleFrameTest, CommandlineInterfaceTest, SeriesTest]
     for test_class in test_classes:
         suite = unittest.TestLoader().loadTestsFromTestCase(test_class)
         unittest.TextTestRunner().run(suite)

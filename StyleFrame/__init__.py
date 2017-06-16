@@ -3,9 +3,11 @@ import sys
 # Python 2
 if sys.version_info < (3, 0):
     # noinspection PyUnresolvedReferences
-    from style_frame import StyleFrame
-    # noinspection PyUnresolvedReferences
     from container import Container
+    # noinspection PyUnresolvedReferences
+    from series import Series
+    # noinspection PyUnresolvedReferences
+    from style_frame import StyleFrame
     # noinspection PyUnresolvedReferences
     from styler import Styler
     # noinspection PyUnresolvedReferences
@@ -17,8 +19,9 @@ if sys.version_info < (3, 0):
 
 # Python 3
 else:
-    from StyleFrame.style_frame import StyleFrame
     from StyleFrame.container import Container
+    from StyleFrame.series import Series
+    from StyleFrame.style_frame import StyleFrame
     from StyleFrame.styler import Styler
     from StyleFrame import utils
     from StyleFrame.version import _version_, _versions_, _openpyxl_version_, _pandas_version_, _python_version_
