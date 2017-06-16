@@ -1,4 +1,5 @@
 1.1.1: - Added option to pass a json string through cli
+       - Added "cells" option to "default_styles" when using JSON
 
 1.1:   - Added commandline interface that supports json to xlsx
        - Added utils.fonts
