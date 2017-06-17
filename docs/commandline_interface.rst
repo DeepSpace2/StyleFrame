@@ -25,6 +25,10 @@ Usage Examples
 
 ``$ styleframe --json_path data.json --output_path data.xlsx``
 
+``styleframe --json "[{\"sheet_name\": \"sheet_1\", \"columns\": [{\"col_name\": \"col_a\", \"cells\": [{\"value\": 1}]}]}]"``
+
+.. note:: You may need to use different syntax to pass a JSON string depending on your OS and terminal application.
+
 JSON Format
 -----------
 
