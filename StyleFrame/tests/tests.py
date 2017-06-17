@@ -1,13 +1,16 @@
 import unittest
 import pandas as pd
+import StyleFrame as sf
 import os
 
 from functools import partial
 from StyleFrame import CommandLineInterface, Container, StyleFrame, Styler, Series, utils
 
+os.chdir(sf.__path__[0])
+BASE_DIR = 'tests'
 TEST_FILENAME = 'styleframe_test.xlsx'
-TEST_JSON_FILE = 'test_json.json'
-TEST_JSON_STRING_FILE = 'test_json_string.json'
+TEST_JSON_FILE = os.path.join(BASE_DIR, 'test_json.json')
+TEST_JSON_STRING_FILE = os.path.join(BASE_DIR, 'test_json_string.json')
 
 
 class StyleFrameTest(unittest.TestCase):
