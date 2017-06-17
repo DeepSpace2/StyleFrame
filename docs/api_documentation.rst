@@ -86,6 +86,8 @@ utils.underline
    single = 'single'
    double = 'double'
 
+
+.. _styler-class:
 Styler Class
 ------------
 
