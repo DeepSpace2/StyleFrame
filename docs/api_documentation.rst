@@ -88,6 +88,7 @@ utils.underline
 
 
 .. _styler-class:
+
 Styler Class
 ------------
 
