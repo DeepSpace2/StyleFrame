@@ -15,8 +15,8 @@ Flag                Explanation
 =================   =========================================================================
 ``-v``              Displays the installed versions of StyleFrame and its dependencies
 ``--json_path``     Path to the json file
-``--json``          JSON string
-``--output-path``   Path to the output xlsx file. If not provided defaults to ``output.xlsx``
+``--json``          json string
+``--output_path``   Path to the output xlsx file. If not provided defaults to ``output.xlsx``
 =================   =========================================================================
 
 
@@ -25,7 +25,7 @@ Usage Examples
 
 ``$ styleframe --json_path data.json --output_path data.xlsx``
 
-``styleframe --json "[{\"sheet_name\": \"sheet_1\", \"columns\": [{\"col_name\": \"col_a\", \"cells\": [{\"value\": 1}]}]}]"``
+``$ styleframe --json "[{\"sheet_name\": \"sheet_1\", \"columns\": [{\"col_name\": \"col_a\", \"cells\": [{\"value\": 1}]}]}]"``
 
 .. note:: You may need to use different syntax to pass a JSON string depending on your OS and terminal application.
 
