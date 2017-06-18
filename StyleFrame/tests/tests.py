@@ -1,13 +1,15 @@
 import unittest
 import pandas as pd
+import StyleFrame as sf
 import os
 
 from functools import partial
 from StyleFrame import CommandLineInterface, Container, StyleFrame, Styler, Series, utils
 
-TEST_FILENAME = 'styleframe_test.xlsx'
-TEST_JSON_FILE = 'test_json.json'
-TEST_JSON_STRING_FILE = 'test_json_string.json'
+base_dir = os.path.dirname(sf.__file__)
+TEST_FILENAME = os.path.join(base_dir, 'styleframe_test.xlsx')
+TEST_JSON_FILE = os.path.join(base_dir, 'test_json.json')
+TEST_JSON_STRING_FILE = os.path.join(base_dir, 'test_json_string.json')
 
 
 class StyleFrameTest(unittest.TestCase):
@@ -27,8 +29,7 @@ class StyleFrameTest(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         try:
-            if os.path.exists(TEST_FILENAME):
-                os.remove(TEST_FILENAME)
+            os.remove(TEST_FILENAME)
         except OSError as ex:
             print(ex)
 
