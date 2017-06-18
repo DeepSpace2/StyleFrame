@@ -6,10 +6,10 @@ import os
 from functools import partial
 from StyleFrame import CommandLineInterface, Container, StyleFrame, Styler, Series, utils
 
-base_dir = os.path.dirname(sf.__file__)
-TEST_FILENAME = os.path.join(base_dir, 'styleframe_test.xlsx')
-TEST_JSON_FILE = os.path.join(base_dir, 'test_json.json')
-TEST_JSON_STRING_FILE = os.path.join(base_dir, 'test_json_string.json')
+tests_dir = os.path.join(os.path.dirname(sf.__file__), 'tests')
+TEST_FILENAME = os.path.join(tests_dir, 'styleframe_test.xlsx')
+TEST_JSON_FILE = os.path.join(tests_dir, 'test_json.json')
+TEST_JSON_STRING_FILE = os.path.join(tests_dir, 'test_json_string.json')
 
 
 class StyleFrameTest(unittest.TestCase):
