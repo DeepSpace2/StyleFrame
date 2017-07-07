@@ -19,7 +19,7 @@ class StyleFrameTest(unittest.TestCase):
         cls.styler_obj = Styler(bg_color=utils.colors.blue, bold=True, font='Impact', font_color=utils.colors.yellow,
                                 font_size=20, underline=utils.underline.single,
                                 horizontal_alignment=utils.horizontal_alignments.left,
-                                vertical_alignment=utils.vertical_aligments.center)
+                                vertical_alignment=utils.vertical_alignments.center)
         cls.openpy_style_obj = cls.styler_obj.create_style()
 
     def setUp(self):

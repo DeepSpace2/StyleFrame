@@ -85,7 +85,7 @@ class horizontal_alignments(BaseDefClass):
     distributed = 'distributed'
 
 
-class vertical_aligments(BaseDefClass):
+class vertical_alignments(BaseDefClass):
     top = 'top'
     center = 'center'
     bottom = 'bottom'
