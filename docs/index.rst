@@ -6,7 +6,6 @@ A library that wraps pandas and openpyxl and allows easy styling of dataframes i
 Contents:
 
 .. toctree::
-   :maxdepth: 2
 
    installation
    usage_examples

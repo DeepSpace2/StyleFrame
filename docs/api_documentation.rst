@@ -79,6 +79,31 @@ utils.borders
    thin = 'thin'
 
 
+utils.horizontal_alignments
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+::
+
+    general = 'general'
+    left = 'left'
+    center = 'center'
+    right = 'right'
+    fill = 'fill'
+    justify = 'justify'
+    center_continuous = 'centerContinuous'
+    distributed = 'distributed'
+
+
+utils.vertical_alignments
+^^^^^^^^^^^^^^^^^^^^^^^^^
+::
+
+    top = 'top'
+    center = 'center'
+    bottom = 'bottom'
+    justify = 'justify'
+    distributed = 'distributed'
+
+
 utils.underline
 ^^^^^^^^^^^^^^^
 ::
@@ -100,7 +125,8 @@ Init Arguments
 
    Styler(bg_color=None, bold=False, font=utils.fonts.arial, font_size=12, font_color=None,
           number_format=utils.number_formats.general, protection=False, underline=None,
-          border_type=utils.borders.thin)
+          border_type=utils.borders.thin, horizontal_alignment=utils.horizontal_alignments.center,
+          vertical_alignment=utils.vertical_alignments.center)
 
 :bg_color: (str: hex string or color name ie `'yellow'` | utils.color) The background color
 :bold: (bool) If true, a bold typeface is used
@@ -111,6 +137,8 @@ Init Arguments
 :protection: (bool) If true, the cell/column will be write-protected
 :underline: (str: utils.underline or any other underline Excel supports) The underline type
 :border_type: (str: utils.border_type or any other border type Excel supports) The border type
+:horizontal_alignment: (str: utils.horizontal_alignment or any other horizontal alignment Excel supports) Text's horizontal alignment
+:vertical_alignment: (str: utils.vertical_alignment or any other vertical alignment Excel supports) Text's vertical alignment
 
 Methods
 ^^^^^^^
