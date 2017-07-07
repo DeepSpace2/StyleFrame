@@ -13,7 +13,8 @@ class Styler(object):
     """
     def __init__(self, bg_color=None, bold=False, font=utils.fonts.arial, font_size=12, font_color=None,
                  number_format=utils.number_formats.general, protection=False, underline=None,
-                 border_type=utils.borders.thin):
+                 border_type=utils.borders.thin, horizontal_alignment=utils.horizontal_alignments.center,
+                 vertical_alignment=utils.vertical_aligments.center):
 
         def get_color_from_string(color_str, default_color=None):
             if color_str and color_str.startswith('#'):
@@ -29,6 +30,8 @@ class Styler(object):
         self.protection = protection
         self.underline = underline
         self.border_type = border_type
+        self.horizontal_alignment = horizontal_alignment
+        self.vertical_alignment = vertical_alignment
         self.bg_color = get_color_from_string(bg_color, default_color=utils.colors.white)
         self.font_color = get_color_from_string(font_color, default_color=utils.colors.black)
 
@@ -42,7 +45,8 @@ class Styler(object):
         return Style(font=Font(name=self.font, size=self.font_size, color=Color(self.font_color),
                                bold=self.bold, underline=self.underline),
                      fill=PatternFill(patternType='solid', fgColor=self.bg_color),
-                     alignment=Alignment(horizontal='center', vertical='center', wrap_text=True, shrink_to_fit=True, indent=0),
+                     alignment=Alignment(horizontal=self.horizontal_alignment, vertical=self.vertical_alignment,
+                                         wrap_text=True, shrink_to_fit=True, indent=0),
                      border=border,
                      number_format=self.number_format,
                      protection=Protection(locked=self.protection))

@@ -74,6 +74,25 @@ class borders(BaseDefClass):
     thin = 'thin'
 
 
+class horizontal_alignments(BaseDefClass):
+    general = 'general'
+    left = 'left'
+    center = 'center'
+    right = 'right'
+    fill = 'fill'
+    justify = 'justify'
+    center_continuous = 'centerContinuous'
+    distributed = 'distributed'
+
+
+class vertical_aligments(BaseDefClass):
+    top = 'top'
+    center = 'center'
+    bottom = 'bottom'
+    justify = 'justify'
+    distributed = 'distributed'
+
+
 class underline(BaseDefClass):
     single = 'single'
     double = 'double'
