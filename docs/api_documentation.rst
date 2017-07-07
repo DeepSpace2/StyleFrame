@@ -7,6 +7,8 @@ utils
 The utils module contains the most widely used values for styling elements such as colors and border types for convenience.
 It is possible to directly use a value that is not present in the utils module as long as Excel recognises it.
 
+.. _utils.number_formats:
+
 utils.number_formats
 ^^^^^^^^^^^^^^^^^^^^
 ::
@@ -24,6 +26,8 @@ utils.number_formats
    date_time = 'DD/MM/YY HH:MM'
    date_time_with_seconds = 'DD/MM/YY HH:MM:SS'
 
+
+.. _utils.colors:
 
 utils.colors
 ^^^^^^^^^^^^
@@ -43,6 +47,8 @@ utils.colors
    grey = 'D3D3D3'
 
 
+.. _utils.fonts:
+
 utils.fonts
 ^^^^^^^^^^^
 ::
@@ -59,6 +65,8 @@ utils.fonts
    dejavu_sans = 'DejaVu Sans'
    ellinia = 'Ellinia CLM'
 
+
+.. _utils.borders:
 
 utils.borders
 ^^^^^^^^^^^^^
@@ -79,6 +87,8 @@ utils.borders
    thin = 'thin'
 
 
+.. _utils.horizontal_alignments:
+
 utils.horizontal_alignments
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 ::
@@ -93,6 +103,8 @@ utils.horizontal_alignments
     distributed = 'distributed'
 
 
+.. _utils.vertical_alignments:
+
 utils.vertical_alignments
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 ::
@@ -103,6 +115,8 @@ utils.vertical_alignments
     justify = 'justify'
     distributed = 'distributed'
 
+
+.. _utils.underline:
 
 utils.underline
 ^^^^^^^^^^^^^^^
@@ -128,17 +142,17 @@ Init Arguments
           border_type=utils.borders.thin, horizontal_alignment=utils.horizontal_alignments.center,
           vertical_alignment=utils.vertical_alignments.center)
 
-:bg_color: (str: hex string or color name ie `'yellow'` | utils.color) The background color
+:bg_color: (str: one of :ref:`utils.colors`, hex string or color name ie `'yellow'` Excel supports) The background color
 :bold: (bool) If true, a bold typeface is used
-:font: (str: font name | utils.font) The font to use
+:font: (str: one of :ref:`utils.fonts` or other font name Excel supports) The font to use
 :font_size: (int) The font size
-:font_color: (str: hex string or color name ie `'yellow'` | utils.color) The font color
-:number_format: (str: utils.font_number or any other format Excel supports) The format of the cell's value
+:font_color: (str: one of :ref:`utils.colors`, hex string or color name ie `'yellow'` Excel supports) The font color
+:number_format: (str: one of :ref:`utils.number_formats` or any other format Excel supports) The format of the cell's value
 :protection: (bool) If true, the cell/column will be write-protected
-:underline: (str: utils.underline or any other underline Excel supports) The underline type
-:border_type: (str: utils.border_type or any other border type Excel supports) The border type
-:horizontal_alignment: (str: utils.horizontal_alignment or any other horizontal alignment Excel supports) Text's horizontal alignment
-:vertical_alignment: (str: utils.vertical_alignment or any other vertical alignment Excel supports) Text's vertical alignment
+:underline: (str: one of :ref:`utils.underline` or any other underline Excel supports) The underline type
+:border_type: (str: one of :ref:`utils.border_type` or any other border type Excel supports) The border type
+:horizontal_alignment: (str: one of :ref:`utils.horizontal_alignments` or any other horizontal alignment Excel supports) Text's horizontal alignment
+:vertical_alignment: (str: one of :ref:`utils.vertical_alignments` or any other vertical alignment Excel supports) Text's vertical alignment
 
 Methods
 ^^^^^^^
