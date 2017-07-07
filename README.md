@@ -45,7 +45,8 @@ It saves us the trouble of working with excel workbook and the suffering of tryi
 ```python
 __init__(self, bg_color=None, bold=False, font=utils.fonts.arial, font_size=12, font_color=None,
          number_format=utils.number_formats.general, protection=False, underline=None,
-         border_type=utils.borders.thin)
+         border_type=utils.borders.thin, horizontal_alignment=utils.horizontal_alignments.center,
+         vertical_alignment=utils.vertical_aligments.center)
 ```
 Object that represents the style of a cell in our excel file.
 Styler is responsible of storing the style of single cell.
