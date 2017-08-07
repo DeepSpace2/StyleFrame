@@ -1,5 +1,5 @@
-Usage Examples
-==============
+Basic Usage Examples
+====================
 
 StyleFrame's ``init`` supports all the ways you are used to initiate pandas dataframe.
 An existing dataframe, a dictionary or a list of dictionaries:

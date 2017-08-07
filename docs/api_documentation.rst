@@ -211,6 +211,13 @@ apply_headers_style
    :styler_obj: (Styler) A `Styler` object.
 :returns: self
 
+style_alternate_rows
+""""""""""""""""""""
+
+:arguments:
+   :styles: (list | tuple) List or tuple of `Styler` objects to be applied to rows in an alternating manner
+:returns: self
+
 rename
 """"""
 
