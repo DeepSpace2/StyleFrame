@@ -91,14 +91,16 @@ class StyleFrame(object):
         return self.data_df.__delitem__(item)
 
     def __getattr__(self, attr):
-        known_attrs = {'ix': self.data_df.ix,
-                       'loc': self.data_df.loc,
+        known_attrs = {'loc': self.data_df.loc,
                        'iloc': self.data_df.iloc,
                        'applymap': self.data_df.applymap,
                        'groupby': self.data_df.groupby,
                        'index': self.data_df.index,
                        'columns': self.data_df.columns,
                        'fillna': self.data_df.fillna}
+        # future versions of pandas may not have .ix (deprecated since 0.20)
+        if getattr(self.data_df, 'ix'):
+            known_attrs['ix'] = self.data_df.ix
         if attr in known_attrs and hasattr(self.data_df, attr):
             return known_attrs[attr]
         else:
@@ -526,3 +528,16 @@ class StyleFrame(object):
 
         return sf
 
+    def style_alternate_rows(self, styles):
+        """Applies the provided styles to rows in an alternating manner.
+
+        :param styles: styles to apply
+        :type styles: list|tuple
+        :return: self
+        """
+
+        num_of_styles = len(styles)
+        split_indexes = (self.index[i::num_of_styles] for i in range(num_of_styles))
+        for i, indexes in enumerate(split_indexes):
+            self.apply_style_by_indexes(indexes, styles[i])
+        return self

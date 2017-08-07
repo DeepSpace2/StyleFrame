@@ -1,6 +1,7 @@
-1.1.2: - Fixed deprecation warning for .ix
-            (see http://pandas.pydata.org/pandas-docs/stable/indexing.html#ix-indexer-is-deprecated)
-
+1.2: - Fixed an issue when running tests from code
+     - Using .loc and .iloc instead of .ix since .ix is deprecated in pandas >0.20
+     - Added horizontal and vertical alignments to Styler objects
+     - Added style_alternate_rows
 
 1.1.1: - Added option to pass a json string through cli
        - Added "cells" option to "default_styles" when using JSON
