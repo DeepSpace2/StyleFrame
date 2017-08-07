@@ -16,17 +16,19 @@ class StyleFrameTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.ew = StyleFrame.ExcelWriter(TEST_FILENAME)
-        cls.styler_obj = Styler(bg_color=utils.colors.blue, bold=True, font='Impact', font_color=utils.colors.yellow,
-                                font_size=20, underline=utils.underline.single,
-                                horizontal_alignment=utils.horizontal_alignments.left,
-                                vertical_alignment=utils.vertical_alignments.center)
-        cls.openpy_style_obj = cls.styler_obj.create_style()
+        cls.styler_obj_1 = Styler(bg_color=utils.colors.blue, bold=True, font='Impact', font_color=utils.colors.yellow,
+                                  font_size=20, underline=utils.underline.single,
+                                  horizontal_alignment=utils.horizontal_alignments.left,
+                                  vertical_alignment=utils.vertical_alignments.center)
+        cls.styler_obj_2 = Styler(bg_color=utils.colors.yellow)
+        cls.openpy_style_obj_1 = cls.styler_obj_1.create_style()
+        cls.openpy_style_obj_2 = cls.styler_obj_2.create_style()
 
     def setUp(self):
         self.sf = StyleFrame({'a': [1, 2, 3], 'b': [1, 2, 3]})
-        self.apply_column_style = partial(self.sf.apply_column_style, styler_obj=self.styler_obj, width=10)
-        self.apply_style_by_indexes = partial(self.sf.apply_style_by_indexes, styler_obj=self.styler_obj, height=10)
-        self.apply_headers_style = partial(self.sf.apply_headers_style, styler_obj=self.styler_obj)
+        self.apply_column_style = partial(self.sf.apply_column_style, styler_obj=self.styler_obj_1, width=10)
+        self.apply_style_by_indexes = partial(self.sf.apply_style_by_indexes, styler_obj=self.styler_obj_1, height=10)
+        self.apply_headers_style = partial(self.sf.apply_headers_style, styler_obj=self.styler_obj_1)
 
     @classmethod
     def tearDownClass(cls):
@@ -43,14 +45,14 @@ class StyleFrameTest(unittest.TestCase):
         return self.ew.book.get_sheet_by_name('Sheet1')
 
     def test_init_styler_obj(self):
-        self.sf = StyleFrame({'a': [1, 2, 3], 'b': [1, 2, 3]}, styler_obj=self.styler_obj)
+        self.sf = StyleFrame({'a': [1, 2, 3], 'b': [1, 2, 3]}, styler_obj=self.styler_obj_1)
 
-        self.assertTrue(all(self.sf.ix[index, 'a'].style == self.openpy_style_obj
+        self.assertTrue(all(self.sf.loc[index, 'a'].style == self.openpy_style_obj_1
                             for index in self.sf.index))
 
         sheet = self.export_and_get_default_sheet()
 
-        self.assertTrue(all(sheet.cell(row=i, column=j).style == self.openpy_style_obj
+        self.assertTrue(all(sheet.cell(row=i, column=j).style == self.openpy_style_obj_1
                             for i in range(2, len(self.sf))
                             for j in range(1, len(self.sf.columns))))
 
@@ -94,8 +96,8 @@ class StyleFrameTest(unittest.TestCase):
 
         # actual tests
         self.apply_column_style(cols_to_style=['a'])
-        self.assertTrue(all([self.sf.ix[index, 'a'].style == self.openpy_style_obj
-                             and self.sf.ix[index, 'b'].style != self.openpy_style_obj
+        self.assertTrue(all([self.sf.loc[index, 'a'].style == self.openpy_style_obj_1
+                             and self.sf.loc[index, 'b'].style != self.openpy_style_obj_1
                              for index in self.sf.index]))
 
         sheet = self.export_and_get_default_sheet()
@@ -103,7 +105,7 @@ class StyleFrameTest(unittest.TestCase):
         self.assertEqual(sheet.column_dimensions['A'].width, 10)
 
         # range starts from 2 since we don't want to check the header's style
-        self.assertTrue(all(sheet.cell(row=i, column=1).style == self.openpy_style_obj for i in range(2, len(self.sf))))
+        self.assertTrue(all(sheet.cell(row=i, column=1).style == self.openpy_style_obj_1 for i in range(2, len(self.sf))))
 
     def test_apply_style_by_indexes_single_col(self):
         with self.assertRaises(TypeError):
@@ -111,12 +113,12 @@ class StyleFrameTest(unittest.TestCase):
 
         self.apply_style_by_indexes(self.sf[self.sf['a'] == 2], cols_to_style=['a'])
 
-        self.assertTrue(all(self.sf.ix[index, 'a'].style == self.openpy_style_obj
-                            for index in self.sf.index if self.sf.ix[index, 'a'] == 2))
+        self.assertTrue(all(self.sf.loc[index, 'a'].style == self.openpy_style_obj_1
+                            for index in self.sf.index if self.sf.loc[index, 'a'] == 2))
 
         sheet = self.export_and_get_default_sheet()
 
-        self.assertTrue(all(sheet.cell(row=i, column=1).style == self.openpy_style_obj for i in range(1, len(self.sf))
+        self.assertTrue(all(sheet.cell(row=i, column=1).style == self.openpy_style_obj_1 for i in range(1, len(self.sf))
                             if sheet.cell(row=i, column=1).value == 2))
 
         self.assertEqual(sheet.row_dimensions[3].height, 10)
@@ -124,12 +126,12 @@ class StyleFrameTest(unittest.TestCase):
     def test_apply_style_by_indexes_all_cols(self):
         self.apply_style_by_indexes(self.sf[self.sf['a'] == 2])
 
-        self.assertTrue(all(self.sf.ix[index, 'a'].style == self.openpy_style_obj
-                            for index in self.sf.index if self.sf.ix[index, 'a'] == 2))
+        self.assertTrue(all(self.sf.loc[index, 'a'].style == self.openpy_style_obj_1
+                            for index in self.sf.index if self.sf.loc[index, 'a'] == 2))
 
         sheet = self.export_and_get_default_sheet()
 
-        self.assertTrue(all(sheet.cell(row=i, column=j).style == self.openpy_style_obj
+        self.assertTrue(all(sheet.cell(row=i, column=j).style == self.openpy_style_obj_1
                             for i in range(1, len(self.sf))
                             for j in range(1, len(self.sf.columns))
                             if sheet.cell(row=i, column=1).value == 2))
@@ -137,34 +139,34 @@ class StyleFrameTest(unittest.TestCase):
     def test_apply_style_by_indexes_with_single_index(self):
         self.apply_style_by_indexes(self.sf.index[0])
 
-        self.assertTrue(all(self.sf.ix[0, col].style == self.openpy_style_obj
+        self.assertTrue(all(self.sf.iloc[0, self.sf.columns.get_loc(col)].style == self.openpy_style_obj_1
                             for col in self.sf.columns))
 
         sheet = self.export_and_get_default_sheet()
 
         # row=2 since sheet start from row 1 and the headers are row 1
-        self.assertTrue(all(sheet.cell(row=2, column=col).style == self.openpy_style_obj
+        self.assertTrue(all(sheet.cell(row=2, column=col).style == self.openpy_style_obj_1
                             for col in range(1, len(self.sf.columns))))
 
     def test_apply_style_by_indexes_all_cols_with_multiple_indexes(self):
         self.apply_style_by_indexes([1, 2])
 
-        self.assertTrue(all(self.sf.ix[index, col].style == self.openpy_style_obj
+        self.assertTrue(all(self.sf.iloc[index, self.sf.columns.get_loc(col)].style == self.openpy_style_obj_1
                             for index in [1, 2]
                             for col in self.sf.columns))
 
         sheet = self.export_and_get_default_sheet()
 
-        self.assertTrue(all(sheet.cell(row=i, column=j).style == self.openpy_style_obj
+        self.assertTrue(all(sheet.cell(row=i, column=j).style == self.openpy_style_obj_1
                             for i in [3, 4]  # sheet start from row 1 and headers are row 1
                             for j in range(1, len(self.sf.columns))))
 
     def test_apply_headers_style(self):
         self.apply_headers_style()
-        self.assertEqual(self.sf.columns[0].style, self.openpy_style_obj)
+        self.assertEqual(self.sf.columns[0].style, self.openpy_style_obj_1)
 
         sheet = self.export_and_get_default_sheet()
-        self.assertEqual(sheet.cell(row=1, column=1).style, self.openpy_style_obj)
+        self.assertEqual(sheet.cell(row=1, column=1).style, self.openpy_style_obj_1)
 
     def test_set_column_width(self):
         # testing some edge cases
@@ -283,6 +285,20 @@ class StyleFrameTest(unittest.TestCase):
     def test_row_indexes(self):
         self.assertEqual(self.sf.row_indexes, (1, 2, 3, 4))
 
+    def test_style_alternate_rows(self):
+        styles = [self.styler_obj_1, self.styler_obj_2]
+        openpy_styles = [self.openpy_style_obj_1, self.openpy_style_obj_2]
+        self.sf.style_alternate_rows(styles)
+
+        self.assertTrue(all(self.sf.iloc[index.value, 0].style == styles[index % len(styles)].create_style()
+                            for index in self.sf.index))
+
+        sheet = self.export_and_get_default_sheet()
+
+        # sheet start from row 1 and headers are row 1, so need to add 2 when iterating
+        self.assertTrue(all(sheet.cell(row=i.value + 2, column=1).style == openpy_styles[i % len(styles)]
+                            for i in self.sf.index))
+
 
 class ContainerTest(unittest.TestCase):
     def setUp(self):
@@ -346,7 +362,8 @@ class CommandlineInterfaceTest(unittest.TestCase):
     def setUpClass(cls):
         cls.cli = CommandLineInterface(TEST_JSON_FILE, TEST_FILENAME)
         cls.sheet_1_col_a_style = Styler(bg_color=utils.colors.blue, font_color=utils.colors.yellow).create_style()
-        cls.sheet_1_col_a_cell_2_style = Styler(bold=True, font=utils.fonts.arial, font_size=30, font_color=utils.colors.green,
+        cls.sheet_1_col_a_cell_2_style = Styler(bold=True, font=utils.fonts.arial, font_size=30,
+                                                font_color=utils.colors.green,
                                                 border_type=utils.borders.double).create_style()
         cls.sheet_1_col_b_cell_4_style = Styler(bold=True, font=utils.fonts.arial, font_size=16).create_style()
 
@@ -356,20 +373,26 @@ class CommandlineInterfaceTest(unittest.TestCase):
         except OSError as ex:
             print(ex)
 
+    # noinspection PyUnresolvedReferences
     def test_parse_as_json(self):
         self.cli.parse_as_json()
-        self.assertEqual(self.cli.Sheet1_sf.ix[0, 'col_a'].style, self.sheet_1_col_a_style)
-        self.assertEqual(self.cli.Sheet1_sf.ix[1, 'col_a'].style, self.sheet_1_col_a_cell_2_style)
-        self.assertEqual(self.cli.Sheet1_sf.ix[1, 'col_b'].style, self.sheet_1_col_b_cell_4_style)
+        loc_col_a = self.cli.Sheet1_sf.columns.get_loc('col_a')
+        loc_col_b = self.cli.Sheet1_sf.columns.get_loc('col_b')
+        self.assertEqual(self.cli.Sheet1_sf.iloc[0, loc_col_a].style, self.sheet_1_col_a_style)
+        self.assertEqual(self.cli.Sheet1_sf.iloc[1, loc_col_a].style, self.sheet_1_col_a_cell_2_style)
+        self.assertEqual(self.cli.Sheet1_sf.iloc[1, loc_col_b].style, self.sheet_1_col_b_cell_4_style)
 
+    # noinspection PyUnresolvedReferences
     def test_init_with_json_string(self):
         with open(TEST_JSON_STRING_FILE) as f:
             json_string = f.read()
         cli = CommandLineInterface(input_json=json_string, output_path=TEST_FILENAME)
         cli.parse_as_json()
-        self.assertEqual(cli.Sheet1_sf.ix[0, 'col_a'].style, self.sheet_1_col_a_style)
-        self.assertEqual(cli.Sheet1_sf.ix[1, 'col_a'].style, self.sheet_1_col_a_cell_2_style)
-        self.assertEqual(cli.Sheet1_sf.ix[1, 'col_b'].style, self.sheet_1_col_b_cell_4_style)
+        loc_col_a = cli.Sheet1_sf.columns.get_loc('col_a')
+        loc_col_b = cli.Sheet1_sf.columns.get_loc('col_b')
+        self.assertEqual(cli.Sheet1_sf.iloc[0, loc_col_a].style, self.sheet_1_col_a_style)
+        self.assertEqual(cli.Sheet1_sf.iloc[1, loc_col_a].style, self.sheet_1_col_a_cell_2_style)
+        self.assertEqual(cli.Sheet1_sf.iloc[1, loc_col_b].style, self.sheet_1_col_b_cell_4_style)
 
 
 class SeriesTest(unittest.TestCase):
