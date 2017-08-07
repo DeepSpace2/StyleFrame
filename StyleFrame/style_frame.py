@@ -92,6 +92,8 @@ class StyleFrame(object):
 
     def __getattr__(self, attr):
         known_attrs = {'ix': self.data_df.ix,
+                       'loc': self.data_df.loc,
+                       'iloc': self.data_df.iloc,
                        'applymap': self.data_df.applymap,
                        'groupby': self.data_df.groupby,
                        'index': self.data_df.index,
@@ -109,7 +111,7 @@ class StyleFrame(object):
             for col_index, col_name in enumerate(sf.columns, start=1):
                 sf.columns[col_index - 1].style = sheet.cell(row=1, column=col_index).style
                 for row_index, sf_index in enumerate(sf.index, start=2):
-                    sf.ix[sf_index, col_name].style = sheet.cell(row=row_index, column=col_index).style
+                    sf.loc[sf_index, col_name].style = sheet.cell(row=row_index, column=col_index).style
 
         sf = cls(pd.read_excel(path, sheetname=sheetname, **kwargs))
         if read_style:
@@ -240,7 +242,7 @@ class StyleFrame(object):
                                                         number_format=utils.number_formats.general,
                                                         underline=utils.underline.single).create_style()
                         else:
-                            current_cell.style = self.data_df.ix[index, column].style
+                            current_cell.style = self.data_df.loc[index, column].style
 
                     else:
                         if '=HYPERLINK' in str(current_cell.value):
@@ -252,7 +254,7 @@ class StyleFrame(object):
                                                         number_format=utils.number_formats.general,
                                                         underline='single').create_style()
                         else:
-                            current_cell.style = self.data_df.ix[index, column].style
+                            current_cell.style = self.data_df.loc[index, column].style
 
                 except AttributeError:  # if the element in the dataframe is not Container creating a default style
                     current_cell.style = Styler().create_style()
@@ -342,11 +344,12 @@ class StyleFrame(object):
         for index in indexes_to_style:
             for col in cols_to_style:
                 if styler_obj.number_format == utils.number_formats.general:
-                    values_number_format = default_number_formats.get(type(self.ix[index.value, col].value),
-                                                                      utils.number_formats.general)
+                    values_number_format = default_number_formats.get(
+                        type(self.iloc[index.value, self.columns.get_loc(col)].value),
+                        utils.number_formats.general)
 
                 styler_obj.number_format = values_number_format
-                self.ix[index.value, col].style = styler_obj.create_style()
+                self.iloc[index.value, self.columns.get_loc(col)].style = styler_obj.create_style()
 
         if height:
             # Add offset 2 since rows do not include the headers and they starts from 1 (not 0).
@@ -383,14 +386,14 @@ class StyleFrame(object):
                 self._custom_headers_style = True
             for index in self.index:
                 if use_default_formats:
-                    if isinstance(self.ix[index, col_name].value, pd.tslib.Timestamp):
+                    if isinstance(self.loc[index, col_name].value, pd.tslib.Timestamp):
                         styler_obj.number_format = utils.number_formats.date_time
-                    elif isinstance(self.ix[index, col_name].value, dt.date):
+                    elif isinstance(self.loc[index, col_name].value, dt.date):
                         styler_obj.number_format = utils.number_formats.date
-                    elif isinstance(self.ix[index, col_name].value, dt.time):
+                    elif isinstance(self.loc[index, col_name].value, dt.time):
                         styler_obj.number_format = utils.number_formats.time_24_hours
 
-                self.ix[index, col_name].style = styler_obj.create_style()
+                self.loc[index, col_name].style = styler_obj.create_style()
 
         if width:
             self.set_column_width(columns=cols_to_style, width=width)
