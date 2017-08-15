@@ -150,7 +150,7 @@ Init Arguments
 :number_format: (str: one of :ref:`utils.number_formats` or any other format Excel supports) The format of the cell's value
 :protection: (bool) If true, the cell/column will be write-protected
 :underline: (str: one of :ref:`utils.underline` or any other underline Excel supports) The underline type
-:border_type: (str: one of :ref:`utils.border_type` or any other border type Excel supports) The border type
+:border_type: (str: one of :ref:`utils.borders` or any other border type Excel supports) The border type
 :horizontal_alignment: (str: one of :ref:`utils.horizontal_alignments` or any other horizontal alignment Excel supports) Text's horizontal alignment
 :vertical_alignment: (str: one of :ref:`utils.vertical_alignments` or any other vertical alignment Excel supports) Text's vertical alignment
 
