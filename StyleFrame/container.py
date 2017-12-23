@@ -12,6 +12,11 @@ if PY2:
 else:
     from StyleFrame.styler import Styler
 
+try:
+    pd_timestamp = pd.Timestamp
+except AttributeError:
+    pd_timestamp = pd.tslib.Timestamp
+
 
 class Container(object):
     """
@@ -21,7 +26,7 @@ class Container(object):
     def __init__(self, value, styler=None):
         self.value = value
         if styler is None:
-            if isinstance(self.value, pd.tslib.Timestamp):
+            if isinstance(self.value, pd_timestamp):
                 self.style = Styler(number_format='DD/MM/YY HH:MM').create_style()
             elif isinstance(self.value, dt.date):
                 self.style = Styler(number_format='DD/MM/YY').create_style()

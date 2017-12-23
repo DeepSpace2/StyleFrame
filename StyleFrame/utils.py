@@ -96,3 +96,24 @@ class vertical_alignments(BaseDefClass):
 class underline(BaseDefClass):
     single = 'single'
     double = 'double'
+
+
+class fill_pattern_types(BaseDefClass):
+    solid = 'solid'
+    dark_down = 'darkDown'
+    dark_gray = 'darkGray'
+    dark_grid = 'darkGrid'
+    dark_horizontal = 'darkHorizontal'
+    dark_trellis = 'darkTrellis'
+    dark_up = 'darkUp'
+    dark_vertical = 'darkVertical'
+    gray0625 = 'gray0625'
+    gray125 = 'gray125'
+    light_down = 'lightDown'
+    light_gray = 'lightGray'
+    light_grid = 'lightGrid'
+    light_horizontal = 'lightHorizontal'
+    light_trellis = 'lightTrellis'
+    light_up = 'lightUp'
+    light_vertical = 'lightVertical'
+    medium_gray = 'mediumGray'

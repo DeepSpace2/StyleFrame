@@ -1,3 +1,6 @@
+1.3: - Added utils.fill_pattern_types
+     - Added wrap_text, shrink_to_fit, fill_pattern_type and indent to Styler
+
 1.2: - Fixed an issue when running tests from code
      - Using .loc and .iloc instead of .ix since .ix is deprecated in pandas >0.20
      - Added horizontal and vertical alignments to Styler objects

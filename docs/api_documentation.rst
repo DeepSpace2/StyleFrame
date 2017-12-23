@@ -126,6 +126,32 @@ utils.underline
    double = 'double'
 
 
+.. _utils.fill_pattern_types:
+
+utils.fill_pattern_types
+^^^^^^^^^^^^^^^^^^^^^^^^
+::
+
+  solid = 'solid'
+  dark_down = 'darkDown'
+  dark_gray = 'darkGray'
+  dark_grid = 'darkGrid'
+  dark_horizontal = 'darkHorizontal'
+  dark_trellis = 'darkTrellis'
+  dark_up = 'darkUp'
+  dark_vertical = 'darkVertical'
+  gray0625 = 'gray0625'
+  gray125 = 'gray125'
+  light_down = 'lightDown'
+  light_gray = 'lightGray'
+  light_grid = 'lightGrid'
+  light_horizontal = 'lightHorizontal'
+  light_trellis = 'lightTrellis'
+  light_up = 'lightUp'
+  light_vertical = 'lightVertical'
+  medium_gray = 'mediumGray'
+
+
 .. _styler-class:
 
 Styler Class
@@ -153,6 +179,10 @@ Init Arguments
 :border_type: (str: one of :ref:`utils.borders` or any other border type Excel supports) The border type
 :horizontal_alignment: (str: one of :ref:`utils.horizontal_alignments` or any other horizontal alignment Excel supports) Text's horizontal alignment
 :vertical_alignment: (str: one of :ref:`utils.vertical_alignments` or any other vertical alignment Excel supports) Text's vertical alignment
+:wrap_text: (bool)
+:shrink_to_fit: (bool)
+:fill_pattern_type: (str: one of :ref:`utils.fill_pattern_types` or any other fill pattern type Excel supports) Cells's fill pattern type
+:indent: (int)
 
 Methods
 ^^^^^^^

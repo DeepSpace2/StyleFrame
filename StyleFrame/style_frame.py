@@ -26,6 +26,11 @@ else:
     from StyleFrame.series import Series
     from StyleFrame import utils
 
+try:
+    pd_timestamp = pd.Timestamp
+except AttributeError:
+    pd_timestamp = pd.tslib.Timestamp
+
 
 class StyleFrame(object):
     """
@@ -325,7 +330,7 @@ class StyleFrame(object):
         if isinstance(indexes_to_style, Container):
             indexes_to_style = pd.Index([indexes_to_style])
 
-        default_number_formats = {pd.tslib.Timestamp: 'DD/MM/YY HH:MM',
+        default_number_formats = {pd_timestamp: 'DD/MM/YY HH:MM',
                                   dt.date: 'DD/MM/YY',
                                   dt.time: 'HH:MM'}
 
@@ -388,7 +393,7 @@ class StyleFrame(object):
                 self._custom_headers_style = True
             for index in self.index:
                 if use_default_formats:
-                    if isinstance(self.loc[index, col_name].value, pd.tslib.Timestamp):
+                    if isinstance(self.loc[index, col_name].value, pd_timestamp):
                         styler_obj.number_format = utils.number_formats.date_time
                     elif isinstance(self.loc[index, col_name].value, dt.date):
                         styler_obj.number_format = utils.number_formats.date
