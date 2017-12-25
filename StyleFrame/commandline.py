@@ -1,10 +1,13 @@
 import argparse
 import json
-from collections import defaultdict
-
+import inspect
 import pandas as pd
 
+from collections import defaultdict
 from StyleFrame import StyleFrame, Container, Styler, version
+
+
+styler_kwargs = set(inspect.signature(Styler).parameters.keys())
 
 
 class CommandLineInterface(object):
@@ -45,10 +48,14 @@ class CommandLineInterface(object):
             if col_width:
                 self.col_names_to_width[sheet_name][col_name] = col_width
             for cell in col['cells']:
-                data[col_name].append(Container(cell['value'], Styler(**(cell.get('style')
-                                                                         or col.get('style')
-                                                                         or default_cell_style
-                                                                         or {})).create_style()))
+                provided_style = cell.get('style') or col.get('style') or default_cell_style or {}
+                unrecognized_styler_kwargs = set(provided_style.keys()) - styler_kwargs
+                if unrecognized_styler_kwargs:
+                    raise TypeError('Styler dict {} contains unexpected argument: {}.\n'
+                                    'Expected arguments: {}'.format(provided_style, unrecognized_styler_kwargs,
+                                                                    styler_kwargs))
+                else:
+                    data[col_name].append(Container(cell['value'], Styler(**(provided_style)).create_style()))
         sf = StyleFrame(pd.DataFrame(data=data))
 
         self._apply_headers_style(sf, sheet)
