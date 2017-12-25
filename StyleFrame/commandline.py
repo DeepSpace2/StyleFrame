@@ -2,12 +2,18 @@ import argparse
 import json
 import inspect
 import pandas as pd
+import sys
 
 from collections import defaultdict
 from StyleFrame import StyleFrame, Container, Styler, version
 
+PY2 = sys.version_info[0] == 2
 
-styler_kwargs = set(inspect.signature(Styler).parameters.keys())
+if PY2:
+    styler_kwargs = set(inspect.getargspec(Styler.__init__).args)
+    styler_kwargs.remove('self')
+else:
+    styler_kwargs = set(inspect.signature(Styler).parameters.keys())
 
 
 class CommandLineInterface(object):
