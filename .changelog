@@ -1,3 +1,6 @@
+1.3.1: - Improved error message if invalid style arguments are used in JSON through the commandline interface
+       - Fixed an error importing utils in case there is already a utils module in Python's path (see github issue #31)
+
 1.3: - Added utils.fill_pattern_types
      - Added wrap_text, shrink_to_fit, fill_pattern_type and indent to Styler
 

@@ -1,10 +1,13 @@
 # coding:utf-8
-import sys
-import pandas as pd
-import numpy as np
-from openpyxl import cell, load_workbook
-from copy import deepcopy
+
 import datetime as dt
+import numpy as np
+import pandas as pd
+import sys
+
+from . import utils
+from copy import deepcopy
+from openpyxl import cell, load_workbook
 
 PY2 = sys.version_info[0] == 2
 
@@ -16,15 +19,12 @@ if PY2:
     from series import Series
     # noinspection PyUnresolvedReferences
     from styler import Styler
-    # noinspection PyUnresolvedReferences
-    import utils
 
 # Python 3
 else:
     from StyleFrame.container import Container
     from StyleFrame.styler import Styler
     from StyleFrame.series import Series
-    from StyleFrame import utils
 
 try:
     pd_timestamp = pd.Timestamp
