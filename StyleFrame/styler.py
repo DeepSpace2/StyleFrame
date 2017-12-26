@@ -1,10 +1,7 @@
 # coding:utf-8
 from openpyxl.styles import PatternFill, Style, Color, Border, Side, Font, Alignment, Protection
 
-try:  # python2
-    import utils
-except ImportError:  # python3
-    from StyleFrame import utils
+from . import utils
 
 
 class Styler(object):
