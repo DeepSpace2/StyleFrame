@@ -27,13 +27,13 @@ class Container(object):
         self.value = value
         if styler is None:
             if isinstance(self.value, pd_timestamp):
-                self.style = Styler(number_format='DD/MM/YY HH:MM').create_style()
+                self.style = Styler(number_format='DD/MM/YY HH:MM')
             elif isinstance(self.value, dt.date):
-                self.style = Styler(number_format='DD/MM/YY').create_style()
+                self.style = Styler(number_format='DD/MM/YY')
             elif isinstance(self.value, dt.time):
-                self.style = Styler(number_format='HH:MM').create_style()
+                self.style = Styler(number_format='HH:MM')
             else:
-                self.style = Styler().create_style()
+                self.style = Styler()
         else:
             self.style = styler
 
@@ -122,3 +122,5 @@ class Container(object):
     def __bool__(self):
         return bool(self.value)
 
+    def __len__(self):
+        return len(self.value)

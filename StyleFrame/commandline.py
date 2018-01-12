@@ -61,7 +61,7 @@ class CommandLineInterface(object):
                                     'Expected arguments: {}'.format(provided_style, unrecognized_styler_kwargs,
                                                                     styler_kwargs))
                 else:
-                    data[col_name].append(Container(cell['value'], Styler(**(provided_style)).create_style()))
+                    data[col_name].append(Container(cell['value'], Styler(**provided_style)))
         sf = StyleFrame(pd.DataFrame(data=data))
 
         self._apply_headers_style(sf, sheet)

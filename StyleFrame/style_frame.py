@@ -31,36 +31,39 @@ try:
 except AttributeError:
     pd_timestamp = pd.tslib.Timestamp
 
+str_type = basestring if PY2 else str
+unicode_type = unicode if PY2 else str
+
 
 class StyleFrame(object):
     """
     A wrapper class that wraps pandas DataFrame.
     Stores container objects that have values and Styles that will be applied to excel
     """
+    P_FACTOR = 1.3
+    A_FACTOR = 13
 
     def __init__(self, obj, styler_obj=None):
         from_another_styleframe = False
-        if styler_obj:
-            if not isinstance(styler_obj, Styler):
-                raise TypeError('styler_obj must be {}, got {} instead.'.format(Styler.__name__, type(styler_obj).__name__))
-            styler_obj = styler_obj.create_style()
+        if styler_obj and not isinstance(styler_obj, Styler):
+            raise TypeError('styler_obj must be {}, got {} instead.'.format(Styler.__name__, type(styler_obj).__name__))
         if isinstance(obj, pd.DataFrame):
             if len(obj) == 0:
                 self.data_df = deepcopy(obj)
             else:
-                self.data_df = obj.applymap(lambda x: Container(x, styler_obj) if not isinstance(x, Container) else x)
+                self.data_df = obj.applymap(lambda x: Container(x, deepcopy(styler_obj)) if not isinstance(x, Container) else x)
         elif isinstance(obj, pd.Series):
-            self.data_df = obj.apply(lambda x: Container(x, styler_obj) if not isinstance(x, Container) else x)
+            self.data_df = obj.apply(lambda x: Container(x, deepcopy(styler_obj)) if not isinstance(x, Container) else x)
         elif isinstance(obj, (dict, list)):
-            self.data_df = pd.DataFrame(obj).applymap(lambda x: Container(x, styler_obj) if not isinstance(x, Container) else x)
+            self.data_df = pd.DataFrame(obj).applymap(lambda x: Container(x, deepcopy(styler_obj)) if not isinstance(x, Container) else x)
         elif isinstance(obj, StyleFrame):
             self.data_df = deepcopy(obj.data_df)
             from_another_styleframe = True
         else:
             raise TypeError("{} __init__ doesn't support {}".format(type(self).__name__, type(obj).__name__))
-        self.data_df.columns = [Container(col, styler_obj) if not isinstance(col, Container) else deepcopy(col)
+        self.data_df.columns = [Container(col, deepcopy(styler_obj)) if not isinstance(col, Container) else deepcopy(col)
                                 for col in self.data_df.columns]
-        self.data_df.index = [Container(index, styler_obj) if not isinstance(index, Container) else deepcopy(index)
+        self.data_df.index = [Container(index, deepcopy(styler_obj)) if not isinstance(index, Container) else deepcopy(index)
                               for index in self.data_df.index]
 
         self._columns_width = obj._columns_width if from_another_styleframe else {}
@@ -71,9 +74,7 @@ class StyleFrame(object):
         return str(self.data_df)
 
     def __unicode__(self):
-        if PY2:
-            return unicode(self.data_df)
-        return str(self.data_df)
+        return unicode_type(self.data_df)
 
     def __len__(self):
         return len(self.data_df)
@@ -147,7 +148,7 @@ class StyleFrame(object):
     def to_excel(self, excel_writer='output.xlsx', sheet_name='Sheet1', na_rep='', float_format=None, columns=None,
                  header=True, index=False, index_label=None, startrow=0, startcol=0, merge_cells=True, encoding=None,
                  inf_rep='inf', allow_protection=False, right_to_left=False, columns_to_hide=None,
-                 row_to_add_filters=None, columns_and_rows_to_freeze=None):
+                 row_to_add_filters=None, columns_and_rows_to_freeze=None, best_fit=None):
         """Saves the dataframe to excel and applies the styles.
 
         :param right_to_left: sets the sheet to be right to left.
@@ -173,7 +174,7 @@ class StyleFrame(object):
                     return x
 
         def get_column_as_letter(column_to_convert):
-            if not isinstance(column_to_convert, (int, basestring if PY2 else str, Container)):
+            if not isinstance(column_to_convert, (int, str_type, Container)):
                 raise TypeError("column must be an index, column letter or column name")
             column_as_letter = None
             if column_to_convert in self.data_df.columns:  # column name
@@ -209,7 +210,7 @@ class StyleFrame(object):
         # noinspection PyTypeChecker
         export_df.index = [row_index.value for row_index in export_df.index]
 
-        if isinstance(excel_writer, basestring if PY2 else str):
+        if isinstance(excel_writer, str_type):
             excel_writer = self.ExcelWriter(excel_writer)
 
         export_df.to_excel(excel_writer, sheet_name=sheet_name, na_rep=na_rep, float_format=float_format, index=index,
@@ -234,37 +235,28 @@ class StyleFrame(object):
         # Iterating over the dataframe's elements and applying their styles
         # openpyxl's rows and cols start from 1,1 while the dataframe is 0,0
         for col_index, column in enumerate(self.data_df.columns):
-            sheet.cell(row=startrow + 1, column=col_index + startcol + 1).style = column.style
-
+            sheet.cell(row=startrow + 1, column=col_index + startcol + 1).style = column.style.create_style()
             for row_index, index in enumerate(self.data_df.index):
                 current_cell = sheet.cell(row=row_index + startrow + 2, column=col_index + startcol + 1)
-                try:
-                    if PY2:
-                        if '=HYPERLINK' in unicode(current_cell.value):
-                            current_bg_color = current_cell.style.fill.fgColor.rgb
-                            current_font_size = current_cell.style.font.size
-                            current_cell.style = Styler(bg_color=current_bg_color,
-                                                        font_color=utils.colors.blue,
-                                                        font_size=current_font_size,
-                                                        number_format=utils.number_formats.general,
-                                                        underline=utils.underline.single).create_style()
-                        else:
-                            current_cell.style = self.data_df.loc[index, column].style
+                data_df_style = self.data_df.loc[index, column].style
 
+                try:
+                    if '=HYPERLINK' in unicode_type(current_cell.value):
+                        data_df_style.font_color = utils.colors.blue
+                        data_df_style.underline = utils.underline.single
                     else:
-                        if '=HYPERLINK' in str(current_cell.value):
-                            current_bg_color = current_cell.style.fill.fgColor.rgb
-                            current_font_size = current_cell.style.font.size
-                            current_cell.style = Styler(bg_color=current_bg_color,
-                                                        font_color=utils.colors.blue,
-                                                        font_size=current_font_size,
-                                                        number_format=utils.number_formats.general,
-                                                        underline='single').create_style()
-                        else:
-                            current_cell.style = self.data_df.loc[index, column].style
+                        if best_fit and column in best_fit:
+                            data_df_style.wrap_text = False
+                            data_df_style.shrink_to_fit = False
+
+                    current_cell.style = data_df_style.create_style()
 
                 except AttributeError:  # if the element in the dataframe is not Container creating a default style
                     current_cell.style = Styler().create_style()
+
+        if best_fit:
+            self.set_column_width_dict({column: (max(self.data_df[column].str.len()) + self.A_FACTOR) * self.P_FACTOR
+                                        for column in best_fit})
 
         for column in self._columns_width:
             column_letter = get_column_as_letter(column_to_convert=column)
@@ -286,7 +278,7 @@ class StyleFrame(object):
                 raise TypeError("row must be an index and not {}".format(type(row_to_add_filters)))
 
         if columns_and_rows_to_freeze is not None:
-            if not isinstance(columns_and_rows_to_freeze, basestring if PY2 else str) or len(columns_and_rows_to_freeze) < 2:
+            if not isinstance(columns_and_rows_to_freeze, str_type) or len(columns_and_rows_to_freeze) < 2:
                 raise TypeError("columns_and_rows_to_freeze must be a str for example: 'C3'")
             if columns_and_rows_to_freeze[0] not in sheet.column_dimensions:
                 raise IndexError("column: %s is out of columns range." % columns_and_rows_to_freeze[0])
@@ -346,7 +338,7 @@ class StyleFrame(object):
                     indexes_number_format = default_number_formats.get(type(i.value), utils.number_formats.general)
 
                 styler_obj.number_format = indexes_number_format
-                i.style = styler_obj.create_style()
+                i.style = styler_obj
 
         for index in indexes_to_style:
             for col in cols_to_style:
@@ -356,7 +348,7 @@ class StyleFrame(object):
                         utils.number_formats.general)
 
                 styler_obj.number_format = values_number_format
-                self.iloc[index.value, self.columns.get_loc(col)].style = styler_obj.create_style()
+                self.iloc[index.value, self.columns.get_loc(col)].style = styler_obj
 
         if height:
             # Add offset 2 since rows do not include the headers and they starts from 1 (not 0).
@@ -389,7 +381,7 @@ class StyleFrame(object):
             raise KeyError("one of the columns in {} wasn't found".format(cols_to_style))
         for col_name in cols_to_style:
             if style_header:
-                self.columns[self.columns.get_loc(col_name)].style = styler_obj.create_style()
+                self.columns[self.columns.get_loc(col_name)].style = styler_obj
                 self._custom_headers_style = True
             for index in self.index:
                 if use_default_formats:
@@ -400,7 +392,7 @@ class StyleFrame(object):
                     elif isinstance(self.loc[index, col_name].value, dt.time):
                         styler_obj.number_format = utils.number_formats.time_24_hours
 
-                self.loc[index, col_name].style = styler_obj.create_style()
+                self.loc[index, col_name].style = styler_obj
 
         if width:
             self.set_column_width(columns=cols_to_style, width=width)
@@ -419,7 +411,7 @@ class StyleFrame(object):
         if not isinstance(styler_obj, Styler):
             raise TypeError('styler_obj must be {}, got {} instead.'.format(Styler.__name__, type(styler_obj).__name__))
 
-        styler_obj = styler_obj.create_style()
+        styler_obj = styler_obj
 
         for column in self.data_df.columns:
             column.style = styler_obj
@@ -446,7 +438,7 @@ class StyleFrame(object):
             raise ValueError('columns width must be positive')
 
         for column in columns:
-            if not isinstance(column, (int, basestring if PY2 else str, Container)):
+            if not isinstance(column, (int, str_type, Container)):
                 raise TypeError("column must be an index, column letter or column name")
             self._columns_width[column] = width
 
