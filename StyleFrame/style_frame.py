@@ -114,6 +114,15 @@ class StyleFrame(object):
 
     @classmethod
     def read_excel(cls, path, sheetname='Sheet1', read_style=False, **kwargs):
+        """Creates a StyleFrame object from an existing Excel.
+
+        :param str path: The path to the Excel file to read.
+        :param str sheetname: The sheet name to read from.
+        :param bool read_style: If True the sheet's style will be loaded to the returned StyleFrame object.
+        :param kwargs: Any keyword argument pandas' `read_excel` supports.
+        :rtype: StyleFrame
+        """
+
         def _read_style():
             sheet = load_workbook(path).get_sheet_by_name(sheetname)
             for col_index, col_name in enumerate(sf.columns, start=1):
@@ -151,12 +160,14 @@ class StyleFrame(object):
                  row_to_add_filters=None, columns_and_rows_to_freeze=None, best_fit=None):
         """Saves the dataframe to excel and applies the styles.
 
-        :param right_to_left: sets the sheet to be right to left.
-        :param columns_to_hide: single column, list or tuple of columns to hide, may be column index (starts from 1)
+        :param bool right_to_left: sets the sheet to be right to left.
+        :param str|list|tuple|set columns_to_hide: single column, list, set or tuple of columns to hide, may be column index (starts from 1)
                                 column name or column letter.
-        :param allow_protection: allow to protect the sheet and the cells that specified as protected.
-        :param row_to_add_filters: add filters to the given row, starts from zero (zero is to add filters to columns).
-        :param columns_and_rows_to_freeze: column and row string to freeze for example: C3 will freeze columns: A,B and rows: 1,2.
+        :param bool allow_protection: allow to protect the sheet and the cells that specified as protected.
+        :param int row_to_add_filters: add filters to the given row, starts from zero (zero is to add filters to columns).
+        :param str columns_and_rows_to_freeze: column and row string to freeze for example: C3 will freeze columns: A,B and rows: 1,2.
+        :param str|list|tuple|set best_fit: single column, list, set or tuple of columns names to attempt to best fit the width
+                                for.
 
         See Pandas' to_excel documentation about the other parameters
         """
@@ -255,6 +266,8 @@ class StyleFrame(object):
                     current_cell.style = Styler().create_style()
 
         if best_fit:
+            if not isinstance(best_fit, (list, set, tuple)):
+                best_fit = [best_fit]
             self.set_column_width_dict({column: (max(self.data_df[column].str.len()) + self.A_FACTOR) * self.P_FACTOR
                                         for column in best_fit})
 
@@ -292,7 +305,7 @@ class StyleFrame(object):
 
         # Iterating over the columns_to_hide and check if the format is columns name, column index as number or letter
         if columns_to_hide:
-            if not isinstance(columns_to_hide, (list, tuple)):
+            if not isinstance(columns_to_hide, (list, set, tuple)):
                 columns_to_hide = [columns_to_hide]
 
             for column in columns_to_hide:
@@ -304,11 +317,10 @@ class StyleFrame(object):
     def apply_style_by_indexes(self, indexes_to_style, styler_obj, cols_to_style=None, height=None,):
         """Applies a certain style to the provided indexes in the dataframe in the provided columns
 
-        :param indexes_to_style: indexes to apply the style to
-        :param styler_obj: the styler object that contains the style to be applied
-        :type styler_obj: Styler
-        :param cols_to_style: the columns to apply the style to, if not provided all the columns will be styled
-        :param height: non-default height for the given rows
+        :param list|tuple|int|Container indexes_to_style: indexes to apply the style to
+        :param Styler styler_obj: the styler object that contains the style to be applied
+        :param str|list|tuple|set cols_to_style: the columns to apply the style to, if not provided all the columns will be styled
+        :param int|float height: non-default height for the given rows
         :return: self
         :rtype: StyleFrame
         """
@@ -319,7 +331,7 @@ class StyleFrame(object):
         if isinstance(indexes_to_style, (list, tuple, int)):
             indexes_to_style = self.index[indexes_to_style]
 
-        if isinstance(indexes_to_style, Container):
+        elif isinstance(indexes_to_style, Container):
             indexes_to_style = pd.Index([indexes_to_style])
 
         default_number_formats = {pd_timestamp: 'DD/MM/YY HH:MM',
@@ -329,7 +341,7 @@ class StyleFrame(object):
         indexes_number_format = styler_obj.number_format
         values_number_format = styler_obj.number_format
 
-        if cols_to_style and not isinstance(cols_to_style, (list, tuple)):
+        if cols_to_style and not isinstance(cols_to_style, (list, tuple, set)):
             cols_to_style = [cols_to_style]
         elif not cols_to_style:
             cols_to_style = list(self.data_df.columns)
@@ -360,14 +372,11 @@ class StyleFrame(object):
     def apply_column_style(self, cols_to_style, styler_obj, style_header=False, use_default_formats=True, width=None):
         """apply style to a whole column
 
-        :param cols_to_style: the columns to apply the style to
-        :param styler_obj: the styler object that contains the style to be applied
-        :type styler_obj: Styler
-        :param style_header: if True, style the headers as well
-        :type style_header: bool
-        :param use_default_formats: if True, use predefined styles for dates and times
-        :type use_default_formats: bool
-        :param width: non-default width for the given columns
+        :param str|list|tuple|set cols_to_style: the columns to apply the style to
+        :param Styler styler_obj: the styler object that contains the style to be applied
+        :param bool style_header: if True, style the headers as well
+        :param bool use_default_formats: if True, use predefined styles for dates and times
+        :param int|float width: non-default width for the given columns
         :return: self
         :rtype: StyleFrame
         """
@@ -375,7 +384,7 @@ class StyleFrame(object):
         if not isinstance(styler_obj, Styler):
             raise TypeError('styler_obj must be {}, got {} instead.'.format(Styler.__name__, type(styler_obj).__name__))
 
-        if not isinstance(cols_to_style, (list, tuple, pd.Index)):
+        if not isinstance(cols_to_style, (list, tuple, set, pd.Index)):
             cols_to_style = [cols_to_style]
         if not all(col in self.columns for col in cols_to_style):
             raise KeyError("one of the columns in {} wasn't found".format(cols_to_style))
@@ -402,8 +411,7 @@ class StyleFrame(object):
     def apply_headers_style(self, styler_obj):
         """Apply style to the headers only
 
-        :param styler_obj: the styler object that contains the style to be applied
-        :type styler_obj: Styler
+        :param Styler styler_obj: the styler object that contains the style to be applied
         :return: self
         :rtype: StyleFrame
         """
@@ -421,8 +429,8 @@ class StyleFrame(object):
     def set_column_width(self, columns, width):
         """Set the width of the given columns
 
-        :param columns: a single or a list/tuple of column name, index or letter to change their width
-        :param width: numeric positive value of the new width
+        :param set|list|tuple columns: a single or a list/tuple/set of column name, index or letter to change their width
+        :param int|float width: numeric positive value of the new width
         :return: self
         :rtype: StyleFrame
         """
@@ -446,8 +454,7 @@ class StyleFrame(object):
 
     def set_column_width_dict(self, col_width_dict):
         """
-        :param col_width_dict: dictionary from tuple of columns to new width
-        :type col_width_dict: dict
+        :param dict col_width_dict: dictionary from tuple of columns to new width
         :return: self
         :rtype: StyleFrame
         """
@@ -462,7 +469,7 @@ class StyleFrame(object):
     def set_row_height(self, rows, height):
         """ Set the height of the given rows
 
-        :param rows: a single row index, list of indexes or tuple of indexes to change their height
+        :param int|list|tuple|set rows: a single row index or list, tuple or set of indexes to change their height
         :param height: numeric positive value of the new height
         :return: self
         :rtype: StyleFrame
@@ -489,8 +496,7 @@ class StyleFrame(object):
 
     def set_row_height_dict(self, row_height_dict):
         """
-        :param row_height_dict: dictionary from tuple of rows to new height
-        :type row_height_dict: dict
+        :param dict row_height_dict: dictionary from tuple of rows to new height
         :return: self
         :rtype: StyleFrame
         """
@@ -504,8 +510,7 @@ class StyleFrame(object):
     def rename(self, columns=None, inplace=False):
         """Renames the underlying dataframe's columns
 
-        :param columns: a dictionary, old_col_name -> new_col_name
-        :type columns: dict
+        :param dict columns: a dictionary, old_col_name -> new_col_name
         :param inplace: whether to rename the columns inplace or return a new StyleFrame object
         :return: self if inplace=True, new StyleFrame object if inplace=False
         """
@@ -528,8 +533,7 @@ class StyleFrame(object):
     def style_alternate_rows(self, styles):
         """Applies the provided styles to rows in an alternating manner.
 
-        :param styles: styles to apply
-        :type styles: list|tuple
+        :param list|tuple styles: styles to apply
         :return: self
         """
 
