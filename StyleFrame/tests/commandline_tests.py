@@ -26,9 +26,9 @@ class CommandlineInterfaceTest(unittest.TestCase):
         self.cli.parse_as_json()
         loc_col_a = self.cli.Sheet1_sf.columns.get_loc('col_a')
         loc_col_b = self.cli.Sheet1_sf.columns.get_loc('col_b')
-        self.assertEqual(self.cli.Sheet1_sf.iloc[0, loc_col_a].style, self.sheet_1_col_a_style)
-        self.assertEqual(self.cli.Sheet1_sf.iloc[1, loc_col_a].style, self.sheet_1_col_a_cell_2_style)
-        self.assertEqual(self.cli.Sheet1_sf.iloc[1, loc_col_b].style, self.sheet_1_col_b_cell_4_style)
+        self.assertEqual(self.cli.Sheet1_sf.iloc[0, loc_col_a].style.create_style(), self.sheet_1_col_a_style)
+        self.assertEqual(self.cli.Sheet1_sf.iloc[1, loc_col_a].style.create_style(), self.sheet_1_col_a_cell_2_style)
+        self.assertEqual(self.cli.Sheet1_sf.iloc[1, loc_col_b].style.create_style(), self.sheet_1_col_b_cell_4_style)
 
     # noinspection PyUnresolvedReferences
     def test_init_with_json_string(self):
@@ -38,6 +38,6 @@ class CommandlineInterfaceTest(unittest.TestCase):
         cli.parse_as_json()
         loc_col_a = cli.Sheet1_sf.columns.get_loc('col_a')
         loc_col_b = cli.Sheet1_sf.columns.get_loc('col_b')
-        self.assertEqual(cli.Sheet1_sf.iloc[0, loc_col_a].style, self.sheet_1_col_a_style)
-        self.assertEqual(cli.Sheet1_sf.iloc[1, loc_col_a].style, self.sheet_1_col_a_cell_2_style)
-        self.assertEqual(cli.Sheet1_sf.iloc[1, loc_col_b].style, self.sheet_1_col_b_cell_4_style)
+        self.assertEqual(cli.Sheet1_sf.iloc[0, loc_col_a].style.create_style(), self.sheet_1_col_a_style)
+        self.assertEqual(cli.Sheet1_sf.iloc[1, loc_col_a].style.create_style(), self.sheet_1_col_a_cell_2_style)
+        self.assertEqual(cli.Sheet1_sf.iloc[1, loc_col_b].style.create_style(), self.sheet_1_col_b_cell_4_style)

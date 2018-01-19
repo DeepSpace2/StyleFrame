@@ -42,7 +42,7 @@ class StyleFrameTest(unittest.TestCase):
     def test_init_styler_obj(self):
         self.sf = StyleFrame({'a': [1, 2, 3], 'b': [1, 2, 3]}, styler_obj=self.styler_obj_1)
 
-        self.assertTrue(all(self.sf.loc[index, 'a'].style == self.openpy_style_obj_1
+        self.assertTrue(all(self.sf.loc[index, 'a'].style.create_style() == self.openpy_style_obj_1
                             for index in self.sf.index))
 
         sheet = self.export_and_get_default_sheet()
@@ -91,8 +91,8 @@ class StyleFrameTest(unittest.TestCase):
 
         # actual tests
         self.apply_column_style(cols_to_style=['a'])
-        self.assertTrue(all([self.sf.loc[index, 'a'].style == self.openpy_style_obj_1
-                             and self.sf.loc[index, 'b'].style != self.openpy_style_obj_1
+        self.assertTrue(all([self.sf.loc[index, 'a'].style.create_style() == self.openpy_style_obj_1
+                             and self.sf.loc[index, 'b'].style.create_style() != self.openpy_style_obj_1
                              for index in self.sf.index]))
 
         sheet = self.export_and_get_default_sheet()
@@ -108,7 +108,7 @@ class StyleFrameTest(unittest.TestCase):
 
         self.apply_style_by_indexes(self.sf[self.sf['a'] == 2], cols_to_style=['a'])
 
-        self.assertTrue(all(self.sf.loc[index, 'a'].style == self.openpy_style_obj_1
+        self.assertTrue(all(self.sf.loc[index, 'a'].style.create_style() == self.openpy_style_obj_1
                             for index in self.sf.index if self.sf.loc[index, 'a'] == 2))
 
         sheet = self.export_and_get_default_sheet()
@@ -121,7 +121,7 @@ class StyleFrameTest(unittest.TestCase):
     def test_apply_style_by_indexes_all_cols(self):
         self.apply_style_by_indexes(self.sf[self.sf['a'] == 2])
 
-        self.assertTrue(all(self.sf.loc[index, 'a'].style == self.openpy_style_obj_1
+        self.assertTrue(all(self.sf.loc[index, 'a'].style.create_style() == self.openpy_style_obj_1
                             for index in self.sf.index if self.sf.loc[index, 'a'] == 2))
 
         sheet = self.export_and_get_default_sheet()
@@ -134,7 +134,7 @@ class StyleFrameTest(unittest.TestCase):
     def test_apply_style_by_indexes_with_single_index(self):
         self.apply_style_by_indexes(self.sf.index[0])
 
-        self.assertTrue(all(self.sf.iloc[0, self.sf.columns.get_loc(col)].style == self.openpy_style_obj_1
+        self.assertTrue(all(self.sf.iloc[0, self.sf.columns.get_loc(col)].style.create_style() == self.openpy_style_obj_1
                             for col in self.sf.columns))
 
         sheet = self.export_and_get_default_sheet()
@@ -146,7 +146,7 @@ class StyleFrameTest(unittest.TestCase):
     def test_apply_style_by_indexes_all_cols_with_multiple_indexes(self):
         self.apply_style_by_indexes([1, 2])
 
-        self.assertTrue(all(self.sf.iloc[index, self.sf.columns.get_loc(col)].style == self.openpy_style_obj_1
+        self.assertTrue(all(self.sf.iloc[index, self.sf.columns.get_loc(col)].style.create_style() == self.openpy_style_obj_1
                             for index in [1, 2]
                             for col in self.sf.columns))
 
@@ -158,7 +158,7 @@ class StyleFrameTest(unittest.TestCase):
 
     def test_apply_headers_style(self):
         self.apply_headers_style()
-        self.assertEqual(self.sf.columns[0].style, self.openpy_style_obj_1)
+        self.assertEqual(self.sf.columns[0].style.create_style(), self.openpy_style_obj_1)
 
         sheet = self.export_and_get_default_sheet()
         self.assertEqual(sheet.cell(row=1, column=1).style, self.openpy_style_obj_1)
@@ -285,7 +285,7 @@ class StyleFrameTest(unittest.TestCase):
         openpy_styles = [self.openpy_style_obj_1, self.openpy_style_obj_2]
         self.sf.style_alternate_rows(styles)
 
-        self.assertTrue(all(self.sf.iloc[index.value, 0].style == styles[index % len(styles)].create_style()
+        self.assertTrue(all(self.sf.iloc[index.value, 0].style.create_style() == styles[index % len(styles)].create_style()
                             for index in self.sf.index))
 
         sheet = self.export_and_get_default_sheet()
