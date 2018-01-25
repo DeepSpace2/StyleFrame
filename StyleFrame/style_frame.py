@@ -533,7 +533,7 @@ class StyleFrame(object):
     def style_alternate_rows(self, styles):
         """Applies the provided styles to rows in an alternating manner.
 
-        :param list|tuple styles: styles to apply
+        :param list|tuple|set styles: styles to apply
         :return: self
         """
 

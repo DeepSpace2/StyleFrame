@@ -246,7 +246,7 @@ style_alternate_rows
 """"""""""""""""""""
 
 :arguments:
-   :styles: (list | tuple) List or tuple of `Styler` objects to be applied to rows in an alternating manner
+   :styles: (list | tuple | set) List or tuple of `Styler` objects to be applied to rows in an alternating manner
 :returns: self
 
 rename
