@@ -152,6 +152,31 @@ utils.fill_pattern_types
   medium_gray = 'mediumGray'
 
 
+.. _utils.conditional_formatting_formats:
+
+utils.conditional_formatting_formats
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+::
+
+    color_scale = 'color_scale'
+    icon_set = 'icon_set'  # currently not supported
+    data_bar = 'data_bar'  # currently not supported
+
+
+.. _utils.conditional_formatting_types:
+
+utils.conditional_formatting_types
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+::
+
+    num = 'num'
+    percent = 'percent'
+    max = 'max'
+    min = 'min'
+    formula = 'formula'
+    percentile = 'percentile'
+
+
 .. _styler-class:
 
 Styler Class
@@ -285,6 +310,30 @@ set_row_height_dict
 
 :arguments:
     :row_height_dict: (dict) A dictionary from row indexes to height.
+:returns: self
+
+add_conditional_formatting
+""""""""""""""""""""""""""
+
+:arguments:
+
+    :start_type: (str: one of :ref:`utils.conditional_formatting_types` or any other type Excel supports) The type for the minimum bound
+    :start_value: The threshold for the minimum bound
+    :start_color: (str: one of :ref:`utils.colors`, hex string or color name ie `'yellow'` Excel supports) The color for the minimum bound
+    :end_type: (str: one of :ref:`utils.conditional_formatting_types` or any other type Excel supports) The type for the maximum bound
+    :end_value: The threshold for the maximum bound
+    :end_color: (str: one of :ref:`utils.colors`, hex string or color name ie `'yellow'` Excel supports) The color for the maximum bound
+    :mid_type: (None | str: one of :ref:`utils.conditional_formatting_types` or any other type Excel supports) The type for the middle bound
+    :mid_value: The threshold for the middle bound
+    :mid_color: (None | str: one of :ref:`utils.colors`, hex string or color name ie `'yellow'` Excel supports) The color for the middle bound
+    :columns_range: (None | list | tuple) A two-elements list or tuple of columns to which the conditional formatting will be added
+            to.
+            If not provided at all the conditional formatting will be added to all columns.
+            If a single element is provided then the conditional formatting will be added to the provided column.
+            If two elements are provided then the conditional formatting will start in the first column and end in the second.
+            The provided columns can be a column name, letter or index.
+    :conditional_formatting_format: (str: one of :ref:`utils.conditional_formatting_formats` or any other format Excel supports) The format of the conditional formatting. Currently only
+            color scale is supported.
 :returns: self
 
 read_excel

@@ -8,6 +8,8 @@ import sys
 from . import utils
 from copy import deepcopy
 from openpyxl import cell, load_workbook
+from openpyxl.formatting import ColorScaleRule
+from openpyxl.styles import Color
 
 PY2 = sys.version_info[0] == 2
 
@@ -33,6 +35,7 @@ except AttributeError:
 
 str_type = basestring if PY2 else str
 unicode_type = unicode if PY2 else str
+conditional_formatting_formats = {utils.conditional_formatting_formats.color_scale: ColorScaleRule}
 
 
 class StyleFrame(object):
@@ -69,6 +72,7 @@ class StyleFrame(object):
         self._columns_width = obj._columns_width if from_another_styleframe else {}
         self._rows_height = obj._rows_height if from_another_styleframe else {}
         self._custom_headers_style = obj._custom_headers_style if from_another_styleframe else False
+        self._cond_formatting = []
 
     def __str__(self):
         return str(self.data_df)
@@ -203,13 +207,23 @@ class StyleFrame(object):
 
             return column_as_letter
 
-        def get_range_of_cells_for_specific_row(row_index):
-            start_letter = get_column_as_letter(column_to_convert=self.data_df.columns[0])
-            end_letter = get_column_as_letter(column_to_convert=self.data_df.columns[-1])
+        def get_range_of_cells(row_index=None, columns=None):
+            if columns is None:
+                start_letter = get_column_as_letter(column_to_convert=self.data_df.columns[0])
+                end_letter = get_column_as_letter(column_to_convert=self.data_df.columns[-1])
+            else:
+                start_letter = get_column_as_letter(column_to_convert=columns[0])
+                end_letter = get_column_as_letter(column_to_convert=columns[-1])
+            if row_index is None:  # returns cells range for the entire dataframe
+                start_index = startrow + 1
+                end_index = start_index + len(self)
+            else:
+                start_index = startrow + row_index + 1
+                end_index = start_index
             return '{start_letter}{start_index}:{end_letter}{end_index}'.format(start_letter=start_letter,
-                                                                                start_index=startrow + row_index + 1,
+                                                                                start_index=start_index,
                                                                                 end_letter=end_letter,
-                                                                                end_index=startrow + row_index + 1)
+                                                                                end_index=end_index)
 
         if len(self.data_df) > 0:
             export_df = self.data_df.applymap(get_values)
@@ -286,7 +300,7 @@ class StyleFrame(object):
                 row_to_add_filters = int(row_to_add_filters)
                 if (row_to_add_filters + startrow + 1) not in sheet.row_dimensions:
                     raise IndexError('row: {} is out of rows range'.format(row_to_add_filters))
-                sheet.auto_filter.ref = get_range_of_cells_for_specific_row(row_index=row_to_add_filters)
+                sheet.auto_filter.ref = get_range_of_cells(row_index=row_to_add_filters)
             except (TypeError, ValueError):
                 raise TypeError("row must be an index and not {}".format(type(row_to_add_filters)))
 
@@ -311,6 +325,14 @@ class StyleFrame(object):
             for column in columns_to_hide:
                 column_letter = get_column_as_letter(column_to_convert=column)
                 sheet.column_dimensions[column_letter].hidden = True
+
+        if self._cond_formatting:
+            for cond_formatting in self._cond_formatting:
+                if cond_formatting['columns'] is None:
+                    sheet.conditional_formatting.add(get_range_of_cells(), cond_formatting['rule'])
+                else:
+                    sheet.conditional_formatting.add(get_range_of_cells(columns=cond_formatting['columns']),
+                                                     cond_formatting['rule'])
 
         return excel_writer
 
@@ -541,4 +563,58 @@ class StyleFrame(object):
         split_indexes = (self.index[i::num_of_styles] for i in range(num_of_styles))
         for i, indexes in enumerate(split_indexes):
             self.apply_style_by_indexes(indexes, styles[i])
+        return self
+
+    def add_conditional_formatting(self, start_type, start_value, start_color, end_type, end_value, end_color,
+                                   mid_type=None, mid_value=None, mid_color=None, columns_range=None,
+                                   conditional_formatting_format=None):
+        # TODO add tests
+        """Adds conditional formatting
+
+        :param utils.conditional_formatting_types|str start_type: The type for the minimum bound
+        :param start_value: The threshold for the minimum bound
+        :param utils.colors|str start_color: The color for the minimum bound
+        :param utils.conditional_formatting_types|str end_type: The type for the maximum bound
+        :param end_value: The threshold for the maximum bound
+        :param utils.colors|str end_color: The color for the maximum bound
+        :param None|utils.conditional_formatting_types|str mid_type: The type for the middle bound
+        :param mid_value: The threshold for the middle bound
+        :param None|utils.colors|str mid_color: The color for the middle bound
+        :param None|list|tuple columns_range: A two-elements list or tuple of columns to which the conditional formatting will be added
+            to.
+            If not provided at all the conditional formatting will be added to all columns.
+            If a single element is provided then the conditional formatting will be added to the provided column.
+            If two elements are provided then the conditional formatting will start in the first column and end in the second.
+            The provided columns can be a column name, letter or index.
+        :param utils.conditional_formatting_formats|str conditional_formatting_format: The format of the conditional formatting. Currently only
+            color scale is supported.
+        :return: self
+        """
+
+        if not isinstance(columns_range, (list, tuple)) or len(columns_range) not in (1, 2):
+            raise TypeError("'columns_range' should be a list or a tuple with 1 or 2 elements")
+
+        conditional_formatting_format = conditional_formatting_formats.get(conditional_formatting_format)
+        if conditional_formatting_format is None:
+            raise TypeError('Currently only color scale format is supported.')
+
+        if columns_range is None:
+            columns_range = (self.data_df.columns[0], self.data_df.columns[-1])
+
+        # checking against None explicitly since mid_value may be 0
+        if all(val is not None for val in (mid_type, mid_value, mid_color)):
+            self._cond_formatting.append({'rule': conditional_formatting_format(start_type=start_type, start_value=start_value,
+                                                                                start_color=Color(start_color),
+                                                                                mid_type=mid_type, mid_value=mid_value,
+                                                                                mid_color=Color(mid_color),
+                                                                                end_type=end_type, end_value=end_value,
+                                                                                end_color=Color(end_color)),
+                                         'columns': columns_range})
+        else:
+            self._cond_formatting.append({'rule': conditional_formatting_format(start_type=start_type, start_value=start_value,
+                                                                                start_color=Color(start_color),
+                                                                                end_type=end_type, end_value=end_value,
+                                                                                end_color=Color(end_color)),
+                                         'columns': columns_range})
+
         return self
