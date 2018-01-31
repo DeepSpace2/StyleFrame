@@ -326,13 +326,12 @@ class StyleFrame(object):
                 column_letter = get_column_as_letter(column_to_convert=column)
                 sheet.column_dimensions[column_letter].hidden = True
 
-        if self._cond_formatting:
-            for cond_formatting in self._cond_formatting:
-                if cond_formatting['columns'] is None:
-                    sheet.conditional_formatting.add(get_range_of_cells(), cond_formatting['rule'])
-                else:
-                    sheet.conditional_formatting.add(get_range_of_cells(columns=cond_formatting['columns']),
-                                                     cond_formatting['rule'])
+        for cond_formatting in self._cond_formatting:
+            if cond_formatting['columns'] is None:
+                sheet.conditional_formatting.add(get_range_of_cells(), cond_formatting['rule'])
+            else:
+                sheet.conditional_formatting.add(get_range_of_cells(columns=cond_formatting['columns']),
+                                                 cond_formatting['rule'])
 
         return excel_writer
 
@@ -591,15 +590,15 @@ class StyleFrame(object):
         :return: self
         """
 
-        if not isinstance(columns_range, (list, tuple)) or len(columns_range) not in (1, 2):
-            raise TypeError("'columns_range' should be a list or a tuple with 1 or 2 elements")
-
         conditional_formatting_format = conditional_formatting_formats.get(conditional_formatting_format)
         if conditional_formatting_format is None:
             raise TypeError('Currently only color scale format is supported.')
 
         if columns_range is None:
             columns_range = (self.data_df.columns[0], self.data_df.columns[-1])
+
+        if not isinstance(columns_range, (list, tuple)) or len(columns_range) not in (1, 2):
+            raise TypeError("'columns_range' should be a list or a tuple with 1 or 2 elements")
 
         # checking against None explicitly since mid_value may be 0
         if all(val is not None for val in (mid_type, mid_value, mid_color)):
