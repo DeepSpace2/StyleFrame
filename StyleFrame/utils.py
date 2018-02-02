@@ -119,12 +119,6 @@ class fill_pattern_types(BaseDefClass):
     medium_gray = 'mediumGray'
 
 
-class conditional_formatting_formats(BaseDefClass):
-    color_scale = 'color_scale'
-    icon_set = 'icon_set'  # currently not supported
-    data_bar = 'data_bar'  # currently not supported
-
-
 class conditional_formatting_types(BaseDefClass):
     num = 'num'
     percent = 'percent'

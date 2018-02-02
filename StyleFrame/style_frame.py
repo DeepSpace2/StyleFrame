@@ -8,8 +8,6 @@ import sys
 from . import utils
 from copy import deepcopy
 from openpyxl import cell, load_workbook
-from openpyxl.formatting import ColorScaleRule
-from openpyxl.styles import Color
 
 PY2 = sys.version_info[0] == 2
 
@@ -20,12 +18,12 @@ if PY2:
     # noinspection PyUnresolvedReferences
     from series import Series
     # noinspection PyUnresolvedReferences
-    from styler import Styler
+    from styler import Styler, ColorScaleConditionalFormatRule
 
 # Python 3
 else:
     from StyleFrame.container import Container
-    from StyleFrame.styler import Styler
+    from StyleFrame.styler import Styler, ColorScaleConditionalFormatRule
     from StyleFrame.series import Series
 
 try:
@@ -35,7 +33,6 @@ except AttributeError:
 
 str_type = basestring if PY2 else str
 unicode_type = unicode if PY2 else str
-conditional_formatting_formats = {utils.conditional_formatting_formats.color_scale: ColorScaleRule}
 
 
 class StyleFrame(object):
@@ -327,11 +324,8 @@ class StyleFrame(object):
                 sheet.column_dimensions[column_letter].hidden = True
 
         for cond_formatting in self._cond_formatting:
-            if cond_formatting['columns'] is None:
-                sheet.conditional_formatting.add(get_range_of_cells(), cond_formatting['rule'])
-            else:
-                sheet.conditional_formatting.add(get_range_of_cells(columns=cond_formatting['columns']),
-                                                 cond_formatting['rule'])
+                sheet.conditional_formatting.add(get_range_of_cells(columns=cond_formatting.columns),
+                                                 cond_formatting.rule)
 
         return excel_writer
 
@@ -564,12 +558,10 @@ class StyleFrame(object):
             self.apply_style_by_indexes(indexes, styles[i])
         return self
 
-    def add_conditional_formatting(self, start_type, start_value, start_color, end_type, end_value, end_color,
-                                   mid_type=None, mid_value=None, mid_color=None, columns_range=None,
-                                   conditional_formatting_format=None):
+    def add_color_scale_conditional_formatting(self, start_type, start_value, start_color, end_type, end_value, end_color,
+                                               mid_type=None, mid_value=None, mid_color=None, columns_range=None):
         # TODO add tests
-        """Adds conditional formatting
-
+        """
         :param utils.conditional_formatting_types|str start_type: The type for the minimum bound
         :param start_value: The threshold for the minimum bound
         :param utils.colors|str start_color: The color for the minimum bound
@@ -585,14 +577,8 @@ class StyleFrame(object):
             If a single element is provided then the conditional formatting will be added to the provided column.
             If two elements are provided then the conditional formatting will start in the first column and end in the second.
             The provided columns can be a column name, letter or index.
-        :param utils.conditional_formatting_formats|str conditional_formatting_format: The format of the conditional formatting. Currently only
-            color scale is supported.
         :return: self
         """
-
-        conditional_formatting_format = conditional_formatting_formats.get(conditional_formatting_format)
-        if conditional_formatting_format is None:
-            raise TypeError('Currently only color scale format is supported.')
 
         if columns_range is None:
             columns_range = (self.data_df.columns[0], self.data_df.columns[-1])
@@ -600,20 +586,12 @@ class StyleFrame(object):
         if not isinstance(columns_range, (list, tuple)) or len(columns_range) not in (1, 2):
             raise TypeError("'columns_range' should be a list or a tuple with 1 or 2 elements")
 
-        # checking against None explicitly since mid_value may be 0
-        if all(val is not None for val in (mid_type, mid_value, mid_color)):
-            self._cond_formatting.append({'rule': conditional_formatting_format(start_type=start_type, start_value=start_value,
-                                                                                start_color=Color(start_color),
-                                                                                mid_type=mid_type, mid_value=mid_value,
-                                                                                mid_color=Color(mid_color),
-                                                                                end_type=end_type, end_value=end_value,
-                                                                                end_color=Color(end_color)),
-                                         'columns': columns_range})
-        else:
-            self._cond_formatting.append({'rule': conditional_formatting_format(start_type=start_type, start_value=start_value,
-                                                                                start_color=Color(start_color),
-                                                                                end_type=end_type, end_value=end_value,
-                                                                                end_color=Color(end_color)),
-                                         'columns': columns_range})
+        self._cond_formatting.append(ColorScaleConditionalFormatRule(start_type=start_type, start_value=start_value,
+                                                                     start_color=start_color,
+                                                                     mid_type=mid_type, mid_value=mid_value,
+                                                                     mid_color=mid_color,
+                                                                     end_type=end_type, end_value=end_value,
+                                                                     end_color=end_color,
+                                                                     columns_range=columns_range))
 
         return self
