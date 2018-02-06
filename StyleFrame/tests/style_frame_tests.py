@@ -10,7 +10,6 @@ from StyleFrame.tests import TEST_FILENAME
 class StyleFrameTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.ew = StyleFrame.ExcelWriter(TEST_FILENAME)
         cls.styler_obj_1 = Styler(bg_color=utils.colors.blue, bold=True, font='Impact', font_color=utils.colors.yellow,
                                   font_size=20, underline=utils.underline.single,
                                   horizontal_alignment=utils.horizontal_alignments.left,
@@ -20,6 +19,7 @@ class StyleFrameTest(unittest.TestCase):
         cls.openpy_style_obj_2 = cls.styler_obj_2.create_style()
 
     def setUp(self):
+        self.ew = StyleFrame.ExcelWriter(TEST_FILENAME)
         self.sf = StyleFrame({'a': [1, 2, 3], 'b': [1, 2, 3]})
         self.apply_column_style = partial(self.sf.apply_column_style, styler_obj=self.styler_obj_1, width=10)
         self.apply_style_by_indexes = partial(self.sf.apply_style_by_indexes, styler_obj=self.styler_obj_1, height=10)
@@ -293,3 +293,39 @@ class StyleFrameTest(unittest.TestCase):
         # sheet start from row 1 and headers are row 1, so need to add 2 when iterating
         self.assertTrue(all(sheet.cell(row=i.value + 2, column=1).style == openpy_styles[i % len(styles)]
                             for i in self.sf.index))
+
+    def test_add_color_scale_conditional_formatting_start_end(self):
+        self.sf.add_color_scale_conditional_formatting(start_type=utils.conditional_formatting_types.percentile,
+                                                       start_value=0, start_color=utils.colors.red,
+                                                       end_type=utils.conditional_formatting_types.percentile,
+                                                       end_value=100, end_color=utils.colors.green)
+        sheet = self.export_and_get_default_sheet(save=True)
+        rules_dict = sheet.conditional_formatting.cf_rules['A1:B4']
+        self.assertEqual(rules_dict[0]['type'], 'colorScale')
+        self.assertEqual(rules_dict[0]['colorScale']['color'][0].rgb, utils.colors.red)
+        self.assertEqual(rules_dict[0]['colorScale']['color'][1].rgb, utils.colors.green)
+        self.assertEqual(rules_dict[0]['colorScale']['cfvo'][0]['type'], utils.conditional_formatting_types.percentile)
+        self.assertEqual(rules_dict[0]['colorScale']['cfvo'][0]['val'], '0')
+        self.assertEqual(rules_dict[0]['colorScale']['cfvo'][1]['type'], utils.conditional_formatting_types.percentile)
+        self.assertEqual(rules_dict[0]['colorScale']['cfvo'][1]['val'], '100')
+
+    def test_add_color_scale_conditional_formatting_start_mid_end(self):
+        self.sf.add_color_scale_conditional_formatting(start_type=utils.conditional_formatting_types.percentile,
+                                                       start_value=0, start_color=utils.colors.red,
+                                                       mid_type=utils.conditional_formatting_types.percentile,
+                                                       mid_value=50, mid_color=utils.colors.yellow,
+                                                       end_type=utils.conditional_formatting_types.percentile,
+                                                       end_value=100, end_color=utils.colors.green)
+        sheet = self.export_and_get_default_sheet(save=True)
+        rules_dict = sheet.conditional_formatting.cf_rules['A1:B4']
+
+        self.assertEqual(rules_dict[0]['type'], 'colorScale')
+        self.assertEqual(rules_dict[0]['colorScale']['color'][0].rgb, utils.colors.red)
+        self.assertEqual(rules_dict[0]['colorScale']['color'][1].rgb, utils.colors.yellow)
+        self.assertEqual(rules_dict[0]['colorScale']['color'][2].rgb, utils.colors.green)
+        self.assertEqual(rules_dict[0]['colorScale']['cfvo'][0]['type'], utils.conditional_formatting_types.percentile)
+        self.assertEqual(rules_dict[0]['colorScale']['cfvo'][0]['val'], '0')
+        self.assertEqual(rules_dict[0]['colorScale']['cfvo'][1]['type'], utils.conditional_formatting_types.percentile)
+        self.assertEqual(rules_dict[0]['colorScale']['cfvo'][1]['val'], '50')
+        self.assertEqual(rules_dict[0]['colorScale']['cfvo'][2]['type'], utils.conditional_formatting_types.percentile)
+        self.assertEqual(rules_dict[0]['colorScale']['cfvo'][2]['val'], '100')

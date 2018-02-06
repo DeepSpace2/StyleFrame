@@ -560,7 +560,6 @@ class StyleFrame(object):
 
     def add_color_scale_conditional_formatting(self, start_type, start_value, start_color, end_type, end_value, end_color,
                                                mid_type=None, mid_value=None, mid_color=None, columns_range=None):
-        # TODO add tests
         """
         :param utils.conditional_formatting_types|str start_type: The type for the minimum bound
         :param start_value: The threshold for the minimum bound
