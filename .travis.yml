@@ -6,10 +6,12 @@ python:
   - 3.5
   - 3.6
 env:
-  - PANDAS=0.22.0
+  - PANDAS=specific
+  - PANDAS=latest
 install:
   - pip install -r requirements.txt
-  - pip install pandas==$PANDAS
+  if: env(PANDAS) = latest
+  - pip install pandas -U
   - pip install codecov
 before_script:
 - cd StyleFrame/tests/
