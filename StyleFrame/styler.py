@@ -1,7 +1,7 @@
 # coding:utf-8
-from openpyxl.styles import PatternFill, Style, Color, Border, Side, Font, Alignment, Protection
-
 from . import utils
+from openpyxl.formatting import ColorScaleRule
+from openpyxl.styles import PatternFill, Style, Color, Border, Side, Font, Alignment, Protection
 
 
 class Styler(object):
@@ -52,3 +52,27 @@ class Styler(object):
                      border=border,
                      number_format=self.number_format,
                      protection=Protection(locked=self.protection))
+
+
+class ColorScaleConditionalFormatRule(object):
+    """Creates a color scale conditional format rule. Wraps openpyxl's ColorScaleRule.
+    Mostly should not be used directly, but through StyleFrame.add_color_scale_conditional_formatting
+    """
+    def __init__(self, start_type, start_value, start_color, end_type, end_value, end_color,
+                 mid_type=None, mid_value=None, mid_color=None, columns_range=None):
+
+        self.columns = columns_range
+
+        # checking against None explicitly since mid_value may be 0
+        if all(val is not None for val in (mid_type, mid_value, mid_color)):
+            self.rule = ColorScaleRule(start_type=start_type, start_value=start_value,
+                                       start_color=Color(start_color),
+                                       mid_type=mid_type, mid_value=mid_value,
+                                       mid_color=Color(mid_color),
+                                       end_type=end_type, end_value=end_value,
+                                       end_color=Color(end_color))
+        else:
+            self.rule = ColorScaleRule(start_type=start_type, start_value=start_value,
+                                       start_color=Color(start_color),
+                                       end_type=end_type, end_value=end_value,
+                                       end_color=Color(end_color))

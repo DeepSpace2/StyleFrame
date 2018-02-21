@@ -1,10 +1,10 @@
 API Documentation
 =================
 
-utils
------
+utils module
+------------
 
-The utils module contains the most widely used values for styling elements such as colors and border types for convenience.
+This module contains the most widely used values for styling elements such as colors and border types for convenience.
 It is possible to directly use a value that is not present in the utils module as long as Excel recognises it.
 
 .. _utils.number_formats:
@@ -152,15 +152,32 @@ utils.fill_pattern_types
   medium_gray = 'mediumGray'
 
 
+.. _utils.conditional_formatting_types:
+
+utils.conditional_formatting_types
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+::
+
+    num = 'num'
+    percent = 'percent'
+    max = 'max'
+    min = 'min'
+    formula = 'formula'
+    percentile = 'percentile'
+
+
+styler module
+-------------
+
+This module contains classes that represent styles.
+
 .. _styler-class:
 
 Styler Class
-------------
+^^^^^^^^^^^^
 
 Used to represent a style.
 
-Init Arguments
-^^^^^^^^^^^^^^
 ::
 
    Styler(bg_color=None, bold=False, font=utils.fonts.arial, font_size=12, font_color=None,
@@ -186,7 +203,7 @@ Init Arguments
 :indent: (int)
 
 Methods
-^^^^^^^
+*******
 
 create_style
 """"""""""""
@@ -194,14 +211,14 @@ create_style
 :arguments: None
 :returns: `openpyxl` style object.
 
+style_frame module
+------------------
 
 StyleFrame Class
-----------------
+^^^^^^^^^^^^^^^^
 
 Represent a stylized dataframe
 
-Init Arguments
-^^^^^^^^^^^^^^
 ::
 
    StyleFrame(obj, styler_obj=None)
@@ -211,7 +228,7 @@ Init Arguments
 :styler_obj: (Styler) A Styler object. Will be used as the default style of all cells.
 
 Methods
-^^^^^^^
+*******
 
 apply_style_by_indexes
 """"""""""""""""""""""
@@ -285,6 +302,28 @@ set_row_height_dict
 
 :arguments:
     :row_height_dict: (dict) A dictionary from row indexes to height.
+:returns: self
+
+add_color_scale_conditional_formatting
+""""""""""""""""""""""""""""""""""""""
+
+:arguments:
+
+    :start_type: (str: one of :ref:`utils.conditional_formatting_types` or any other type Excel supports) The type for the minimum bound
+    :start_value: The threshold for the minimum bound
+    :start_color: (str: one of :ref:`utils.colors`, hex string or color name ie `'yellow'` Excel supports) The color for the minimum bound
+    :end_type: (str: one of :ref:`utils.conditional_formatting_types` or any other type Excel supports) The type for the maximum bound
+    :end_value: The threshold for the maximum bound
+    :end_color: (str: one of :ref:`utils.colors`, hex string or color name ie `'yellow'` Excel supports) The color for the maximum bound
+    :mid_type=None: (str: one of :ref:`utils.conditional_formatting_types` or any other type Excel supports) The type for the middle bound
+    :mid_value=None: The threshold for the middle bound
+    :mid_color=None: (str: one of :ref:`utils.colors`, hex string or color name ie `'yellow'` Excel supports) The color for the middle bound
+    :columns_range=None: (list | tuple) A two-elements list or tuple of columns to which the conditional formatting will be added
+            to.
+            If not provided at all the conditional formatting will be added to all columns.
+            If a single element is provided then the conditional formatting will be added to the provided column.
+            If two elements are provided then the conditional formatting will start in the first column and end in the second.
+            The provided columns can be a column name, letter or index.
 :returns: self
 
 read_excel

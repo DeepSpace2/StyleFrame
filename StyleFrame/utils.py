@@ -117,3 +117,12 @@ class fill_pattern_types(BaseDefClass):
     light_up = 'lightUp'
     light_vertical = 'lightVertical'
     medium_gray = 'mediumGray'
+
+
+class conditional_formatting_types(BaseDefClass):
+    num = 'num'
+    percent = 'percent'
+    max = 'max'
+    min = 'min'
+    formula = 'formula'
+    percentile = 'percentile'
