@@ -277,6 +277,9 @@ class StyleFrameTest(unittest.TestCase):
                         for row_in_excel, row_in_self in zip(rows_in_excel, rows_in_self)
                         for excel_cell, self_cell in zip(row_in_excel, row_in_self)))
 
+    def test_read_excel_style_and_save(self):
+        StyleFrame.read_excel(TEST_FILENAME, read_style=True).to_excel(TEST_FILENAME).save()
+
     def test_row_indexes(self):
         self.assertEqual(self.sf.row_indexes, (1, 2, 3, 4))
 

@@ -1,7 +1,8 @@
 # coding:utf-8
 from . import utils
 from openpyxl.formatting import ColorScaleRule
-from openpyxl.styles import PatternFill, Style, Color, Border, Side, Font, Alignment, Protection
+from openpyxl.styles import PatternFill, Style, Color as OpenPyColor, Border, Side, Font, Alignment, Protection
+from colour import Color
 
 
 class Styler(object):
@@ -44,7 +45,7 @@ class Styler(object):
     def create_style(self):
         side = Side(border_style=self.border_type, color=utils.colors.black)
         border = Border(left=side, right=side, top=side, bottom=side)
-        return Style(font=Font(name=self.font, size=self.font_size, color=Color(self.font_color),
+        return Style(font=Font(name=self.font, size=self.font_size, color=OpenPyColor(self.font_color),
                                bold=self.bold, underline=self.underline),
                      fill=PatternFill(patternType=self.fill_pattern_type, fgColor=self.bg_color),
                      alignment=Alignment(horizontal=self.horizontal_alignment, vertical=self.vertical_alignment,
@@ -52,6 +53,48 @@ class Styler(object):
                      border=border,
                      number_format=self.number_format,
                      protection=Protection(locked=self.protection))
+
+    @classmethod
+    def from_openpyxl_style(cls, openpyxl_style, theme_colors):
+        # TODO add test
+        bg_color = openpyxl_style.fill.fgColor.rgb
+
+        # in case we are dealing with a "theme color"
+        if bg_color is not None and not isinstance(bg_color, str):
+            bg_color = theme_colors[openpyxl_style.fill.fgColor.theme]
+            tint = openpyxl_style.fill.fgColor.tint
+            color_obj = Color('#' + bg_color)
+            color_obj.luminance = utils.calc_lum_from_tint(tint, color_obj.luminance)
+            bg_color = color_obj.hex[1:]
+
+        bold = openpyxl_style.font.bold
+        font = openpyxl_style.font.name
+        font_size = openpyxl_style.font.size
+        font_color = openpyxl_style.font.color.rgb
+
+        # in case we are dealing with a "theme color"
+        if font_color is not None and not isinstance(bg_color, str):
+            font_color = theme_colors[openpyxl_style.font.color.theme]
+            tint = openpyxl_style.font.color.tint
+            color_obj = Color('#' + font_color)
+            color_obj.luminance = utils.calc_lum_from_tint(tint, color_obj.luminance)
+            font_color = color_obj.hex_l[1:]
+
+        number_format = openpyxl_style.number_format
+        protection = openpyxl_style.protection.locked
+        underline = openpyxl_style.font.underline
+        border_type = openpyxl_style.border.bottom.border_style
+        horizontal_alignment = openpyxl_style.alignment.horizontal
+        vertical_alignment = openpyxl_style.alignment.vertical
+        wrap_text = openpyxl_style.alignment.wrap_text
+        shrink_to_fit = openpyxl_style.alignment.shrink_to_fit
+        fill_pattern_type = openpyxl_style.fill.patternType
+        indent = openpyxl_style.alignment.indent
+        return cls(bg_color, bold, font, font_size, font_color,
+                   number_format, protection, underline,
+                   border_type, horizontal_alignment,
+                   vertical_alignment, wrap_text, shrink_to_fit,
+                   fill_pattern_type, indent)
 
 
 class ColorScaleConditionalFormatRule(object):
@@ -66,13 +109,13 @@ class ColorScaleConditionalFormatRule(object):
         # checking against None explicitly since mid_value may be 0
         if all(val is not None for val in (mid_type, mid_value, mid_color)):
             self.rule = ColorScaleRule(start_type=start_type, start_value=start_value,
-                                       start_color=Color(start_color),
+                                       start_color=OpenPyColor(start_color),
                                        mid_type=mid_type, mid_value=mid_value,
-                                       mid_color=Color(mid_color),
+                                       mid_color=OpenPyColor(mid_color),
                                        end_type=end_type, end_value=end_value,
-                                       end_color=Color(end_color))
+                                       end_color=OpenPyColor(end_color))
         else:
             self.rule = ColorScaleRule(start_type=start_type, start_value=start_value,
-                                       start_color=Color(start_color),
+                                       start_color=OpenPyColor(start_color),
                                        end_type=end_type, end_value=end_value,
-                                       end_color=Color(end_color))
+                                       end_color=OpenPyColor(end_color))

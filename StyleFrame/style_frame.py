@@ -8,6 +8,7 @@ import sys
 from . import utils
 from copy import deepcopy
 from openpyxl import cell, load_workbook
+from openpyxl.xml.functions import fromstring, QName
 
 PY2 = sys.version_info[0] == 2
 
@@ -114,22 +115,55 @@ class StyleFrame(object):
             raise AttributeError("'{}' object has no attribute '{}'".format(type(self).__name__, attr))
 
     @classmethod
-    def read_excel(cls, path, sheetname='Sheet1', read_style=False, **kwargs):
+    def read_excel(cls, path, sheetname='Sheet1', read_style=False, use_openpyxl_styles=True, **kwargs):
         """Creates a StyleFrame object from an existing Excel.
 
         :param str path: The path to the Excel file to read.
         :param str sheetname: The sheet name to read from.
         :param bool read_style: If True the sheet's style will be loaded to the returned StyleFrame object.
+        :param bool use_openpyxl_styles: If True (and read_style is also True) then the styles in the return
+            StyleFrame object will be Openpyxl's style objects. If False, they styles will be StyleFrame.Styler objects.
+            Defaults to True for backward compatibility.
         :param kwargs: Any keyword argument pandas' `read_excel` supports.
         :rtype: StyleFrame
         """
 
+        # TODO add tests for use_openpyxl_styles behavior
+        # TODO update docs with use_openpyxl_styles
+        # TODO update changelogs
+
+        def _get_scheme_colors_from_excel(wb):
+            xlmns = 'http://schemas.openxmlformats.org/drawingml/2006/main'
+            root = fromstring(wb.loaded_theme)
+            theme_element = root.find(QName(xlmns, 'themeElements').text)
+            color_schemes = theme_element.findall(QName(xlmns, 'clrScheme').text)
+            colors = []
+            for colorScheme in color_schemes:
+                for tag in ['lt1', 'dk1', 'lt2', 'dk2', 'accent1', 'accent2', 'accent3', 'accent4', 'accent5', 'accent6']:
+                    accent = colorScheme.find(QName(xlmns, tag).text)
+                    if 'window' in accent.getchildren()[0].attrib['val']:
+                        colors.append(accent.getchildren()[0].attrib['lastClr'])
+                    else:
+                        colors.append(accent.getchildren()[0].attrib['val'])
+            return colors
+
         def _read_style():
-            sheet = load_workbook(path).get_sheet_by_name(sheetname)
+            wb = load_workbook(path)
+            sheet = wb.get_sheet_by_name(sheetname)
+            theme_colors = _get_scheme_colors_from_excel(wb)
             for col_index, col_name in enumerate(sf.columns, start=1):
-                sf.columns[col_index - 1].style = sheet.cell(row=1, column=col_index).style
+                if use_openpyxl_styles:
+                    style_object = sheet.cell(row=1, column=col_index).style
+                else:
+                    style_object = Styler.from_openpyxl_style(sheet.cell(row=1, column=col_index).style, theme_colors)
+                sf.columns[col_index - 1].style = style_object
                 for row_index, sf_index in enumerate(sf.index, start=2):
-                    sf.loc[sf_index, col_name].style = sheet.cell(row=row_index, column=col_index).style
+                    if use_openpyxl_styles:
+                        style_object = sheet.cell(row=row_index, column=col_index).style
+                    else:
+                        style_object = Styler.from_openpyxl_style(sheet.cell(row=row_index, column=col_index).style,
+                                                                  theme_colors)
+                    sf.loc[sf_index, col_name].style = style_object
 
         sf = cls(pd.read_excel(path, sheetname=sheetname, **kwargs))
         if read_style:
@@ -257,7 +291,11 @@ class StyleFrame(object):
         # Iterating over the dataframe's elements and applying their styles
         # openpyxl's rows and cols start from 1,1 while the dataframe is 0,0
         for col_index, column in enumerate(self.data_df.columns):
-            sheet.cell(row=startrow + 1, column=col_index + startcol + 1).style = column.style.create_style()
+            try:
+                style_to_apply = column.style.create_style()
+            except AttributeError:
+                style_to_apply = column.style
+            sheet.cell(row=startrow + 1, column=col_index + startcol + 1).style = style_to_apply
             for row_index, index in enumerate(self.data_df.index):
                 current_cell = sheet.cell(row=row_index + startrow + 2, column=col_index + startcol + 1)
                 data_df_style = self.data_df.loc[index, column].style
@@ -270,8 +308,11 @@ class StyleFrame(object):
                         if best_fit and column in best_fit:
                             data_df_style.wrap_text = False
                             data_df_style.shrink_to_fit = False
-
-                    current_cell.style = data_df_style.create_style()
+                    try:
+                        style_to_apply = data_df_style.create_style()
+                    except AttributeError:
+                        style_to_apply = data_df_style
+                    current_cell.style = style_to_apply
 
                 except AttributeError:  # if the element in the dataframe is not Container creating a default style
                     current_cell.style = Styler().create_style()

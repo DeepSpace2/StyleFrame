@@ -6,6 +6,13 @@ def is_hex_color_string(hex_string):
     return re.match(r'^([A-Fa-f0-9]{8}|[A-Fa-f0-9]{6})$', hex_string) if hex_string else False
 
 
+def calc_lum_from_tint(tint, current_lum):
+    # based on http://ciintelligence.blogspot.co.il/2012/02/converting-excel-theme-color-and-tint.html
+    if not tint:
+        return current_lum
+    return current_lum * (1.0 + tint)
+
+
 class BaseDefClass:
     @classmethod
     def get(cls, key, default=None):
