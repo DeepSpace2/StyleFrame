@@ -365,3 +365,14 @@ to_excel
                                 for.
 
 :returns: self
+
+.. note:: ``best_fit`` will attempt to calculate the correct column-width based on the longest value in each provided
+          column. However this isn't guaranteed to work for all fonts (works best with monospaced fonts). The formula
+          used to calculate a column's width is equivalent to
+
+          ::
+
+            (len(longest_value_in_column) + A_FACTOR) * P_FACTOR
+
+          The default values for ``A_FACTOR`` and ``P_FACTOR`` are 13 and 1.3 respectively, and can be modified before
+          calling ``StyleFrame.to_excel`` by directly modifying ``StyleFrame.A_FACTOR`` and ``StyleFrame.P_FACTOR``
