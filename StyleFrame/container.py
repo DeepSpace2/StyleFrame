@@ -3,6 +3,8 @@ import sys
 import datetime as dt
 import pandas as pd
 
+from . import utils
+
 PY2 = sys.version_info[0] == 2
 
 # Python 2
@@ -11,7 +13,6 @@ if PY2:
 # Python 3
 else:
     from StyleFrame.styler import Styler
-
 try:
     pd_timestamp = pd.Timestamp
 except AttributeError:
@@ -27,11 +28,11 @@ class Container(object):
         self.value = value
         if styler is None:
             if isinstance(self.value, pd_timestamp):
-                self.style = Styler(number_format='DD/MM/YY HH:MM')
+                self.style = Styler(number_format=utils.number_formats.default_date_time_format)
             elif isinstance(self.value, dt.date):
-                self.style = Styler(number_format='DD/MM/YY')
+                self.style = Styler(number_format=utils.number_formats.default_date_format)
             elif isinstance(self.value, dt.time):
-                self.style = Styler(number_format='HH:MM')
+                self.style = Styler(number_format=utils.number_formats.default_time_format)
             else:
                 self.style = Styler()
         else:

@@ -390,9 +390,9 @@ class StyleFrame(object):
         elif isinstance(indexes_to_style, Container):
             indexes_to_style = pd.Index([indexes_to_style])
 
-        default_number_formats = {pd_timestamp: 'DD/MM/YY HH:MM',
-                                  dt.date: 'DD/MM/YY',
-                                  dt.time: 'HH:MM'}
+        default_number_formats = {pd_timestamp: utils.number_formats.default_date_time_format,
+                                  dt.date: utils.number_formats.default_date_format,
+                                  dt.time: utils.number_formats.default_time_format}
 
         indexes_number_format = styler_obj.number_format
         values_number_format = styler_obj.number_format

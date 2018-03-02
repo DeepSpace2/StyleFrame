@@ -30,6 +30,10 @@ class number_formats(BaseDefClass):
     date_time = 'DD/MM/YY HH:MM'
     date_time_with_seconds = 'DD/MM/YY HH:MM:SS'
 
+    default_date_format = date
+    default_time_format = time_24_hours
+    default_date_time_format = date_time
+
 
 class colors(BaseDefClass):
     white = op_colors.WHITE
