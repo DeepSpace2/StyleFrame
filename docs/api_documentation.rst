@@ -347,7 +347,7 @@ A classmethod used to create a StyleFrame object from an existing Excel.
 
    ::
 
-       sf = sf[sf['col_a'].style.bg_color == utils.colors.red]
+       sf = sf[[col for col in sf.columns if col.style.font == utils.fonts.arial]]
 
 
 to_excel
