@@ -343,7 +343,7 @@ A classmethod used to create a StyleFrame object from an existing Excel.
 
 .. note::
 
-   You may want to use ``use_openpyxl_styles=False`` if you are going to select rows by style, for example:
+   Using ``use_openpyxl_styles=False`` is useful if you are going to filter columns or rows by style, for example:
 
    ::
 
