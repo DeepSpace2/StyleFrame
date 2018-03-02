@@ -121,16 +121,12 @@ class StyleFrame(object):
         :param str path: The path to the Excel file to read.
         :param str sheetname: The sheet name to read from.
         :param bool read_style: If True the sheet's style will be loaded to the returned StyleFrame object.
-        :param bool use_openpyxl_styles: If True (and read_style is also True) then the styles in the return
-            StyleFrame object will be Openpyxl's style objects. If False, they styles will be StyleFrame.Styler objects.
+        :param bool use_openpyxl_styles: If True (and read_style is also True) then the styles in the returned
+            StyleFrame object will be Openpyxl's style objects. If False, the styles will be StyleFrame.Styler objects.
             Defaults to True for backward compatibility.
         :param kwargs: Any keyword argument pandas' `read_excel` supports.
         :rtype: StyleFrame
         """
-
-        # TODO add tests for use_openpyxl_styles behavior
-        # TODO update docs with use_openpyxl_styles
-        # TODO update changelogs
 
         def _get_scheme_colors_from_excel(wb):
             xlmns = 'http://schemas.openxmlformats.org/drawingml/2006/main'

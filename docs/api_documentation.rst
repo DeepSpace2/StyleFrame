@@ -333,10 +333,22 @@ read_excel
    :path: (str) The path to the Excel file to read.
    :sheetname: (str) The sheet name to read from.
    :read_style=False: (bool) If `True` the sheet's style will be loaded to the returned StyleFrame object.
+   :use_openpyxl_styles=True: (bool) If `True` (and `read_style` is also `True`) then the styles in the returned
+            StyleFrame object will be Openpyxl's style objects. If `False`, the styles will be :ref:`styler-class` objects.
+            Defaults to `True` for backward compatibility.
    :kwargs: Any keyword argument pandas' `read_excel` supports.
 :returns: StyleFrame object
 
 A classmethod used to create a StyleFrame object from an existing Excel.
+
+.. note::
+
+   You may want to use ``use_openpyxl_styles=False`` if you are going to select rows by style, for example:
+
+   ::
+
+       sf = sf[sf['col_a'].style.bg_color == utils.colors.red]
+
 
 to_excel
 """"""""
