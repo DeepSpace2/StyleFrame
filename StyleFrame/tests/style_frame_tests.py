@@ -43,7 +43,7 @@ class StyleFrameTest(unittest.TestCase):
     def test_init_styler_obj(self):
         self.sf = StyleFrame({'a': [1, 2, 3], 'b': [1, 2, 3]}, styler_obj=self.styler_obj_1)
 
-        self.assertTrue(all(self.sf.loc[index, 'a'].style.create_style() == self.openpy_style_obj_1
+        self.assertTrue(all(self.sf.at[index, 'a'].style.create_style() == self.openpy_style_obj_1
                             for index in self.sf.index))
 
         sheet = self.export_and_get_default_sheet()
@@ -85,6 +85,7 @@ class StyleFrameTest(unittest.TestCase):
     def test_apply_column_style(self):
         # testing some edge cases
         with self.assertRaises(TypeError):
+            # noinspection PyTypeChecker
             self.sf.apply_column_style(cols_to_style='a', styler_obj=0)
 
         with self.assertRaises(KeyError):
@@ -92,8 +93,8 @@ class StyleFrameTest(unittest.TestCase):
 
         # actual tests
         self.apply_column_style(cols_to_style=['a'])
-        self.assertTrue(all([self.sf.loc[index, 'a'].style.create_style() == self.openpy_style_obj_1
-                             and self.sf.loc[index, 'b'].style.create_style() != self.openpy_style_obj_1
+        self.assertTrue(all([self.sf.at[index, 'a'].style.create_style() == self.openpy_style_obj_1
+                             and self.sf.at[index, 'b'].style.create_style() != self.openpy_style_obj_1
                              for index in self.sf.index]))
 
         sheet = self.export_and_get_default_sheet()
@@ -105,12 +106,13 @@ class StyleFrameTest(unittest.TestCase):
 
     def test_apply_style_by_indexes_single_col(self):
         with self.assertRaises(TypeError):
+            # noinspection PyTypeChecker
             self.sf.apply_style_by_indexes(indexes_to_style=0, styler_obj=0)
 
         self.apply_style_by_indexes(self.sf[self.sf['a'] == 'col_a_row_2'], cols_to_style=['a'])
 
-        self.assertTrue(all(self.sf.loc[index, 'a'].style.create_style() == self.openpy_style_obj_1
-                            for index in self.sf.index if self.sf.loc[index, 'a'] == 'col_a_row_2'))
+        self.assertTrue(all(self.sf.at[index, 'a'].style.create_style() == self.openpy_style_obj_1
+                            for index in self.sf.index if self.sf.at[index, 'a'] == 'col_a_row_2'))
 
         sheet = self.export_and_get_default_sheet()
 
@@ -122,8 +124,8 @@ class StyleFrameTest(unittest.TestCase):
     def test_apply_style_by_indexes_all_cols(self):
         self.apply_style_by_indexes(self.sf[self.sf['a'] == 2])
 
-        self.assertTrue(all(self.sf.loc[index, 'a'].style.create_style() == self.openpy_style_obj_1
-                            for index in self.sf.index if self.sf.loc[index, 'a'] == 2))
+        self.assertTrue(all(self.sf.at[index, 'a'].style.create_style() == self.openpy_style_obj_1
+                            for index in self.sf.index if self.sf.at[index, 'a'] == 2))
 
         sheet = self.export_and_get_default_sheet()
 
@@ -167,8 +169,10 @@ class StyleFrameTest(unittest.TestCase):
     def test_set_column_width(self):
         # testing some edge cases
         with self.assertRaises(TypeError):
+            # noinspection PyTypeChecker
             self.sf.set_column_width(columns='a', width='a')
         with self.assertRaises(ValueError):
+            # noinspection PyTypeChecker
             self.sf.set_column_width(columns='a', width=-1)
 
         # actual tests
@@ -181,6 +185,7 @@ class StyleFrameTest(unittest.TestCase):
 
     def test_set_column_width_dict(self):
         with self.assertRaises(TypeError):
+            # noinspection PyTypeChecker
             self.sf.set_column_width_dict(None)
 
         width_dict = {'a': 20, 'b': 30}
@@ -211,6 +216,7 @@ class StyleFrameTest(unittest.TestCase):
 
     def test_set_row_height_dict(self):
         with self.assertRaises(TypeError):
+            # noinspection PyTypeChecker
             self.sf.set_row_height_dict(None)
 
         height_dict = {1: 20, 2: 30}
@@ -224,6 +230,7 @@ class StyleFrameTest(unittest.TestCase):
 
     def test_rename(self):
         with self.assertRaises(TypeError):
+            # noinspection PyTypeChecker
             self.sf.rename(columns=None)
 
         original_columns_name = list(self.sf.columns)

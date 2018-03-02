@@ -1,9 +1,11 @@
 import re
 from openpyxl.styles import colors as op_colors
 
+HEX_REGEX = re.compile(r'^([A-Fa-f0-9]{8}|[A-Fa-f0-9]{6})$')
+
 
 def is_hex_color_string(hex_string):
-    return re.match(r'^([A-Fa-f0-9]{8}|[A-Fa-f0-9]{6})$', hex_string) if hex_string else False
+    return HEX_REGEX.match(hex_string) if hex_string else False
 
 
 class BaseDefClass:

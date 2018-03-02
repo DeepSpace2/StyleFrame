@@ -99,7 +99,8 @@ class StyleFrame(object):
         return self.data_df.__delitem__(item)
 
     def __getattr__(self, attr):
-        known_attrs = {'loc': self.data_df.loc,
+        known_attrs = {'at': self.data_df.at,
+                       'loc': self.data_df.loc,
                        'iloc': self.data_df.iloc,
                        'applymap': self.data_df.applymap,
                        'groupby': self.data_df.groupby,
@@ -159,7 +160,7 @@ class StyleFrame(object):
                     else:
                         style_object = Styler.from_openpyxl_style(sheet.cell(row=row_index, column=col_index).style,
                                                                   theme_colors)
-                    sf.loc[sf_index, col_name].style = style_object
+                    sf.at[sf_index, col_name].style = style_object
 
         sf = cls(pd.read_excel(path, sheetname=sheetname, **kwargs))
         if read_style:
@@ -278,7 +279,11 @@ class StyleFrame(object):
 
         if index:
             for row_index, index in enumerate(self.data_df.index):
-                sheet.cell(row=startrow + row_index + 2, column=startcol + 1).style = index.style
+                try:
+                    style_to_apply = index.style.create_style()
+                except AttributeError:
+                    style_to_apply = index.style
+                sheet.cell(row=startrow + row_index + 2, column=startcol + 1).style = style_to_apply
             startcol += 1
 
         if header and not self._custom_headers_style:
@@ -294,8 +299,7 @@ class StyleFrame(object):
             sheet.cell(row=startrow + 1, column=col_index + startcol + 1).style = style_to_apply
             for row_index, index in enumerate(self.data_df.index):
                 current_cell = sheet.cell(row=row_index + startrow + 2, column=col_index + startcol + 1)
-                data_df_style = self.data_df.loc[index, column].style
-
+                data_df_style = self.data_df.at[index, column].style
                 try:
                     if '=HYPERLINK' in unicode_type(current_cell.value):
                         data_df_style.font_color = utils.colors.blue
@@ -446,14 +450,14 @@ class StyleFrame(object):
                 self._custom_headers_style = True
             for index in self.index:
                 if use_default_formats:
-                    if isinstance(self.loc[index, col_name].value, pd_timestamp):
+                    if isinstance(self.at[index, col_name].value, pd_timestamp):
                         styler_obj.number_format = utils.number_formats.date_time
-                    elif isinstance(self.loc[index, col_name].value, dt.date):
+                    elif isinstance(self.at[index, col_name].value, dt.date):
                         styler_obj.number_format = utils.number_formats.date
-                    elif isinstance(self.loc[index, col_name].value, dt.time):
+                    elif isinstance(self.at[index, col_name].value, dt.time):
                         styler_obj.number_format = utils.number_formats.time_24_hours
 
-                self.loc[index, col_name].style = styler_obj
+                self.at[index, col_name].style = styler_obj
 
         if width:
             self.set_column_width(columns=cols_to_style, width=width)
