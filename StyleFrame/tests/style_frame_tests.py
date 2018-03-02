@@ -20,7 +20,8 @@ class StyleFrameTest(unittest.TestCase):
 
     def setUp(self):
         self.ew = StyleFrame.ExcelWriter(TEST_FILENAME)
-        self.sf = StyleFrame({'a': [1, 2, 3], 'b': [1, 2, 3]})
+        self.sf = StyleFrame({'a': ['col_a_row_1', 'col_a_row_2', 'col_a_row_3'],
+                              'b': ['col_b_row_1', 'col_b_row_2', 'col_b_row_3']})
         self.apply_column_style = partial(self.sf.apply_column_style, styler_obj=self.styler_obj_1, width=10)
         self.apply_style_by_indexes = partial(self.sf.apply_style_by_indexes, styler_obj=self.styler_obj_1, height=10)
         self.apply_headers_style = partial(self.sf.apply_headers_style, styler_obj=self.styler_obj_1)
@@ -106,10 +107,10 @@ class StyleFrameTest(unittest.TestCase):
         with self.assertRaises(TypeError):
             self.sf.apply_style_by_indexes(indexes_to_style=0, styler_obj=0)
 
-        self.apply_style_by_indexes(self.sf[self.sf['a'] == 2], cols_to_style=['a'])
+        self.apply_style_by_indexes(self.sf[self.sf['a'] == 'col_a_row_2'], cols_to_style=['a'])
 
         self.assertTrue(all(self.sf.loc[index, 'a'].style.create_style() == self.openpy_style_obj_1
-                            for index in self.sf.index if self.sf.loc[index, 'a'] == 2))
+                            for index in self.sf.index if self.sf.loc[index, 'a'] == 'col_a_row_2'))
 
         sheet = self.export_and_get_default_sheet()
 
@@ -256,14 +257,12 @@ class StyleFrameTest(unittest.TestCase):
             new_sf['A']
 
     def test_read_excel_no_style(self):
-        self.apply_headers_style()
         self.export_and_get_default_sheet(save=True)
         sf_from_excel = StyleFrame.read_excel(TEST_FILENAME)
         # making sure content is the same
         self.assertTrue(all(list(self.sf[col]) == list(sf_from_excel[col]) for col in self.sf.columns))
 
-    def test_read_excel_style(self):
-        self.apply_headers_style()
+    def test_read_excel_with_style(self):
         self.export_and_get_default_sheet(save=True)
         sf_from_excel = StyleFrame.read_excel(TEST_FILENAME, read_style=True)
         # making sure content is the same
@@ -273,7 +272,25 @@ class StyleFrameTest(unittest.TestCase):
         rows_in_self = self.sf.data_df.itertuples()
 
         # making sure styles are the same
-        self.assertTrue(all(excel_cell.value == self_cell.value
+        self.assertTrue(all(excel_cell.style == self_cell.style
+                            # the dataframe's index's styles should be Styler object because
+                            # we don't save the indexes to the excel in the tests
+                            if index == 0
+                            else self_cell.style == Styler.from_openpyxl_style(excel_cell.style, [])
+                            for row_in_excel, row_in_self in zip(rows_in_excel, rows_in_self)
+                            for index, (excel_cell, self_cell) in enumerate(zip(row_in_excel, row_in_self))))
+
+    def test_read_excel_with_style_and_styler_objects(self):
+        self.export_and_get_default_sheet(save=True)
+        sf_from_excel = StyleFrame.read_excel(TEST_FILENAME, read_style=True, use_openpyxl_styles=False)
+        # making sure content is the same
+        self.assertTrue(all(list(self.sf[col]) == list(sf_from_excel[col]) for col in self.sf.columns))
+
+        rows_in_excel = sf_from_excel.data_df.itertuples()
+        rows_in_self = self.sf.data_df.itertuples()
+
+        # making sure styles are the same
+        self.assertTrue(all(excel_cell.style == self_cell.style
                         for row_in_excel, row_in_self in zip(rows_in_excel, rows_in_self)
                         for excel_cell, self_cell in zip(row_in_excel, row_in_self)))
 

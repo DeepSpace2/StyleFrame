@@ -38,6 +38,11 @@ class Styler(object):
         self.fill_pattern_type = fill_pattern_type
         self.indent = indent
 
+    def __eq__(self, other):
+        if not isinstance(other, Styler):
+            return False
+        return self.__dict__ == other.__dict__
+
     @classmethod
     def default_header_style(cls):
         return cls(bold=True)
@@ -56,16 +61,26 @@ class Styler(object):
 
     @classmethod
     def from_openpyxl_style(cls, openpyxl_style, theme_colors):
-        # TODO add test
+        def _calc_new_hex_from_theme_hex_and_tint(theme_hex, color_tint):
+            if not theme_hex.startswith('#'):
+                theme_hex = '#' + theme_hex
+            color_obj = Color(theme_hex)
+            color_obj.luminance = _calc_lum_from_tint(color_tint, color_obj.luminance)
+            return color_obj.hex_l[1:]
+
+        def _calc_lum_from_tint(color_tint, current_lum):
+            # based on http://ciintelligence.blogspot.co.il/2012/02/converting-excel-theme-color-and-tint.html
+            if not color_tint:
+                return current_lum
+            return current_lum * (1.0 + color_tint)
+
         bg_color = openpyxl_style.fill.fgColor.rgb
 
         # in case we are dealing with a "theme color"
-        if bg_color is not None and not isinstance(bg_color, str):
+        if not isinstance(bg_color, str):
             bg_color = theme_colors[openpyxl_style.fill.fgColor.theme]
             tint = openpyxl_style.fill.fgColor.tint
-            color_obj = Color('#' + bg_color)
-            color_obj.luminance = utils.calc_lum_from_tint(tint, color_obj.luminance)
-            bg_color = color_obj.hex[1:]
+            bg_color = _calc_new_hex_from_theme_hex_and_tint(bg_color, tint)
 
         bold = openpyxl_style.font.bold
         font = openpyxl_style.font.name
@@ -73,12 +88,10 @@ class Styler(object):
         font_color = openpyxl_style.font.color.rgb
 
         # in case we are dealing with a "theme color"
-        if font_color is not None and not isinstance(bg_color, str):
+        if not isinstance(font_color, str):
             font_color = theme_colors[openpyxl_style.font.color.theme]
             tint = openpyxl_style.font.color.tint
-            color_obj = Color('#' + font_color)
-            color_obj.luminance = utils.calc_lum_from_tint(tint, color_obj.luminance)
-            font_color = color_obj.hex_l[1:]
+            font_color = _calc_new_hex_from_theme_hex_and_tint(font_color, tint)
 
         number_format = openpyxl_style.number_format
         protection = openpyxl_style.protection.locked
