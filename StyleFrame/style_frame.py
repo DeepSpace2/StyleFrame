@@ -49,7 +49,7 @@ class StyleFrame(object):
         if styler_obj and not isinstance(styler_obj, Styler):
             raise TypeError('styler_obj must be {}, got {} instead.'.format(Styler.__name__, type(styler_obj).__name__))
         if isinstance(obj, pd.DataFrame):
-            if len(obj) == 0:
+            if obj.empty:
                 self.data_df = deepcopy(obj)
             else:
                 self.data_df = obj.applymap(lambda x: Container(x, deepcopy(styler_obj)) if not isinstance(x, Container) else x)
