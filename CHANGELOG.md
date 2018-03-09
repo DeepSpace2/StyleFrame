@@ -1,35 +1,35 @@
-####1.3.1
+#### 1.3.1
 * Improved error message if invalid style arguments are used in JSON through the commandline interface
 * Fixed an error importing utils in case there is already a utils module in Python's path (see github issue #31)
 
-####1.3
+#### 1.3
 * Added `utils.fill_pattern_types`
 * Added `wrap_text`, `shrink_to_fit`, `fill_pattern_type` and `indent` arguments to `Styler.__init__`
 
-####1.2
+#### 1.2
 * Fixed an issue when running tests from code  
 * Using `.loc` and `.iloc` instead of `.ix` since `.ix` is deprecated in pandas >0.20 
 * Added `horizontal_alignment` and `vertical_alignment` arguments to `Styler.__init__`
 * Added `style_alternate_rows` method to `StyleFrame`.
 
-####1.1.1
+#### 1.1.1
 * Added option to pass a json string through cli
 * Added `cells` option to `default_styles` when using JSON
 
-####1.1
+#### 1.1
 * Added commandline interface that supports json to xlsx
 * Added `utils.fonts`
 * Added `width` and `height` arguments to relevant styling methods
 
-####1.0
+#### 1.0
 * Removed support for individual style specifiers when calling styling methods
 
-####0.2.1 
+#### 0.2.1 
 * Added 2 general styles to `utils.number_formats`: '0' as `utils.number_formats.general_integer`
   and '0.00' as `utils.number_formats.general_float`
 * Fixed a bug with a `DeprecationWarning` unnecessarily showing
 
-####0.2
+#### 0.2
 * Added ability to change font
 * Added ability to change cell border type
 * Added `style_obj` argument to all styling methods which accepts a `Styler` object so styles can be reused.
@@ -39,77 +39,77 @@
 * Added ability to provide a default `Styler` object to `StyleFrame.__init__`, and added deprecation message when not
   passing a `Styler` object to styling methods
 
-####0.1.8
+#### 0.1.8
 * Added ability to run tests by code:
   ```python
   from StyleFrame import tests
   tests.run()
   ```
 
-####0.1.7
+#### 0.1.7
 * Fixed a bug when adding an underline to a style
 * More extensive tests
 
-####0.1.6
+#### 0.1.6
 * Fixed a bug when passing `header=False` to `to_excel`
 
-####0.1.5
+#### 0.1.5
 * Changed dependencies, now requires pandas 0.16.2 - 0.18.1      
 * Changed Python support: 2.7, 3.3, 3.4, 3.5
 * Fixed a bug when trying to filter the first row
 * Transitioning to x.y.z version numbers
 
-####0.1.4.2    
+#### 0.1.4.2    
 * `right_to_left` is now set to `False` as default in `to_excel()`
 * Most of the methods now return `self` to allow method chaining (eg `StyleFrame(..).rename(..).to_excel()`)
 
-####0.1.4.1
+#### 0.1.4.1
 * Supports passing a path to required output file to `to_excel` method, much like pandas's `to_excel`.
 
-####0.1.3.5    
+#### 0.1.3.5    
 * Basic support for Python 3.
 
-####0.1.3.2
+#### 0.1.3.2
 * Internal changes in `apply_style_by_indexes` method in order to keep number formats of dates and times.
 
-####0.1.3.1     
+#### 0.1.3.1     
 * Fixed a bug when creating a `StyleFrame` from an empty `DataFrame`
 
-####0.1.3   
+#### 0.1.3   
 * Some bugs fixes
 * Added ability to change width and height of several columns/rows at once (`set_column_width_dict` and `set_row_height` methods)
 
-####0.1.2       
+#### 0.1.2       
 * Added ability to create excel with the dataframe's  (and style) indexes
 
-####0.1.1    
+#### 0.1.1    
 * Added ability add filter to rows
 * Added ability to protect cells and sheets from editing
 
-####0.0.9       
+#### 0.0.9       
 * Some bugs fixes
 
-####0.0.8   
+#### 0.0.8   
 * Added default style for cells with `'=HYPERLINK(..)'` values (blue color, underlined)       
 * Improved unicode support
 
-####0.0.7       
+#### 0.0.7       
 * Added ability to set rows height and columns width
 
-####0.0.6 
+#### 0.0.6 
 * Added ability to style only the columns headers.         
 * Added ability to rename columns while keeping the style of the headers
 * Added ability to change font color
 * Added `utils.number_formats`       
 * Added support for 'direct' item assignment, ie `sf['column_c'] = 5`
 
-####0.0.5.5 
+#### 0.0.5.5 
 * Added ability to hide certain columns when exporting to excel.        
 * Changed parameters names. See the documentation.
 
-####0.0.5.2   
+#### 0.0.5.2   
 * Added `ExcelWriter` to `StyleFrame` class        
 * Supports initializing `StyleFrame` with containers
 
-####0.0.5      
+#### 0.0.5      
 * Initial release
