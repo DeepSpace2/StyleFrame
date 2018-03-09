@@ -3,26 +3,23 @@
 [![PyPI](https://img.shields.io/pypi/pyversions/StyleFrame.svg?style=plastic)]()
 
 # StyleFrame
-_Exporting DataFrame to designed excel file has never been so easy_
+_Exporting DataFrames to a styled Excel file has never been so easy_
 
 
-A library that wraps pandas and openpyxl and allows easy styling of dataframes in excel
-```
-$ pip install styleframe
-```
-You can read the documentation at http://styleframe.readthedocs.org/en/latest/
+A library that wraps pandas and openpyxl and allows easy styling of dataframes in Excel.
 
-<img src=https://s.faketrumptweet.com/j3kkdbjj_1vtght_m1uf0.png width=365px height=150px/>    
+[Documentation](http://styleframe.readthedocs.org/en/latest/) and [Changelog](CHANGELOG.md)
 
 ---
 
 ## Contents
 1. [Rationale](#rationale)
-2. [Basics](#basics)
-3. [Usage Examples](#usage-examples)    
+2. [Installation](#installation)
+3. [Basics](#basics)
+4. [Usage Examples](#usage-examples)    
 &nbsp;&nbsp;&nbsp;&nbsp;- [Simple Example](#simple-example)    
 &nbsp;&nbsp;&nbsp;&nbsp;- [Advance Example](#advance-example)   
-4. [Commandline Interface](#commandline-interface)
+5. [Commandline Interface](#commandline-interface)
 
 
 ## Rationale
@@ -38,6 +35,11 @@ That is why many times we would choose excel files as our output.
 StyleFrame package allows us to design the excel file on the data in a similar way to DataFrame api.   
 It saves us the trouble of working with excel workbook and the suffering of trying to match it with the data stored in our DataFrame.
 
+
+## Installation
+```
+$ pip install styleframe
+```
 
 ## Basics
 
