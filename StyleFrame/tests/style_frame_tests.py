@@ -3,7 +3,7 @@ import pandas as pd
 import os
 
 from functools import partial
-from StyleFrame import StyleFrame, Styler, utils
+from StyleFrame import Container, StyleFrame, Styler, utils
 from StyleFrame.tests import TEST_FILENAME
 
 
@@ -72,12 +72,22 @@ class StyleFrameTest(unittest.TestCase):
     def test_str(self):
         self.assertEqual(str(self.sf), str(self.sf.data_df))
 
-    def test__get_item__(self):
+    def test__getitem__(self):
         self.assertEqual(self.sf['a'].tolist(), self.sf.data_df['a'].tolist())
         self.assertTrue(self.sf.data_df[['a', 'b']].equals(self.sf[['a', 'b']].data_df))
 
+    def test__setitem__(self):
+        self.sf['a'] = range(3)
+        self.sf['b'] = range(3, 6)
+        self.sf['c'] = 5
+        self.sf['d'] = self.sf['a'] + self.sf['b']
+        self.sf['e'] = self.sf['a'] + 5
+
+        self.assertTrue(all(self.sf.applymap(lambda x: isinstance(x, Container)).all()))
+
     def test__getattr__(self):
         self.assertEqual(self.sf.fillna, self.sf.data_df.fillna)
+        self.assertTrue(self.sf['a'].equals(self.sf.a))
 
         with self.assertRaises(AttributeError):
             self.sf.non_exisiting_method()
@@ -312,13 +322,13 @@ class StyleFrameTest(unittest.TestCase):
         openpy_styles = [self.openpy_style_obj_1, self.openpy_style_obj_2]
         self.sf.style_alternate_rows(styles)
 
-        self.assertTrue(all(self.sf.iloc[index.value, 0].style.create_style() == styles[index % len(styles)].create_style()
+        self.assertTrue(all(self.sf.iloc[index.value, 0].style.create_style() == styles[index.value % len(styles)].create_style()
                             for index in self.sf.index))
 
         sheet = self.export_and_get_default_sheet()
 
         # sheet start from row 1 and headers are row 1, so need to add 2 when iterating
-        self.assertTrue(all(sheet.cell(row=i.value + 2, column=1).style == openpy_styles[i % len(styles)]
+        self.assertTrue(all(sheet.cell(row=i.value + 2, column=1).style == openpy_styles[i.value % len(styles)]
                             for i in self.sf.index))
 
     def test_add_color_scale_conditional_formatting_start_end(self):

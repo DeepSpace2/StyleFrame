@@ -7,6 +7,7 @@ import sys
 
 from . import utils
 from copy import deepcopy
+from collections import Iterable
 from openpyxl import cell, load_workbook
 from openpyxl.xml.functions import fromstring, QName
 
@@ -90,8 +91,8 @@ class StyleFrame(object):
             return Series(self.data_df.__getitem__(item))
 
     def __setitem__(self, key, value):
-        if isinstance(value, pd.Series):
-            self.data_df.__setitem__(Container(key), map(Container, value))
+        if isinstance(value, (Iterable, pd.Series)):
+            self.data_df.__setitem__(Container(key), list(map(Container, value)))
         else:
             self.data_df.__setitem__(Container(key), Container(value))
 
@@ -107,9 +108,8 @@ class StyleFrame(object):
                        'index': self.data_df.index,
                        'columns': self.data_df.columns,
                        'fillna': self.data_df.fillna}
-        # future versions of pandas may not have .ix (deprecated since 0.20)
-        if getattr(self.data_df, 'ix'):
-            known_attrs['ix'] = self.data_df.ix
+        for column in self.data_df.columns:
+            known_attrs[str(column)] = getattr(self.data_df, str(column))
         if attr in known_attrs and hasattr(self.data_df, attr):
             return known_attrs[attr]
         else:
