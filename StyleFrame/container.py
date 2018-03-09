@@ -78,41 +78,72 @@ class Container(object):
 
     def __add__(self, other):
         if isinstance(other, self.__class__):
-            return self.value + other.value
-        return self.value + other
+            return Container(self.value + other.value)
+        return Container(self.value + other)
+
+    def __radd__(self, other):
+        return self.__add__(other)
 
     def __sub__(self, other):
         if isinstance(other, self.__class__):
-            return self.value - other.value
-        return self.value - other
+            return Container(self.value - other.value)
+        return Container(self.value - other)
+
+    def __rsub__(self, other):
+        if isinstance(other, self.__class__):
+            return Container(other.value - self.value)
+        return Container(other - self.value)
 
     def __div__(self, other):
         if isinstance(other, self.__class__):
-            return self.value / other.value
-        return self.value / other
+            return Container(self.value / other.value)
+        return Container(self.value / other)
+
+    def __rdiv__(self, other):
+        if isinstance(other, self.__class__):
+            return Container(other.value / self.value)
+        return Container(other / self.value)
 
     def __truediv__(self, other):
         if isinstance(other, self.__class__):
-            return self.value / other.value
-        return self.value / other
+            return Container(self.value / other.value)
+        return Container(self.value / other)
+
+    def __rtruediv__(self, other):
+        if isinstance(other, self.__class__):
+            return Container(other.value / self.value)
+        return Container(other / self.value)
 
     def __floordiv__(self, other):
         if isinstance(other, self.__class__):
-            return self.value // other.value
-        return self.value // other
+            return Container(self.value // other.value)
+        return Container(self.value // other)
+
+    def __rfloordiv__(self, other):
+        if isinstance(other, self.__class__):
+            return Container(other.value // self.value)
+        return Container(other // self.value)
 
     def __mul__(self, other):
         if isinstance(other, self.__class__):
-            return self.value * other.value
-        return self.value * other
+            return Container(self.value * other.value)
+        return Container(self.value * other)
+
+    def __rmul__(self, other):
+        return self.__mul__(other)
 
     def __mod__(self, other):
         if isinstance(other, self.__class__):
-            return self.value % other.value
-        return self.value % other
+            return Container(self.value % other.value)
+        return Container(self.value % other)
+
+    def __rmod__(self, other):
+        if isinstance(other, self.__class__):
+            return Container(other.value % self.value)
+        return Container(other % self.value)
 
     def __pow__(self, power, modulo=None):
-        return self.value ** power
+        return Container(self.value ** power)
 
     def __int__(self):
         return int(self.value)
@@ -125,3 +156,6 @@ class Container(object):
 
     def __len__(self):
         return len(self.value)
+
+    # for Python 2
+    __nonzero__ = __bool__
