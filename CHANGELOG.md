@@ -1,3 +1,13 @@
+#### 1.4
+* **No longer supporting Python 3.3**
+* StyleFrame objects no longer expose .ix method as it is deprecated since pandas 0.20. Use .loc or .iloc instead
+* Added ability to access StyleFrame columns as attributes (eg `sf.column_a`)
+* Added conditional formatting
+* Added `best_fit` to `to_excel` method
+* Added support for pandas <= 0.22.0
+* Added support for theme colors when reading styles from Excel sheets
+* Added option to use `Styler` objects when reading styles from Excel sheets
+
 #### 1.3.1
 * Improved error message if invalid style arguments are used in JSON through the commandline interface
 * Fixed an error importing utils in case there is already a utils module in Python's path (see github issue #31)
