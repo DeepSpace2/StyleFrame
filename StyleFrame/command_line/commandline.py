@@ -4,8 +4,10 @@ import inspect
 import pandas as pd
 import sys
 
+import jsonschema
 from collections import defaultdict
-from StyleFrame import StyleFrame, Container, Styler, version
+from .. import StyleFrame, Container, Styler, version
+from .tests.json_schema import commandline_json_schema
 
 PY2 = sys.version_info[0] == 2
 
@@ -39,8 +41,9 @@ class CommandLineInterface(object):
                 sheets = json.load(f)
         else:
             raise TypeError('Neither --json nor --json_path were provided.')
-        if not isinstance(sheets, list):
-            raise TypeError('JSON must contain a list of sheets.')
+
+        jsonschema.validate(sheets, commandline_json_schema)
+
         for sheet in sheets:
             self._load_sheet(sheet)
 

@@ -1,6 +1,6 @@
 import unittest
 
-from StyleFrame.tests.commandline_tests import CommandlineInterfaceTest
+from StyleFrame.command_line.tests.commandline_tests import CommandlineInterfaceTest
 from StyleFrame.tests.container_tests import ContainerTest
 from StyleFrame.tests.series_tests import SeriesTest
 from StyleFrame.tests.style_frame_tests import StyleFrameTest
