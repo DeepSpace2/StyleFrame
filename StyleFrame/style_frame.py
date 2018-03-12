@@ -450,12 +450,9 @@ class StyleFrame(object):
                 self._custom_headers_style = True
             for index in self.index:
                 if use_default_formats:
-                    if isinstance(self.at[index, col_name].value, pd_timestamp):
-                        styler_obj.number_format = utils.number_formats.date_time
-                    elif isinstance(self.at[index, col_name].value, dt.date):
-                        styler_obj.number_format = utils.number_formats.date
-                    elif isinstance(self.at[index, col_name].value, dt.time):
-                        styler_obj.number_format = utils.number_formats.time_24_hours
+                    value_type = self.at[index, col_name].value
+                    styler_obj.number_format = utils.number_formats.value_type_to_default_format.get(value_type,
+                                                                                                     styler_obj.number_format)
 
                 self.at[index, col_name].style = styler_obj
 

@@ -20,7 +20,7 @@ setup(
     author_email='deepspace2@gmail.com',
 
     entry_points={
-        'console_scripts': ['styleframe = StyleFrame.commandline:execute_from_command_line']
+        'console_scripts': ['styleframe = StyleFrame.command_line.commandline:execute_from_command_line']
     },
 
     # Choose your license

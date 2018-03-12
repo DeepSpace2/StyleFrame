@@ -51,8 +51,8 @@ __init__(self, bg_color=None, bold=False, font=utils.fonts.arial, font_size=12, 
          vertical_alignment=utils.vertical_alignments.center, wrap_text=True, shrink_to_fit=True,
          fill_pattern_type=utils.fill_pattern_types.solid, indent=0)
 ```
-Object that represents the style of a cell in our excel file.
-Styler is responsible of storing the style of single cell.
+Object that represents the style of a cell in our excel file.   
+Styler is responsible of storing the style of single cell.   
 Once the style is ready, ```.create_style()``` method is called.
 
 * ***utils***:
@@ -78,9 +78,9 @@ And finally:
 ```python
 __init__(self, obj, styler_obj=None):
 ```
-StyleFrame is the main object we will be dealing with.
-It contains self DataFrame which is based on the given obj.
-Each item of the self DataFrame is wrapped by a Container object to store the given data and its` style.
+StyleFrame is the main object we will be dealing with.   
+It contains self DataFrame which is based on the given obj.   
+Each item of the self DataFrame is wrapped by a Container object to store the given data and its` style.   
 StyleFrame (usually referred as sf) reveals a very easy api for styling.
 
 ## Usage Examples
@@ -88,6 +88,17 @@ StyleFrame (usually referred as sf) reveals a very easy api for styling.
 ### Simple Example
 
 ```python
+import pandas as pd
+from StyleFrame import StyleFrame, Styler, utils   
+   
+df = pd.DataFrame({
+    'Time': [1.496728e+09, 1.496728e+09, 1.496728e+09, 1.496728e+09, 1.496728e+09],
+    'Expect': ['Hey', 'how', 'are', 'you', 'today?'],
+    'Actual': ['Hello', 'how', 'are', 'u', 'today?'],
+    'Pass/Fail': ['Failed', 'Passed', 'Passed', 'Failed', 'Passed']
+    },
+    columns=['Time', 'Expect', 'Actual', 'Pass/Fail'])
+   
 """Our DataFrame looks like this:
 
            Time  Expect  Actual Pass/Fail
@@ -98,27 +109,27 @@ StyleFrame (usually referred as sf) reveals a very easy api for styling.
 4  1.496728e+09  today?  today?    Passed
 
 """
-
+   
 # Create StyleFrame object that wrap our DataFrame and assign default style.
 defaults = {'font': utils.fonts.aharoni, 'font_size': 14}
 sf = StyleFrame(df, styler_obj=Styler(**defaults))
-
+   
 # Style the headers of the table
 header_style = Styler(bold=True, font_size=18)
 sf.apply_headers_style(styler_obj=header_style)
-
+   
 # Set the background color to green where the test marked as 'passed'
 passed_style = Styler(bg_color=utils.colors.green, font_color=utils.colors.white, **defaults)
 sf.apply_style_by_indexes(indexes_to_style=sf[sf['Pass/Fail'] == 'Passed'],
                           cols_to_style='Pass/Fail',
                           styler_obj=passed_style)
-
+   
 # Set the background color to red where the test marked as 'failed'
 failed_style = Styler(bg_color=utils.colors.red, font_color=utils.colors.white, **defaults)
 sf.apply_style_by_indexes(indexes_to_style=sf[sf['Pass/Fail'] == 'Failed'],
                           cols_to_style='Pass/Fail',
                           styler_obj=failed_style)
-
+   
 # Change the columns width and the rows height
 sf.set_column_width(columns=sf.columns, width=20)
 sf.set_row_height(rows=sf.row_indexes, height=25)
@@ -139,8 +150,8 @@ First, let us create a DataFrame that contains data we would like to export to a
 ```python
 from datetime import date
 import pandas as pd
-
-
+   
+   
 columns = ['Date', 'Col A', 'Col B', 'Col C', 'Percentage']
 df = pd.DataFrame(data={'Date': [date(1995, 9, 5), date(1947, 11, 29), date(2000, 1, 15)],
                         'Col A': [1, 2004, -3],
