@@ -1,13 +1,5 @@
 import re
-import datetime as dt
-
-import pandas as pd
 from openpyxl.styles import colors as op_colors
-
-try:
-    pd_timestamp = pd.Timestamp
-except AttributeError:
-    pd_timestamp = pd.tslib.Timestamp
 
 HEX_REGEX = re.compile(r'^([A-Fa-f0-9]{8}|[A-Fa-f0-9]{6})$')
 
@@ -41,12 +33,6 @@ class number_formats(BaseDefClass):
     default_date_format = date
     default_time_format = time_24_hours
     default_date_time_format = date_time
-
-    value_type_to_default_format = {
-        pd_timestamp: default_date_time_format,
-        dt.date: default_date_format,
-        dt.time: default_time_format
-    }
 
 
 class colors(BaseDefClass):
