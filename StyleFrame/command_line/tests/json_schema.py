@@ -13,9 +13,9 @@ commandline_json_schema = {
                 "columns": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/Column",
-                        "minItems": 1
-                    }
+                        "$ref": "#/definitions/Column"
+                    },
+                    "minItems": 1
                 },
                 "row_heights": {
                     "type": "object"
@@ -138,7 +138,7 @@ commandline_json_schema = {
     },
     "type": "array",
     "items": {
-        "$ref": "#/definitions/Sheet",
-        "minItems": 1
-    }
+        "$ref": "#/definitions/Sheet"
+    },
+    "minItems": 1
 }
