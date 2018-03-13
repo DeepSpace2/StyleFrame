@@ -1,9 +1,6 @@
 commandline_json_schema = {
-    "type": "array",
-    "items": {
-        "$ref": "#/definitions/Sheet",
-        "minItems": 1
-    },
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "sheets",
     "definitions": {
         "Sheet": {
             "$id": "#sheet",
@@ -30,16 +27,19 @@ commandline_json_schema = {
                     "type": "object",
                     "properties": {
                         "headers": {
-                            "$ref": "#definitions/Style"
+                            "$ref": "#/definitions/Style"
                         },
                         "cells": {
                             "$ref": "#/definitions/Style"
                         }
-                    }
-                },
+                    },
+                    "additionalProperties": False
+                }
             },
-            "required": ["sheet_name", "columns"],
-            "additionalProperties": False
+            "required": [
+                "sheet_name",
+                "columns"
+            ]
         },
         "Column": {
             "$id": "#column",
@@ -136,4 +136,9 @@ commandline_json_schema = {
             "additionalProperties": False
         }
     },
+    "type": "array",
+    "items": {
+        "$ref": "#/definitions/Sheet",
+        "minItems": 1
+    }
 }

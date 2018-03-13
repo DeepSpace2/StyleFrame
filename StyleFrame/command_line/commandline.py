@@ -1,10 +1,10 @@
 import argparse
 import json
+import jsonschema
 import inspect
 import pandas as pd
 import sys
 
-import jsonschema
 from collections import defaultdict
 from .. import StyleFrame, Container, Styler, version
 from .tests.json_schema import commandline_json_schema
