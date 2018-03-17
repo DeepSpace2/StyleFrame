@@ -7,6 +7,8 @@
 * Added support for pandas <= 0.22.0
 * Added support for theme colors when reading styles from Excel sheets
 * Added option to use `Styler` objects when reading styles from Excel sheets
+* Using a JSON schema to validate json from command line
+* Added command line argument --show-schema
 
 #### 1.3.1
 * Improved error message if invalid style arguments are used in JSON through the commandline interface
