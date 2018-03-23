@@ -205,7 +205,7 @@ Used to represent a style.
 Methods
 *******
 
-create_style
+to_openpyxl_style
 """"""""""""
 
 :arguments: None

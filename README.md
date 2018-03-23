@@ -54,7 +54,7 @@ __init__(self, bg_color=None, bold=False, font=utils.fonts.arial, font_size=12, 
 ```
 Object that represents the style of a cell in our excel file.   
 Styler is responsible of storing the style of single cell.   
-Once the style is ready, ```.create_style()``` method is called.
+Once the style is ready, ```.to_openpyxl_style()``` method is called.
 
 * ***utils***:
 ```python
@@ -71,7 +71,7 @@ __init__(self, value, styler=None)
 Object that represents cell in our excel file.
  it contains two variables:          
 &nbsp;&nbsp;&nbsp;&nbsp;- value which may be anything you wish to put in the cell as long as excel file support its format.   
-&nbsp;&nbsp;&nbsp;&nbsp;- style which is the style of the cell- created by ```Styler(...).create_style()```
+&nbsp;&nbsp;&nbsp;&nbsp;- style which is the style of the cell- created by ```Styler(...).to_openpyxl_style()```
 
 And finally:
 
@@ -235,7 +235,7 @@ style = Styler(bg_color=utils.colors.red,
                font_color=utils.colors.white,
                protection=True,
                underline=utils.underline.double,
-               number_format=utils.number_formats.thousands_comma_sep).create_style()
+               number_format=utils.number_formats.thousands_comma_sep).to_openpyxl_style()
         
 for row_index, col_name in rows_max_value.iteritems():
     sf[col_name][row_index].style = style

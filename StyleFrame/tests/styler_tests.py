@@ -12,4 +12,4 @@ class StylerTests(unittest.TestCase):
                             vertical_alignment=utils.vertical_alignments.bottom, wrap_text=False, shrink_to_fit=True,
                             fill_pattern_type=utils.fill_pattern_types.gray0625, indent=1)
 
-        self.assertEqual(styler_obj,  Styler.from_openpyxl_style(styler_obj.create_style(), []))
+        self.assertEqual(styler_obj, Styler.from_openpyxl_style(styler_obj.to_openpyxl_style(), []))

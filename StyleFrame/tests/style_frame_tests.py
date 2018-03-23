@@ -15,8 +15,8 @@ class StyleFrameTest(unittest.TestCase):
                                   horizontal_alignment=utils.horizontal_alignments.left,
                                   vertical_alignment=utils.vertical_alignments.center)
         cls.styler_obj_2 = Styler(bg_color=utils.colors.yellow)
-        cls.openpy_style_obj_1 = cls.styler_obj_1.create_style()
-        cls.openpy_style_obj_2 = cls.styler_obj_2.create_style()
+        cls.openpy_style_obj_1 = cls.styler_obj_1.to_openpyxl_style()
+        cls.openpy_style_obj_2 = cls.styler_obj_2.to_openpyxl_style()
 
     def setUp(self):
         self.ew = StyleFrame.ExcelWriter(TEST_FILENAME)
@@ -43,7 +43,7 @@ class StyleFrameTest(unittest.TestCase):
     def test_init_styler_obj(self):
         self.sf = StyleFrame({'a': [1, 2, 3], 'b': [1, 2, 3]}, styler_obj=self.styler_obj_1)
 
-        self.assertTrue(all(self.sf.at[index, 'a'].style.create_style() == self.openpy_style_obj_1
+        self.assertTrue(all(self.sf.at[index, 'a'].style.to_openpyxl_style() == self.openpy_style_obj_1
                             for index in self.sf.index))
 
         sheet = self.export_and_get_default_sheet()
@@ -103,8 +103,8 @@ class StyleFrameTest(unittest.TestCase):
 
         # actual tests
         self.apply_column_style(cols_to_style=['a'])
-        self.assertTrue(all([self.sf.at[index, 'a'].style.create_style() == self.openpy_style_obj_1
-                             and self.sf.at[index, 'b'].style.create_style() != self.openpy_style_obj_1
+        self.assertTrue(all([self.sf.at[index, 'a'].style.to_openpyxl_style() == self.openpy_style_obj_1
+                             and self.sf.at[index, 'b'].style.to_openpyxl_style() != self.openpy_style_obj_1
                              for index in self.sf.index]))
 
         sheet = self.export_and_get_default_sheet()
@@ -121,7 +121,7 @@ class StyleFrameTest(unittest.TestCase):
 
         self.apply_style_by_indexes(self.sf[self.sf['a'] == 'col_a_row_2'], cols_to_style=['a'])
 
-        self.assertTrue(all(self.sf.at[index, 'a'].style.create_style() == self.openpy_style_obj_1
+        self.assertTrue(all(self.sf.at[index, 'a'].style.to_openpyxl_style() == self.openpy_style_obj_1
                             for index in self.sf.index if self.sf.at[index, 'a'] == 'col_a_row_2'))
 
         sheet = self.export_and_get_default_sheet()
@@ -134,7 +134,7 @@ class StyleFrameTest(unittest.TestCase):
     def test_apply_style_by_indexes_all_cols(self):
         self.apply_style_by_indexes(self.sf[self.sf['a'] == 2])
 
-        self.assertTrue(all(self.sf.at[index, 'a'].style.create_style() == self.openpy_style_obj_1
+        self.assertTrue(all(self.sf.at[index, 'a'].style.to_openpyxl_style() == self.openpy_style_obj_1
                             for index in self.sf.index if self.sf.at[index, 'a'] == 2))
 
         sheet = self.export_and_get_default_sheet()
@@ -147,7 +147,7 @@ class StyleFrameTest(unittest.TestCase):
     def test_apply_style_by_indexes_with_single_index(self):
         self.apply_style_by_indexes(self.sf.index[0])
 
-        self.assertTrue(all(self.sf.iloc[0, self.sf.columns.get_loc(col)].style.create_style() == self.openpy_style_obj_1
+        self.assertTrue(all(self.sf.iloc[0, self.sf.columns.get_loc(col)].style.to_openpyxl_style() == self.openpy_style_obj_1
                             for col in self.sf.columns))
 
         sheet = self.export_and_get_default_sheet()
@@ -159,7 +159,7 @@ class StyleFrameTest(unittest.TestCase):
     def test_apply_style_by_indexes_all_cols_with_multiple_indexes(self):
         self.apply_style_by_indexes([1, 2])
 
-        self.assertTrue(all(self.sf.iloc[index, self.sf.columns.get_loc(col)].style.create_style() == self.openpy_style_obj_1
+        self.assertTrue(all(self.sf.iloc[index, self.sf.columns.get_loc(col)].style.to_openpyxl_style() == self.openpy_style_obj_1
                             for index in [1, 2]
                             for col in self.sf.columns))
 
@@ -171,7 +171,7 @@ class StyleFrameTest(unittest.TestCase):
 
     def test_apply_headers_style(self):
         self.apply_headers_style()
-        self.assertEqual(self.sf.columns[0].style.create_style(), self.openpy_style_obj_1)
+        self.assertEqual(self.sf.columns[0].style.to_openpyxl_style(), self.openpy_style_obj_1)
 
         sheet = self.export_and_get_default_sheet()
         self.assertEqual(sheet.cell(row=1, column=1).style, self.openpy_style_obj_1)
@@ -322,7 +322,7 @@ class StyleFrameTest(unittest.TestCase):
         openpy_styles = [self.openpy_style_obj_1, self.openpy_style_obj_2]
         self.sf.style_alternate_rows(styles)
 
-        self.assertTrue(all(self.sf.iloc[index.value, 0].style.create_style() == styles[index.value % len(styles)].create_style()
+        self.assertTrue(all(self.sf.iloc[index.value, 0].style.to_openpyxl_style() == styles[index.value % len(styles)].to_openpyxl_style()
                             for index in self.sf.index))
 
         sheet = self.export_and_get_default_sheet()

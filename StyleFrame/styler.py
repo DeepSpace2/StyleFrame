@@ -9,6 +9,9 @@ class Styler(object):
     """
     Creates openpyxl Style to be applied
     """
+
+    cache = {}
+
     def __init__(self, bg_color=None, bold=False, font=utils.fonts.arial, font_size=12, font_color=None,
                  number_format=utils.number_formats.general, protection=False, underline=None,
                  border_type=utils.borders.thin, horizontal_alignment=utils.horizontal_alignments.center,
@@ -47,17 +50,23 @@ class Styler(object):
     def default_header_style(cls):
         return cls(bold=True)
 
-    def create_style(self):
-        side = Side(border_style=self.border_type, color=utils.colors.black)
-        border = Border(left=side, right=side, top=side, bottom=side)
-        return Style(font=Font(name=self.font, size=self.font_size, color=OpenPyColor(self.font_color),
-                               bold=self.bold, underline=self.underline),
-                     fill=PatternFill(patternType=self.fill_pattern_type, fgColor=self.bg_color),
-                     alignment=Alignment(horizontal=self.horizontal_alignment, vertical=self.vertical_alignment,
-                                         wrap_text=self.wrap_text, shrink_to_fit=self.shrink_to_fit, indent=self.indent),
-                     border=border,
-                     number_format=self.number_format,
-                     protection=Protection(locked=self.protection))
+    def to_openpyxl_style(self):
+        attrs = tuple((k, v) for k, v in self.__dict__.items())
+        try:
+            openpyxl_style = self.cache[attrs]
+        except KeyError:
+            side = Side(border_style=self.border_type, color=utils.colors.black)
+            border = Border(left=side, right=side, top=side, bottom=side)
+            openpyxl_style = self.cache[attrs] = Style(font=Font(name=self.font, size=self.font_size, color=OpenPyColor(self.font_color),
+                                                       bold=self.bold, underline=self.underline),
+                                                       fill=PatternFill(patternType=self.fill_pattern_type, fgColor=self.bg_color),
+                                                       alignment=Alignment(horizontal=self.horizontal_alignment, vertical=self.vertical_alignment,
+                                                                           wrap_text=self.wrap_text, shrink_to_fit=self.shrink_to_fit,
+                                                                           indent=self.indent),
+                                                       border=border,
+                                                       number_format=self.number_format,
+                                                       protection=Protection(locked=self.protection))
+        return openpyxl_style
 
     @classmethod
     def from_openpyxl_style(cls, openpyxl_style, theme_colors):
@@ -108,6 +117,8 @@ class Styler(object):
                    border_type, horizontal_alignment,
                    vertical_alignment, wrap_text, shrink_to_fit,
                    fill_pattern_type, indent)
+
+    create_style = to_openpyxl_style
 
 
 class ColorScaleConditionalFormatRule(object):

@@ -280,7 +280,7 @@ class StyleFrame(object):
         if index:
             for row_index, index in enumerate(self.data_df.index):
                 try:
-                    style_to_apply = index.style.create_style()
+                    style_to_apply = index.style.to_openpyxl_style()
                 except AttributeError:
                     style_to_apply = index.style
                 sheet.cell(row=startrow + row_index + 2, column=startcol + 1).style = style_to_apply
@@ -293,7 +293,7 @@ class StyleFrame(object):
         # openpyxl's rows and cols start from 1,1 while the dataframe is 0,0
         for col_index, column in enumerate(self.data_df.columns):
             try:
-                style_to_apply = column.style.create_style()
+                style_to_apply = column.style.to_openpyxl_style()
             except AttributeError:
                 style_to_apply = column.style
             sheet.cell(row=startrow + 1, column=col_index + startcol + 1).style = style_to_apply
@@ -309,13 +309,13 @@ class StyleFrame(object):
                             data_df_style.wrap_text = False
                             data_df_style.shrink_to_fit = False
                     try:
-                        style_to_apply = data_df_style.create_style()
+                        style_to_apply = data_df_style.to_openpyxl_style()
                     except AttributeError:
                         style_to_apply = data_df_style
                     current_cell.style = style_to_apply
 
                 except AttributeError:  # if the element in the dataframe is not Container creating a default style
-                    current_cell.style = Styler().create_style()
+                    current_cell.style = Styler().to_openpyxl_style()
 
         if best_fit:
             if not isinstance(best_fit, (list, set, tuple)):
