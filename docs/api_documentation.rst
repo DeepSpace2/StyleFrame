@@ -206,7 +206,7 @@ Methods
 *******
 
 to_openpyxl_style
-""""""""""""
+"""""""""""""""""
 
 :arguments: None
 :returns: `openpyxl` style object.
@@ -236,9 +236,12 @@ apply_style_by_indexes
 :arguments:
    :indexes_to_style: (list | tuple | int | Container) The StyleFrame indexes to style. This usually passed as pandas selecting syntax.
                       For example, ``sf[sf['some_col'] = 20]``
-   :styler_obj: (Styler) The `Styler` object that represent the style
+   :styler_obj: (Styler) `Styler` object that contains the style which will be applied to indexes in `indexes_to_style`
    :cols_to_style=None: (str | list | tuple | set) The column names to apply the provided style to. If ``None`` all columns will be styled.
-   :height=None: (int | float) If provided, the new height for the matched indexes.
+   :height=None: (int | float) If provided, height for rows whose indexes are in indexes_to_style.
+   :complement_style=None: (Styler) `Styler` object that contains the style which will be applied to indexes not in `indexes_to_style`
+   :complement_height=None: (int | float)  Height for rows whose indexes are not in indexes_to_style. If not provided then
+            `height` will be used (if provided).
 :returns: self
 
 apply_column_style

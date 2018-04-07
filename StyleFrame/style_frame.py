@@ -370,13 +370,17 @@ class StyleFrame(object):
 
         return excel_writer
 
-    def apply_style_by_indexes(self, indexes_to_style, styler_obj, cols_to_style=None, height=None,):
+    def apply_style_by_indexes(self, indexes_to_style, styler_obj, cols_to_style=None, height=None,
+                               complement_style=None, complement_height=None):
         """Applies a certain style to the provided indexes in the dataframe in the provided columns
 
-        :param list|tuple|int|Container indexes_to_style: indexes to apply the style to
-        :param Styler styler_obj: the styler object that contains the style to be applied
+        :param list|tuple|int|Container indexes_to_style: indexes to which the provided style will be applied
+        :param Styler styler_obj: the styler object that contains the style which will be applied to indexes in indexes_to_style
         :param str|list|tuple|set cols_to_style: the columns to apply the style to, if not provided all the columns will be styled
-        :param int|float height: non-default height for the given rows
+        :param int|float height: height for rows whose indexes are in indexes_to_style
+        :param Styler complement_style: the styler object that contains the style which will be applied to indexes not in indexes_to_style
+        :param int|float complement_height: height for rows whose indexes are not in indexes_to_style. If not provided then
+            height will be used (if provided).
         :return: self
         :rtype: StyleFrame
         """
@@ -422,6 +426,10 @@ class StyleFrame(object):
             # Add offset 2 since rows do not include the headers and they starts from 1 (not 0).
             rows_indexes_for_height_change = [self.index.get_loc(idx) + 2 for idx in indexes_to_style]
             self.set_row_height(rows=rows_indexes_for_height_change, height=height)
+
+        if complement_style:
+            self.apply_style_by_indexes(self.index.difference(indexes_to_style), complement_style, cols_to_style,
+                                        complement_height if complement_height else height)
 
         return self
 
