@@ -52,6 +52,12 @@ class Container(object):
         else:
             return other == self.value
 
+    def __ne__(self, other):
+        if isinstance(other, self.__class__):
+            return other.value != self.value
+        else:
+            return other != self.value
+
     def __gt__(self, other):
         if isinstance(other, self.__class__):
             return other.value < self.value
