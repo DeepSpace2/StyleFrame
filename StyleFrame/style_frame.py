@@ -587,12 +587,12 @@ class StyleFrame(object):
 
         new_columns = [col if col not in columns else Container(columns[col], col.style)
                        for col in sf.data_df.columns]
-        sf.data_df.columns = new_columns
+
+        sf._known_attrs['columns'] = sf.data_df.columns = new_columns
 
         sf._columns_width.update({new_col_name: sf._columns_width.pop(old_col_name)
                                   for old_col_name, new_col_name in columns.items()
                                   if old_col_name in sf._columns_width})
-
         return sf
 
     def style_alternate_rows(self, styles):
