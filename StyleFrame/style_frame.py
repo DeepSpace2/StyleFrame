@@ -193,12 +193,12 @@ class StyleFrame(object):
         """Saves the dataframe to excel and applies the styles.
 
         :param bool right_to_left: sets the sheet to be right to left.
-        :param str|list|tuple|set columns_to_hide: single column, list, set or tuple of columns to hide, may be column index (starts from 1)
+        :param None|str|list|tuple|set columns_to_hide: single column, list, set or tuple of columns to hide, may be column index (starts from 1)
                                 column name or column letter.
         :param bool allow_protection: allow to protect the sheet and the cells that specified as protected.
-        :param int row_to_add_filters: add filters to the given row, starts from zero (zero is to add filters to columns).
-        :param str columns_and_rows_to_freeze: column and row string to freeze for example: C3 will freeze columns: A,B and rows: 1,2.
-        :param str|list|tuple|set best_fit: single column, list, set or tuple of columns names to attempt to best fit the width
+        :param None|int row_to_add_filters: add filters to the given row, starts from zero (zero is to add filters to columns).
+        :param None|str columns_and_rows_to_freeze: column and row string to freeze for example: C3 will freeze columns: A,B and rows: 1,2.
+        :param None|str|list|tuple|set best_fit: single column, list, set or tuple of columns names to attempt to best fit the width
                                 for.
 
         See Pandas' to_excel documentation about the other parameters
@@ -376,10 +376,10 @@ class StyleFrame(object):
 
         :param list|tuple|int|Container indexes_to_style: indexes to which the provided style will be applied
         :param Styler styler_obj: the styler object that contains the style which will be applied to indexes in indexes_to_style
-        :param str|list|tuple|set cols_to_style: the columns to apply the style to, if not provided all the columns will be styled
-        :param int|float height: height for rows whose indexes are in indexes_to_style
-        :param Styler complement_style: the styler object that contains the style which will be applied to indexes not in indexes_to_style
-        :param int|float complement_height: height for rows whose indexes are not in indexes_to_style. If not provided then
+        :param None|str|list|tuple|set cols_to_style: the columns to apply the style to, if not provided all the columns will be styled
+        :param None|int|float height: height for rows whose indexes are in indexes_to_style
+        :param None|Styler complement_style: the styler object that contains the style which will be applied to indexes not in indexes_to_style
+        :param None|int|float complement_height: height for rows whose indexes are not in indexes_to_style. If not provided then
             height will be used (if provided).
         :return: self
         :rtype: StyleFrame
@@ -440,7 +440,7 @@ class StyleFrame(object):
         :param Styler styler_obj: the styler object that contains the style to be applied
         :param bool style_header: if True, style the headers as well
         :param bool use_default_formats: if True, use predefined styles for dates and times
-        :param int|float width: non-default width for the given columns
+        :param None|int|float width: non-default width for the given columns
         :return: self
         :rtype: StyleFrame
         """
