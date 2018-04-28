@@ -237,10 +237,10 @@ apply_style_by_indexes
    :indexes_to_style: (list | tuple | int | Container) The StyleFrame indexes to style. This usually passed as pandas selecting syntax.
                       For example, ``sf[sf['some_col'] = 20]``
    :styler_obj: (Styler) `Styler` object that contains the style which will be applied to indexes in `indexes_to_style`
-   :cols_to_style=None: (str | list | tuple | set) The column names to apply the provided style to. If ``None`` all columns will be styled.
-   :height=None: (int | float) If provided, height for rows whose indexes are in indexes_to_style.
-   :complement_style=None: (Styler) `Styler` object that contains the style which will be applied to indexes not in `indexes_to_style`
-   :complement_height=None: (int | float)  Height for rows whose indexes are not in indexes_to_style. If not provided then
+   :cols_to_style=None: (None | str | list | tuple | set) The column names to apply the provided style to. If ``None`` all columns will be styled.
+   :height=None: (None | int | float) If provided, height for rows whose indexes are in indexes_to_style.
+   :complement_style=None: (None | Styler) `Styler` object that contains the style which will be applied to indexes not in `indexes_to_style`
+   :complement_height=None: (None | int | float)  Height for rows whose indexes are not in indexes_to_style. If not provided then
             `height` will be used (if provided).
 :returns: self
 
@@ -252,7 +252,7 @@ apply_column_style
    :styler_obj: (Styler) A `Styler` object.
    :style_header=False: (bool) If True, the column(s) header will also be styled.
    :use_default_formats=True: (bool) If True, the default formats for date and times will be used.
-   :width=None: (int | float) If provided, the new width for the specified columns.
+   :width=None: (None | int | float) If provided, the new width for the specified columns.
 :returns: self
 
 apply_headers_style
@@ -318,10 +318,10 @@ add_color_scale_conditional_formatting
     :end_type: (str: one of :ref:`utils.conditional_formatting_types` or any other type Excel supports) The type for the maximum bound
     :end_value: The threshold for the maximum bound
     :end_color: (str: one of :ref:`utils.colors`, hex string or color name ie `'yellow'` Excel supports) The color for the maximum bound
-    :mid_type=None: (str: one of :ref:`utils.conditional_formatting_types` or any other type Excel supports) The type for the middle bound
+    :mid_type=None: (None | str: one of :ref:`utils.conditional_formatting_types` or any other type Excel supports) The type for the middle bound
     :mid_value=None: The threshold for the middle bound
-    :mid_color=None: (str: one of :ref:`utils.colors`, hex string or color name ie `'yellow'` Excel supports) The color for the middle bound
-    :columns_range=None: (list | tuple) A two-elements list or tuple of columns to which the conditional formatting will be added
+    :mid_color=None: (None | str: one of :ref:`utils.colors`, hex string or color name ie `'yellow'` Excel supports) The color for the middle bound
+    :columns_range=None: (None | list | tuple) A two-elements list or tuple of columns to which the conditional formatting will be added
             to.
             If not provided at all the conditional formatting will be added to all columns.
             If a single element is provided then the conditional formatting will be added to the provided column.
@@ -360,11 +360,11 @@ to_excel
    :allow_protection=False: (bool) Allow to protect the cells that specified as protected. If used ``protection=True``
                              in a Styler object this must be set to `True`.
    :right_to_left=False: (bool) Makes the sheet right-to-left.
-   :columns_to_hide=None: (str | list | tuple | set) Columns names to hide.
-   :row_to_add_filters=None: (int) Add filters to the given row index, starts from 0 (which will add filters to header row).
-   :columns_and_rows_to_freeze=None: (str) Column and row string to freeze.
+   :columns_to_hide=None: (None | str | list | tuple | set) Columns names to hide.
+   :row_to_add_filters=None: (None | int) Add filters to the given row index, starts from 0 (which will add filters to header row).
+   :columns_and_rows_to_freeze=None: (None | str) Column and row string to freeze.
                                      For example "C3" will freeze columns: A, B and rows: 1, 2.
-   :best_fit=None: (str | list | tuple | set) single column, list, set or tuple of columns names to attempt to best fit the width
+   :best_fit=None: (None | str | list | tuple | set) single column, list, set or tuple of columns names to attempt to best fit the width
                                 for.
 
 :returns: self
