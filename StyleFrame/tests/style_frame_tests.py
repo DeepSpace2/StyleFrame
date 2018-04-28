@@ -144,6 +144,15 @@ class StyleFrameTest(unittest.TestCase):
                             for j in range(1, len(self.sf.columns))
                             if sheet.cell(row=i, column=1).value == 2))
 
+    def test_apply_style_by_indexes_complement_style(self):
+        self.apply_style_by_indexes(self.sf[self.sf['a'] == 'col_a_row_1'], complement_style=self.styler_obj_2)
+
+        self.assertTrue(all(self.sf.at[index, 'a'].style.to_openpyxl_style() == self.openpy_style_obj_1
+                            for index in self.sf.index if self.sf.at[index, 'a'] == 'col_a_row_1'))
+
+        self.assertTrue(all(self.sf.at[index, 'a'].style.to_openpyxl_style() == self.openpy_style_obj_2
+                            for index in self.sf.index if self.sf.at[index, 'a'] != 'col_a_row_1'))
+
     def test_apply_style_by_indexes_with_single_index(self):
         self.apply_style_by_indexes(self.sf.index[0])
 
