@@ -73,6 +73,15 @@ class StyleFrame(object):
         self._custom_headers_style = obj._custom_headers_style if from_another_styleframe else False
         self._cond_formatting = []
 
+        self._known_attrs = {'at': self.data_df.at,
+                             'loc': self.data_df.loc,
+                             'iloc': self.data_df.iloc,
+                             'applymap': self.data_df.applymap,
+                             'groupby': self.data_df.groupby,
+                             'index': self.data_df.index,
+                             'columns': self.data_df.columns,
+                             'fillna': self.data_df.fillna}
+
     def __str__(self):
         return str(self.data_df)
 
@@ -100,19 +109,11 @@ class StyleFrame(object):
         return self.data_df.__delitem__(item)
 
     def __getattr__(self, attr):
-        known_attrs = {'at': self.data_df.at,
-                       'loc': self.data_df.loc,
-                       'iloc': self.data_df.iloc,
-                       'applymap': self.data_df.applymap,
-                       'groupby': self.data_df.groupby,
-                       'index': self.data_df.index,
-                       'columns': self.data_df.columns,
-                       'fillna': self.data_df.fillna}
-        for column in self.data_df.columns:
-            known_attrs[str(column)] = getattr(self.data_df, str(column))
-        if attr in known_attrs and hasattr(self.data_df, attr):
-            return known_attrs[attr]
-        else:
+        if attr in self.data_df.columns:
+            return self.data_df[attr]
+        try:
+            return self._known_attrs[attr]
+        except KeyError:
             raise AttributeError("'{}' object has no attribute '{}'".format(type(self).__name__, attr))
 
     @classmethod
