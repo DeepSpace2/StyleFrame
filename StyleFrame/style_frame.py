@@ -401,9 +401,9 @@ class StyleFrame(object):
         indexes_number_format = styler_obj.number_format
         values_number_format = styler_obj.number_format
 
-        if cols_to_style and not isinstance(cols_to_style, (list, tuple, set)):
+        if cols_to_style is not None and not isinstance(cols_to_style, (list, tuple, set)):
             cols_to_style = [cols_to_style]
-        elif not cols_to_style:
+        elif cols_to_style is None:
             cols_to_style = list(self.data_df.columns)
             for i in indexes_to_style:
                 if styler_obj.number_format == utils.number_formats.general:
