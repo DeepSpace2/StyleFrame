@@ -332,6 +332,10 @@ add_color_scale_conditional_formatting
 read_excel
 """"""""""
 
+A classmethod used to create a StyleFrame object from an existing Excel.
+
+.. note:: ``read_excel`` also accepts all arguments that ``pandas.read_excel`` accepts as kwargs.
+
 :arguments:
    :path: (str) The path to the Excel file to read.
    :sheetname: (str) The sheet name to read from.
@@ -339,22 +343,20 @@ read_excel
    :use_openpyxl_styles=True: (bool) If `True` (and `read_style` is also `True`) then the styles in the returned
             StyleFrame object will be Openpyxl's style objects. If `False`, the styles will be :ref:`styler-class` objects.
             Defaults to `True` for backward compatibility.
-   :kwargs: Any keyword argument pandas' `read_excel` supports.
+
+   .. note:: Using ``use_openpyxl_styles=False`` is useful if you are going to filter columns or rows by style, for example:
+
+             ::
+
+                sf = sf[[col for col in sf.columns if col.style.font == utils.fonts.arial]]
+
+
 :returns: StyleFrame object
-
-A classmethod used to create a StyleFrame object from an existing Excel.
-
-.. note::
-
-   Using ``use_openpyxl_styles=False`` is useful if you are going to filter columns or rows by style, for example:
-
-   ::
-
-       sf = sf[[col for col in sf.columns if col.style.font == utils.fonts.arial]]
-
 
 to_excel
 """"""""
+
+.. note:: ``to_excel`` also accepts all arguments that ``pandas.DataFrame.to_excel`` accepts as kwargs.
 
 :arguments:
    :excel_writer='output.xlsx': (str | pandas.ExcelWriter) File path or existing ExcelWriter
@@ -369,17 +371,15 @@ to_excel
    :best_fit=None: (None | str | list | tuple | set) single column, list, set or tuple of columns names to attempt to best fit the width
                                 for.
 
-   .. note:: ``to_excel`` also accepts all arguments that ``pandas.DataFrame.to_excel`` accepts as kwargs.
+   .. note:: ``best_fit`` will attempt to calculate the correct column-width based on the longest value in each provided
+              column. However this isn't guaranteed to work for all fonts (works best with monospaced fonts). The formula
+              used to calculate a column's width is equivalent to
+
+              ::
+
+                (len(longest_value_in_column) + A_FACTOR) * P_FACTOR
+
+              The default values for ``A_FACTOR`` and ``P_FACTOR`` are 13 and 1.3 respectively, and can be modified before
+              calling ``StyleFrame.to_excel`` by directly modifying ``StyleFrame.A_FACTOR`` and ``StyleFrame.P_FACTOR``
 
 :returns: self
-
-.. note:: ``best_fit`` will attempt to calculate the correct column-width based on the longest value in each provided
-          column. However this isn't guaranteed to work for all fonts (works best with monospaced fonts). The formula
-          used to calculate a column's width is equivalent to
-
-          ::
-
-            (len(longest_value_in_column) + A_FACTOR) * P_FACTOR
-
-          The default values for ``A_FACTOR`` and ``P_FACTOR`` are 13 and 1.3 respectively, and can be modified before
-          calling ``StyleFrame.to_excel`` by directly modifying ``StyleFrame.A_FACTOR`` and ``StyleFrame.P_FACTOR``
