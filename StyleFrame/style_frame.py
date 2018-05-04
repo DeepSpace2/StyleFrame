@@ -187,12 +187,13 @@ class StyleFrame(object):
 
         return tuple(range(1, len(self) + 2))
 
-    def to_excel(self, excel_writer='output.xlsx', sheet_name='Sheet1', na_rep='', float_format=None, columns=None,
-                 header=True, index=False, index_label=None, startrow=0, startcol=0, merge_cells=True, encoding=None,
-                 inf_rep='inf', allow_protection=False, right_to_left=False, columns_to_hide=None,
-                 row_to_add_filters=None, columns_and_rows_to_freeze=None, best_fit=None):
+    def to_excel(self, excel_writer='output.xlsx', sheet_name='Sheet1',
+                 allow_protection=False, right_to_left=False, columns_to_hide=None, row_to_add_filters=None,
+                 columns_and_rows_to_freeze=None, best_fit=None, **kwargs):
         """Saves the dataframe to excel and applies the styles.
 
+        :param str|pandas.ExcelWriter excel_writer: File path or existing ExcelWriter
+        :param str sheet_name: Name of sheet the StyleFrame will be exported to
         :param bool right_to_left: sets the sheet to be right to left.
         :param None|str|list|tuple|set columns_to_hide: single column, list, set or tuple of columns to hide, may be column index (starts from 1)
                                 column name or column letter.
@@ -202,8 +203,15 @@ class StyleFrame(object):
         :param None|str|list|tuple|set best_fit: single column, list, set or tuple of columns names to attempt to best fit the width
                                 for.
 
-        See Pandas' to_excel documentation about the other parameters
+        See Pandas.DataFrame.to_excel documentation about other arguments
         """
+
+        # dealing with needed pandas.to_excel defaults
+        header = kwargs.pop('header', True)
+        index = kwargs.pop('index', False)
+        startcol = kwargs.pop('startcol', 0)
+        startrow = kwargs.pop('startrow', 0)
+        na_rep = kwargs.pop('na_rep', '')
 
         def get_values(x):
             if isinstance(x, Container):
@@ -267,10 +275,8 @@ class StyleFrame(object):
         if isinstance(excel_writer, str_type):
             excel_writer = self.ExcelWriter(excel_writer)
 
-        export_df.to_excel(excel_writer, sheet_name=sheet_name, na_rep=na_rep, float_format=float_format, index=index,
-                           columns=columns, header=header, index_label=index_label, startrow=startrow,
-                           startcol=startcol, engine='openpyxl', merge_cells=merge_cells, encoding=encoding,
-                           inf_rep=inf_rep)
+        export_df.to_excel(excel_writer, sheet_name=sheet_name, engine='openpyxl', header=header,
+                           index=index, startcol=startcol, startrow=startrow, na_rep=na_rep, **kwargs)
 
         sheet = excel_writer.book.get_sheet_by_name(sheet_name)
 
