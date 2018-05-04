@@ -1,6 +1,7 @@
 [![Codecov branch](https://img.shields.io/codecov/c/github/DeepSpace2/StyleFrame/master.svg?style=plastic)]()
 [![Travis branch](https://img.shields.io/travis/DeepSpace2/StyleFrame/master.svg?style=plastic)]()
 [![PyPI](https://img.shields.io/pypi/v/styleframe.svg?style=plastic)]()
+[![Downloads](http://pepy.tech/badge/styleframe)](http://pepy.tech/count/styleframe)
 [![PyPI](https://img.shields.io/pypi/pyversions/StyleFrame.svg?style=plastic)]()
 
 # StyleFrame
