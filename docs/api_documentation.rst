@@ -354,6 +354,8 @@ to_excel
 """"""""
 
 :arguments:
+   :excel_writer='output.xlsx': (str | pandas.ExcelWriter) File path or existing ExcelWriter
+   :sheet_name='Sheet1': (str) Name of sheet the StyleFrame will be exported to
    :allow_protection=False: (bool) Allow to protect the cells that specified as protected. If used ``protection=True``
                              in a Styler object this must be set to `True`.
    :right_to_left=False: (bool) Makes the sheet right-to-left.
@@ -363,6 +365,8 @@ to_excel
                                      For example "C3" will freeze columns: A, B and rows: 1, 2.
    :best_fit=None: (str | list | tuple | set) single column, list, set or tuple of columns names to attempt to best fit the width
                                 for.
+
+   .. note:: ``to_excel`` also accepts all arguments that ``pandas.DataFrame.to_excel`` accepts as kwargs.
 
 :returns: self
 
