@@ -350,6 +350,8 @@ A classmethod used to create a StyleFrame object from an existing Excel.
 
                 sf = sf[[col for col in sf.columns if col.style.font == utils.fonts.arial]]
 
+   :read_comments=False: (bool) If `True` (and `read_style` is also `True`) cells' comments will be loaded to the returned StyleFrame object. Note
+            that reading comments without reading styles is currently not supported.
 
 :returns: StyleFrame object
 

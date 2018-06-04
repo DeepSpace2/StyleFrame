@@ -13,8 +13,9 @@ class StyleFrameTest(unittest.TestCase):
         cls.styler_obj_1 = Styler(bg_color=utils.colors.blue, bold=True, font='Impact', font_color=utils.colors.yellow,
                                   font_size=20, underline=utils.underline.single,
                                   horizontal_alignment=utils.horizontal_alignments.left,
-                                  vertical_alignment=utils.vertical_alignments.center)
-        cls.styler_obj_2 = Styler(bg_color=utils.colors.yellow)
+                                  vertical_alignment=utils.vertical_alignments.center,
+                                  comment_text='styler_obj_1 comment')
+        cls.styler_obj_2 = Styler(bg_color=utils.colors.yellow, comment_text='styler_obj_2 comment')
         cls.openpy_style_obj_1 = cls.styler_obj_1.to_openpyxl_style()
         cls.openpy_style_obj_2 = cls.styler_obj_2.to_openpyxl_style()
 
@@ -288,7 +289,7 @@ class StyleFrameTest(unittest.TestCase):
         # making sure content is the same
         self.assertTrue(all(list(self.sf[col]) == list(sf_from_excel[col]) for col in self.sf.columns))
 
-    def test_read_excel_with_style(self):
+    def test_read_excel_with_style_openpyxl_objects(self):
         self.export_and_get_default_sheet(save=True)
         sf_from_excel = StyleFrame.read_excel(TEST_FILENAME, read_style=True)
         # making sure content is the same
@@ -306,7 +307,7 @@ class StyleFrameTest(unittest.TestCase):
                             for row_in_excel, row_in_self in zip(rows_in_excel, rows_in_self)
                             for index, (excel_cell, self_cell) in enumerate(zip(row_in_excel, row_in_self))))
 
-    def test_read_excel_with_style_and_styler_objects(self):
+    def test_read_excel_with_style_styler_objects(self):
         self.export_and_get_default_sheet(save=True)
         sf_from_excel = StyleFrame.read_excel(TEST_FILENAME, read_style=True, use_openpyxl_styles=False)
         # making sure content is the same
@@ -319,6 +320,39 @@ class StyleFrameTest(unittest.TestCase):
         self.assertTrue(all(excel_cell.style == self_cell.style
                         for row_in_excel, row_in_self in zip(rows_in_excel, rows_in_self)
                         for excel_cell, self_cell in zip(row_in_excel, row_in_self)))
+
+    def test_read_excel_with_style_comments_openpyxl_objects(self):
+        self.export_and_get_default_sheet(save=True)
+        sf_from_excel = StyleFrame.read_excel(TEST_FILENAME, read_style=True, read_comments=True)
+        # making sure content is the same
+        self.assertTrue(all(list(self.sf[col]) == list(sf_from_excel[col]) for col in self.sf.columns))
+
+        rows_in_excel = sf_from_excel.data_df.itertuples()
+        rows_in_self = self.sf.data_df.itertuples()
+
+        # making sure styles are the same
+        self.assertTrue(all(excel_cell.style == self_cell.style
+                            # the dataframe's index's styles should be Styler object because
+                            # we don't save the indexes to the excel in the tests
+                            if index == 0
+                            else self_cell.style == Styler.from_openpyxl_style(excel_cell.style, [])
+                            for row_in_excel, row_in_self in zip(rows_in_excel, rows_in_self)
+                            for index, (excel_cell, self_cell) in enumerate(zip(row_in_excel, row_in_self))))
+
+    def test_read_excel_with_style_comments_styler_objects(self):
+        self.export_and_get_default_sheet(save=True)
+        sf_from_excel = StyleFrame.read_excel(TEST_FILENAME, read_style=True, use_openpyxl_styles=False,
+                                              read_comments=True)
+        # making sure content is the same
+        self.assertTrue(all(list(self.sf[col]) == list(sf_from_excel[col]) for col in self.sf.columns))
+
+        rows_in_excel = sf_from_excel.data_df.itertuples()
+        rows_in_self = self.sf.data_df.itertuples()
+
+        # making sure styles are the same
+        self.assertTrue(all(excel_cell.style == self_cell.style
+                            for row_in_excel, row_in_self in zip(rows_in_excel, rows_in_self)
+                            for excel_cell, self_cell in zip(row_in_excel, row_in_self)))
 
     def test_read_excel_style_and_save(self):
         StyleFrame.read_excel(TEST_FILENAME, read_style=True).to_excel(TEST_FILENAME).save()

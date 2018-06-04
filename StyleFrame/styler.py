@@ -1,8 +1,10 @@
 # coding:utf-8
 from . import utils
+from colour import Color
 from openpyxl.formatting import ColorScaleRule
 from openpyxl.styles import PatternFill, Style, Color as OpenPyColor, Border, Side, Font, Alignment, Protection
-from colour import Color
+from openpyxl.comments import Comment
+from pprint import pformat
 
 
 class Styler(object):
@@ -16,7 +18,7 @@ class Styler(object):
                  number_format=utils.number_formats.general, protection=False, underline=None,
                  border_type=utils.borders.thin, horizontal_alignment=utils.horizontal_alignments.center,
                  vertical_alignment=utils.vertical_alignments.center, wrap_text=True, shrink_to_fit=True,
-                 fill_pattern_type=utils.fill_pattern_types.solid, indent=0):
+                 fill_pattern_type=utils.fill_pattern_types.solid, indent=0, comment_author=None, comment_text=None):
 
         def get_color_from_string(color_str, default_color=None):
             if color_str and color_str.startswith('#'):
@@ -40,9 +42,11 @@ class Styler(object):
         self.wrap_text = wrap_text
         self.fill_pattern_type = fill_pattern_type
         self.indent = indent
+        self.comment_author = comment_author
+        self.comment_text = comment_text
 
     def __eq__(self, other):
-        if not isinstance(other, Styler):
+        if not isinstance(other, self.__class__):
             return False
         return self.__dict__ == other.__dict__
 
@@ -69,7 +73,7 @@ class Styler(object):
         return openpyxl_style
 
     @classmethod
-    def from_openpyxl_style(cls, openpyxl_style, theme_colors):
+    def from_openpyxl_style(cls, openpyxl_style, theme_colors, openpyxl_comment=None):
         def _calc_new_hex_from_theme_hex_and_tint(theme_hex, color_tint):
             if not theme_hex.startswith('#'):
                 theme_hex = '#' + theme_hex
@@ -112,11 +116,19 @@ class Styler(object):
         shrink_to_fit = openpyxl_style.alignment.shrink_to_fit
         fill_pattern_type = openpyxl_style.fill.patternType
         indent = openpyxl_style.alignment.indent
+
+        if openpyxl_comment:
+            comment_author = openpyxl_comment.author
+            comment_text = openpyxl_comment.text
+        else:
+            comment_author = None
+            comment_text = None
+
         return cls(bg_color, bold, font, font_size, font_color,
                    number_format, protection, underline,
                    border_type, horizontal_alignment,
                    vertical_alignment, wrap_text, shrink_to_fit,
-                   fill_pattern_type, indent)
+                   fill_pattern_type, indent, comment_author, comment_text)
 
     create_style = to_openpyxl_style
 

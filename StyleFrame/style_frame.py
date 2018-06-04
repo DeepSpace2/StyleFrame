@@ -117,7 +117,8 @@ class StyleFrame(object):
             raise AttributeError("'{}' object has no attribute '{}'".format(type(self).__name__, attr))
 
     @classmethod
-    def read_excel(cls, path, sheetname='Sheet1', read_style=False, use_openpyxl_styles=True, **kwargs):
+    def read_excel(cls, path, sheetname='Sheet1', read_style=False, use_openpyxl_styles=True,
+                   read_comments=False, **kwargs):
         """Creates a StyleFrame object from an existing Excel.
 
         :param str path: The path to the Excel file to read.
@@ -126,6 +127,8 @@ class StyleFrame(object):
         :param bool use_openpyxl_styles: If True (and read_style is also True) then the styles in the returned
             StyleFrame object will be Openpyxl's style objects. If False, the styles will be StyleFrame.Styler objects.
             Defaults to True for backward compatibility.
+        :param bool read_comments: If True cells' comments will be loaded to the returned StyleFrame object. Note
+            that reading comments without reading styles is currently not supported.
         :param kwargs: Any keyword argument pandas' `read_excel` supports.
         :rtype: StyleFrame
         """
@@ -150,17 +153,24 @@ class StyleFrame(object):
             sheet = wb.get_sheet_by_name(sheetname)
             theme_colors = _get_scheme_colors_from_excel(wb)
             for col_index, col_name in enumerate(sf.columns, start=1):
+                column_cell = sheet.cell(row=1, column=col_index)
                 if use_openpyxl_styles:
-                    style_object = sheet.cell(row=1, column=col_index).style
+                    style_object = column_cell.style
+                    if read_comments:
+                        style_object.comment = column_cell.comment
                 else:
-                    style_object = Styler.from_openpyxl_style(sheet.cell(row=1, column=col_index).style, theme_colors)
+                    style_object = Styler.from_openpyxl_style(column_cell.style, theme_colors,
+                                                              read_comments and column_cell.comment)
                 sf.columns[col_index - 1].style = style_object
                 for row_index, sf_index in enumerate(sf.index, start=2):
+                    current_cell = sheet.cell(row=row_index, column=col_index)
                     if use_openpyxl_styles:
-                        style_object = sheet.cell(row=row_index, column=col_index).style
+                        style_object = current_cell.style
+                        if read_comments:
+                            style_object.comment = current_cell.comment
                     else:
-                        style_object = Styler.from_openpyxl_style(sheet.cell(row=row_index, column=col_index).style,
-                                                                  theme_colors)
+                        style_object = Styler.from_openpyxl_style(current_cell.style, theme_colors,
+                                                                  read_comments and current_cell.comment)
                     sf.at[sf_index, col_name].style = style_object
 
         sf = cls(pd.read_excel(path, sheetname=sheetname, **kwargs))
@@ -290,7 +300,15 @@ class StyleFrame(object):
                     style_to_apply = index.style.to_openpyxl_style()
                 except AttributeError:
                     style_to_apply = index.style
-                sheet.cell(row=startrow + row_index + 2, column=startcol + 1).style = style_to_apply
+                current_cell = sheet.cell(row=startrow + row_index + 2, column=startcol + 1)
+                current_cell.style = style_to_apply
+                if isinstance(index.style, Styler):
+                    current_cell.comment = index.style.generate_comment()
+                else:
+                    if hasattr(index.style, 'comment'):
+                        index.style.comment.parent = None
+                        current_cell.comment = index.style.comment
+
             startcol += 1
 
         if header and not self._custom_headers_style:
@@ -303,7 +321,14 @@ class StyleFrame(object):
                 style_to_apply = column.style.to_openpyxl_style()
             except AttributeError:
                 style_to_apply = column.style
-            sheet.cell(row=startrow + 1, column=col_index + startcol + 1).style = style_to_apply
+            column_header_cell = sheet.cell(row=startrow + 1, column=col_index + startcol + 1)
+            column_header_cell.style = style_to_apply
+            if isinstance(column.style, Styler):
+                column_header_cell.comment = column.style.generate_comment()
+            else:
+                if hasattr(column.style, 'comment'):
+                    column.style.comment.parent = None
+                    column_header_cell.comment = column.style.comment
             for row_index, index in enumerate(self.data_df.index):
                 current_cell = sheet.cell(row=row_index + startrow + 2, column=col_index + startcol + 1)
                 data_df_style = self.data_df.at[index, column].style
@@ -320,7 +345,12 @@ class StyleFrame(object):
                     except AttributeError:
                         style_to_apply = data_df_style
                     current_cell.style = style_to_apply
-
+                    if isinstance(data_df_style, Styler):
+                        current_cell.comment = data_df_style.generate_comment()
+                    else:
+                        if hasattr(data_df_style, 'comment'):
+                            data_df_style.comment.parent = None
+                            current_cell.comment = data_df_style.comment
                 except AttributeError:  # if the element in the dataframe is not Container creating a default style
                     current_cell.style = Styler().to_openpyxl_style()
 
