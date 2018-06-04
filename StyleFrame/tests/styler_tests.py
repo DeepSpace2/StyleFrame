@@ -4,6 +4,10 @@ from StyleFrame import Styler, utils
 
 
 class StylerTests(unittest.TestCase):
+    def test_eq(self):
+        self.assertEqual(Styler(bg_color='yellow'), Styler(bg_color='yellow'))
+        self.assertNotEqual(Styler(bg_color='yellow'), Styler(bg_color='blue'))
+
     def test_from_openpyxl_style(self):
         styler_obj = Styler(bg_color=utils.colors.yellow, bold=True, font=utils.fonts.david, font_size=16,
                             font_color=utils.colors.blue, number_format=utils.number_formats.date, protection=True,

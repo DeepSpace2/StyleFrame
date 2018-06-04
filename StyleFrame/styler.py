@@ -50,6 +50,14 @@ class Styler(object):
             return False
         return self.__dict__ == other.__dict__
 
+    def __repr__(self):
+        return pformat(self.__dict__)
+
+    def generate_comment(self):
+        if any((self.comment_author, self.comment_text)):
+            return Comment(self.comment_text, self.comment_author)
+        return None
+
     @classmethod
     def default_header_style(cls):
         return cls(bold=True)
