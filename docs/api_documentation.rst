@@ -207,6 +207,14 @@ Used to represent a style.
 Methods
 *******
 
+combine
+"""""""
+
+:arguments:
+  :styles: Arbitrary number of Styler objects
+:returns: :ref:`styler-class` object
+
+
 to_openpyxl_style
 """""""""""""""""
 
@@ -226,8 +234,8 @@ Represent a stylized dataframe
    StyleFrame(obj, styler_obj=None)
 
 :obj: Any object that pandas' dataframe can be initialized with: an existing dataframe, a dictionary,
-      a list of dictionaries or another StylerFrame.
-:styler_obj: (Styler) A Styler object. Will be used as the default style of all cells.
+      a list of dictionaries or another StyleFrame.
+:styler_obj: (:ref:`styler-class`) A Styler object. Will be used as the default style of all cells.
 
 Methods
 *******
@@ -238,10 +246,10 @@ apply_style_by_indexes
 :arguments:
    :indexes_to_style: (list | tuple | int | Container) The StyleFrame indexes to style. This usually passed as pandas selecting syntax.
                       For example, ``sf[sf['some_col'] = 20]``
-   :styler_obj: (Styler) `Styler` object that contains the style which will be applied to indexes in `indexes_to_style`
+   :styler_obj: (:ref:`styler-class`) `Styler` object that contains the style which will be applied to indexes in `indexes_to_style`
    :cols_to_style=None: (None | str | list | tuple | set) The column names to apply the provided style to. If ``None`` all columns will be styled.
    :height=None: (None | int | float) If provided, height for rows whose indexes are in indexes_to_style.
-   :complement_style=None: (None | Styler) `Styler` object that contains the style which will be applied to indexes not in `indexes_to_style`
+   :complement_style=None: (None | :ref:`styler-class`) `Styler` object that contains the style which will be applied to indexes not in `indexes_to_style`
    :complement_height=None: (None | int | float)  Height for rows whose indexes are not in indexes_to_style. If not provided then
             `height` will be used (if provided).
 :returns: self
@@ -251,7 +259,7 @@ apply_column_style
 
 :arguments:
    :cols_to_style: (str | list | tuple | set) The column names to style.
-   :styler_obj: (Styler) A `Styler` object.
+   :styler_obj: (:ref:`styler-class`) A `Styler` object.
    :style_header=False: (bool) If True, the column(s) header will also be styled.
    :use_default_formats=True: (bool) If True, the default formats for date and times will be used.
    :width=None: (None | int | float) If provided, the new width for the specified columns.
@@ -261,14 +269,14 @@ apply_headers_style
 """""""""""""""""""
 
 :arguments:
-   :styler_obj: (Styler) A `Styler` object.
+   :styler_obj: (:ref:`styler-class`) A `Styler` object.
 :returns: self
 
 style_alternate_rows
 """"""""""""""""""""
 
 :arguments:
-   :styles: (list | tuple | set) List or tuple of `Styler` objects to be applied to rows in an alternating manner
+   :styles: (list | tuple | set) List or tuple of :ref:`styler-class` objects to be applied to rows in an alternating manner
 :returns: self
 
 rename

@@ -53,6 +53,14 @@ class Styler(object):
     def __hash__(self):
         return hash(tuple((k, v) for k, v in self.__dict__.items()))
 
+    def __add__(self, other):
+        default = Styler().__dict__
+        d = dict(self.__dict__)
+        for k, v in other.__dict__.items():
+            if v != default[k]:
+                d[k] = v
+        return Styler(**d)
+
     def __repr__(self):
         return pformat(self.__dict__)
 
@@ -139,6 +147,10 @@ class Styler(object):
                    border_type, horizontal_alignment,
                    vertical_alignment, wrap_text, shrink_to_fit,
                    fill_pattern_type, indent, comment_author, comment_text)
+
+    @classmethod
+    def combine(cls, *styles):
+        return sum(styles, cls())
 
     create_style = to_openpyxl_style
 
