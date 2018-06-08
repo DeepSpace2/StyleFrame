@@ -435,29 +435,25 @@ class StyleFrame(object):
                                   dt.date: utils.number_formats.default_date_format,
                                   dt.time: utils.number_formats.default_time_format}
 
-        indexes_number_format = styler_obj.number_format
-        values_number_format = styler_obj.number_format
+        orig_number_format = styler_obj.number_format
 
         if cols_to_style is not None and not isinstance(cols_to_style, (list, tuple, set)):
             cols_to_style = [cols_to_style]
         elif cols_to_style is None:
             cols_to_style = list(self.data_df.columns)
-            for i in indexes_to_style:
-                if styler_obj.number_format == utils.number_formats.general:
-                    indexes_number_format = default_number_formats.get(type(i.value), utils.number_formats.general)
-
-                styler_obj.number_format = indexes_number_format
-                i.style = styler_obj
-
         for index in indexes_to_style:
-            for col in cols_to_style:
-                if styler_obj.number_format == utils.number_formats.general:
-                    values_number_format = default_number_formats.get(
-                        type(self.iloc[index.value, self.columns.get_loc(col)].value),
-                        utils.number_formats.general)
+            if orig_number_format == utils.number_formats.general:
+                styler_obj.number_format = default_number_formats.get(type(index.value),
+                                                                      utils.number_formats.general)
+            index.style = deepcopy(styler_obj)
 
-                styler_obj.number_format = values_number_format
-                self.iloc[index.value, self.columns.get_loc(col)].style = styler_obj
+            for col in cols_to_style:
+                cell = self.iloc[index.value, self.columns.get_loc(col)]
+                if orig_number_format == utils.number_formats.general:
+                    styler_obj.number_format = default_number_formats.get(type(cell.value),
+                                                                          utils.number_formats.general)
+
+                cell.style = deepcopy(styler_obj)
 
         if height:
             # Add offset 2 since rows do not include the headers and they starts from 1 (not 0).
