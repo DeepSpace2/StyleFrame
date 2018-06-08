@@ -50,6 +50,9 @@ class Styler(object):
             return False
         return self.__dict__ == other.__dict__
 
+    def __hash__(self):
+        return hash(tuple((k, v) for k, v in self.__dict__.items()))
+
     def __repr__(self):
         return pformat(self.__dict__)
 
@@ -63,21 +66,20 @@ class Styler(object):
         return cls(bold=True)
 
     def to_openpyxl_style(self):
-        attrs = tuple((k, v) for k, v in self.__dict__.items())
         try:
-            openpyxl_style = self.cache[attrs]
+            openpyxl_style = self.cache[self]
         except KeyError:
             side = Side(border_style=self.border_type, color=utils.colors.black)
             border = Border(left=side, right=side, top=side, bottom=side)
-            openpyxl_style = self.cache[attrs] = Style(font=Font(name=self.font, size=self.font_size, color=OpenPyColor(self.font_color),
-                                                       bold=self.bold, underline=self.underline),
-                                                       fill=PatternFill(patternType=self.fill_pattern_type, fgColor=self.bg_color),
-                                                       alignment=Alignment(horizontal=self.horizontal_alignment, vertical=self.vertical_alignment,
-                                                                           wrap_text=self.wrap_text, shrink_to_fit=self.shrink_to_fit,
-                                                                           indent=self.indent),
-                                                       border=border,
-                                                       number_format=self.number_format,
-                                                       protection=Protection(locked=self.protection))
+            openpyxl_style = self.cache[self] = Style(font=Font(name=self.font, size=self.font_size, color=OpenPyColor(self.font_color),
+                                                      bold=self.bold, underline=self.underline),
+                                                      fill=PatternFill(patternType=self.fill_pattern_type, fgColor=self.bg_color),
+                                                      alignment=Alignment(horizontal=self.horizontal_alignment, vertical=self.vertical_alignment,
+                                                                          wrap_text=self.wrap_text, shrink_to_fit=self.shrink_to_fit,
+                                                                          indent=self.indent),
+                                                      border=border,
+                                                      number_format=self.number_format,
+                                                      protection=Protection(locked=self.protection))
         return openpyxl_style
 
     @classmethod
