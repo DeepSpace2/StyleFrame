@@ -1,3 +1,9 @@
+#### 1.5
+* Added `complement_style` and `complement_height` arguments to `StyleFrame.apply_indexes_by_style`
+* Added support for comments
+* Renamed `Styler.create_style` method to `to_openpyxl_style` (`create_style` is still available for backward compatibility)
+* Fixed a bug not allowing to access StyleFrame columns by dot notation in case a column name is a number
+
 #### 1.4
 * **No longer supporting Python 3.3**
 * StyleFrame objects no longer expose .ix method as it is deprecated since pandas 0.20. Use .loc or .iloc instead
