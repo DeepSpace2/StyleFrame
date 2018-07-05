@@ -84,7 +84,7 @@ class StyleFrame(object):
                              'fillna': self.data_df.fillna}
 
     def __str__(self):
-        return str(self.data_df)
+        return str_type(self.data_df)
 
     def __unicode__(self):
         return unicode_type(self.data_df)
@@ -155,7 +155,7 @@ class StyleFrame(object):
 
         def _read_style():
             wb = load_workbook(path)
-            if isinstance(sheet_name, str):
+            if isinstance(sheet_name, str_type):
                 sheet = wb.get_sheet_by_name(sheet_name)
             elif isinstance(sheet_name, int):
                 sheet = wb.worksheets[sheet_name]
