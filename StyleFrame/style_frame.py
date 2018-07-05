@@ -119,12 +119,12 @@ class StyleFrame(object):
 
     @classmethod
     @deprecated_kwargs(('sheetname',))
-    def read_excel(cls, path, sheetname='Sheet1', read_style=False, use_openpyxl_styles=True,
+    def read_excel(cls, path, sheet_name='Sheet1', read_style=False, use_openpyxl_styles=True,
                    read_comments=False, **kwargs):
         """Creates a StyleFrame object from an existing Excel.
 
         :param str path: The path to the Excel file to read.
-        :param str sheetname: The sheet name to read from.
+        :param str sheet_name: The sheet name to read from.
         :param bool read_style: If True the sheet's style will be loaded to the returned StyleFrame object.
         :param bool use_openpyxl_styles: If True (and read_style is also True) then the styles in the returned
             StyleFrame object will be Openpyxl's style objects. If False, the styles will be StyleFrame.Styler objects.
@@ -152,7 +152,7 @@ class StyleFrame(object):
 
         def _read_style():
             wb = load_workbook(path)
-            sheet = wb.get_sheet_by_name(sheetname)
+            sheet = wb.get_sheet_by_name(sheet_name)
             theme_colors = _get_scheme_colors_from_excel(wb)
             for col_index, col_name in enumerate(sf.columns, start=1):
                 column_cell = sheet.cell(row=1, column=col_index)
@@ -175,7 +175,10 @@ class StyleFrame(object):
                                                                   read_comments and current_cell.comment)
                     sf.at[sf_index, col_name].style = style_object
 
-        sf = cls(pd.read_excel(path, sheetname, **kwargs))
+        if 'sheetname' in kwargs:
+            sheet_name = kwargs.pop('sheetname')
+
+        sf = cls(pd.read_excel(path, sheet_name, **kwargs))
         if read_style:
             _read_style()
             sf._custom_headers_style = True
