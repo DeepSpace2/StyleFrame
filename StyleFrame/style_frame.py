@@ -135,6 +135,8 @@ class StyleFrame(object):
 
         def _get_scheme_colors_from_excel(wb):
             xlmns = 'http://schemas.openxmlformats.org/drawingml/2006/main'
+            if wb.loaded_theme is None:
+                return []
             root = fromstring(wb.loaded_theme)
             theme_element = root.find(QName(xlmns, 'themeElements').text)
             color_schemes = theme_element.findall(QName(xlmns, 'clrScheme').text)
