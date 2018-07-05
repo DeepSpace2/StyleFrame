@@ -84,7 +84,7 @@ class StyleFrame(object):
                              'fillna': self.data_df.fillna}
 
     def __str__(self):
-        return str_type(self.data_df)
+        return str(self.data_df)
 
     def __unicode__(self):
         return unicode_type(self.data_df)
