@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 import sys
 
+from .deprecations import deprecated_kwargs
 from . import utils
 from copy import deepcopy
 from collections import Iterable
@@ -117,6 +118,7 @@ class StyleFrame(object):
             raise AttributeError("'{}' object has no attribute '{}'".format(type(self).__name__, attr))
 
     @classmethod
+    @deprecated_kwargs(('sheetname',))
     def read_excel(cls, path, sheetname='Sheet1', read_style=False, use_openpyxl_styles=True,
                    read_comments=False, **kwargs):
         """Creates a StyleFrame object from an existing Excel.
@@ -141,11 +143,11 @@ class StyleFrame(object):
             colors = []
             for colorScheme in color_schemes:
                 for tag in ['lt1', 'dk1', 'lt2', 'dk2', 'accent1', 'accent2', 'accent3', 'accent4', 'accent5', 'accent6']:
-                    accent = colorScheme.find(QName(xlmns, tag).text)
-                    if 'window' in accent.getchildren()[0].attrib['val']:
-                        colors.append(accent.getchildren()[0].attrib['lastClr'])
+                    accent = list(colorScheme.find(QName(xlmns, tag).text))[0]
+                    if 'window' in accent.attrib['val']:
+                        colors.append(accent.attrib['lastClr'])
                     else:
-                        colors.append(accent.getchildren()[0].attrib['val'])
+                        colors.append(accent.attrib['val'])
             return colors
 
         def _read_style():
@@ -173,7 +175,7 @@ class StyleFrame(object):
                                                                   read_comments and current_cell.comment)
                     sf.at[sf_index, col_name].style = style_object
 
-        sf = cls(pd.read_excel(path, sheetname=sheetname, **kwargs))
+        sf = cls(pd.read_excel(path, sheetname, **kwargs))
         if read_style:
             _read_style()
             sf._custom_headers_style = True
