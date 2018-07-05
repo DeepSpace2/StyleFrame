@@ -1,3 +1,7 @@
+#### 1.5.1
+* Fixed a bug where `read_excel` will fail when using `read_style=True` in cases
+  where specific themes are used (See github issue #37).
+
 #### 1.5
 * Added `complement_style` and `complement_height` arguments to `StyleFrame.apply_indexes_by_style`
 * Added support for comments
