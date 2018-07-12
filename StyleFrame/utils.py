@@ -34,6 +34,10 @@ class number_formats(BaseDefClass):
     default_time_format = time_24_hours
     default_date_time_format = date_time
 
+    @staticmethod
+    def decimal_with_num_of_digits(num_of_digits):
+        return '0.{}'.format('0' * num_of_digits)
+
 
 class colors(BaseDefClass):
     white = op_colors.WHITE

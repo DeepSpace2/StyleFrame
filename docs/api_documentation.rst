@@ -26,6 +26,13 @@ utils.number_formats
    date_time = 'DD/MM/YY HH:MM'
    date_time_with_seconds = 'DD/MM/YY HH:MM:SS'
 
+decimal_with_num_of_digits
+**************************
+
+:arguments:
+  :num_of_digits: (int) Number of digits after the decimal point
+:returns: A format string that represents a floating point number with the provided number of digits after the
+          decimal point. For example, ``utils.number_formats.decimal_with_num_of_digits(2)`` will return ``'0.00'``
 
 .. _utils.colors:
 
