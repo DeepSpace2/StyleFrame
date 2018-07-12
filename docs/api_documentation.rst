@@ -209,6 +209,9 @@ Methods
 
 combine
 """""""
+A classmethod used to combine :ref:`styler-class` objects. The right-most object has precedence.
+For example: ``Styler.combine(Styler(bg_color='yellow', font_size=24), Styler(bg_color='blue'))`` will return
+``Styler(bg_color='blue', font_size=24)``
 
 :arguments:
   :styles: Arbitrary number of Styler objects
