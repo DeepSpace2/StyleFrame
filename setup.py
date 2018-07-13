@@ -1,6 +1,8 @@
 from setuptools import setup, find_packages
 from StyleFrame.version import _version_
 
+DESCRIPTION = 'A library that wraps pandas and openpyxl and allows easy styling of dataframes in excel. Documentation can be found at http://styleframe.readthedocs.org'
+
 setup(
     name='StyleFrame',
 
@@ -9,8 +11,8 @@ setup(
     # https://packaging.python.org/en/latest/single_source_version.html
     version=_version_,
 
-    description='A library that wraps pandas and openpyxl and allows easy styling of dataframes in excel. Documentation can be found at http://styleframe.readthedocs.org',
-    # long_description=long_description,
+    description=DESCRIPTION,
+    long_description=DESCRIPTION,
 
     # The project's main homepage.
     url='https://github.com/DeepSpace2/StyleFrame',
@@ -50,7 +52,7 @@ setup(
     ],
 
     # What does your project relate to?
-    keywords='pandas',
+    keywords=('pandas', 'openpyxl', 'excel'),
 
     # You can just specify the packages manually here if your project is
     # simple. Or you can use find_packages().
