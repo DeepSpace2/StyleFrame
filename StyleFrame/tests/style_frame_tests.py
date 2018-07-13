@@ -10,6 +10,7 @@ from StyleFrame.tests import TEST_FILENAME
 class StyleFrameTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
+        cls.default_styler_obj = Styler(wrap_text=False)
         cls.styler_obj_1 = Styler(bg_color=utils.colors.blue, bold=True, font='Impact', font_color=utils.colors.yellow,
                                   font_size=20, underline=utils.underline.single,
                                   horizontal_alignment=utils.horizontal_alignments.left,
@@ -22,7 +23,7 @@ class StyleFrameTest(unittest.TestCase):
     def setUp(self):
         self.ew = StyleFrame.ExcelWriter(TEST_FILENAME)
         self.sf = StyleFrame({'a': ['col_a_row_1', 'col_a_row_2', 'col_a_row_3'],
-                              'b': ['col_b_row_1', 'col_b_row_2', 'col_b_row_3']})
+                              'b': ['col_b_row_1', 'col_b_row_2', 'col_b_row_3']}, self.default_styler_obj)
         self.apply_column_style = partial(self.sf.apply_column_style, styler_obj=self.styler_obj_1, width=10)
         self.apply_style_by_indexes = partial(self.sf.apply_style_by_indexes, styler_obj=self.styler_obj_1, height=10)
         self.apply_headers_style = partial(self.sf.apply_headers_style, styler_obj=self.styler_obj_1)
@@ -114,6 +115,30 @@ class StyleFrameTest(unittest.TestCase):
 
         # range starts from 2 since we don't want to check the header's style
         self.assertTrue(all(sheet.cell(row=i, column=1).style == self.openpy_style_obj_1 for i in range(2, len(self.sf))))
+
+    def test_apply_column_style_no_override_default_style(self):
+        # testing some edge cases
+        with self.assertRaises(TypeError):
+            # noinspection PyTypeChecker
+            self.sf.apply_column_style(cols_to_style='a', styler_obj=0)
+
+        with self.assertRaises(KeyError):
+            self.sf.apply_column_style(cols_to_style='non_existing_col', styler_obj=Styler())
+
+        # actual tests
+
+        self.apply_column_style(cols_to_style=['a'], overwrite_default_style=False)
+        self.assertTrue(all([self.sf.at[index, 'a'].style == Styler.combine(self.default_styler_obj, self.styler_obj_1)
+                             and self.sf.at[index, 'b'].style == self.default_styler_obj
+                             for index in self.sf.index]))
+
+        sheet = self.export_and_get_default_sheet()
+
+        self.assertEqual(sheet.column_dimensions['A'].width, 10)
+
+        # range starts from 2 since we don't want to check the header's style
+        self.assertTrue(all(sheet.cell(row=i, column=1).style == Styler.combine(self.default_styler_obj, self.styler_obj_1).to_openpyxl_style()
+                            for i in range(2, len(self.sf))))
 
     def test_apply_style_by_indexes_single_col(self):
         with self.assertRaises(TypeError):
@@ -299,13 +324,9 @@ class StyleFrameTest(unittest.TestCase):
         rows_in_self = self.sf.data_df.itertuples()
 
         # making sure styles are the same
-        self.assertTrue(all(excel_cell.style == self_cell.style
-                            # the dataframe's index's styles should be Styler object because
-                            # we don't save the indexes to the excel in the tests
-                            if index == 0
-                            else self_cell.style == Styler.from_openpyxl_style(excel_cell.style, [])
+        self.assertTrue(all(self_cell.style == Styler.from_openpyxl_style(excel_cell.style, [])
                             for row_in_excel, row_in_self in zip(rows_in_excel, rows_in_self)
-                            for index, (excel_cell, self_cell) in enumerate(zip(row_in_excel, row_in_self))))
+                            for excel_cell, self_cell in zip(row_in_excel[1:], row_in_self[1:])))
 
     def test_read_excel_with_style_openpyxl_objects(self):
         self.export_and_get_default_sheet(save=True)
@@ -317,13 +338,9 @@ class StyleFrameTest(unittest.TestCase):
         rows_in_self = self.sf.data_df.itertuples()
 
         # making sure styles are the same
-        self.assertTrue(all(excel_cell.style == self_cell.style
-                            # the dataframe's index's styles should be Styler object because
-                            # we don't save the indexes to the excel in the tests
-                            if index == 0
-                            else self_cell.style == Styler.from_openpyxl_style(excel_cell.style, [])
+        self.assertTrue(all(self_cell.style == Styler.from_openpyxl_style(excel_cell.style, [])
                             for row_in_excel, row_in_self in zip(rows_in_excel, rows_in_self)
-                            for index, (excel_cell, self_cell) in enumerate(zip(row_in_excel, row_in_self))))
+                            for excel_cell, self_cell in zip(row_in_excel[1:], row_in_self[1:])))
 
     def test_read_excel_with_style_styler_objects(self):
         self.export_and_get_default_sheet(save=True)
@@ -337,7 +354,7 @@ class StyleFrameTest(unittest.TestCase):
         # making sure styles are the same
         self.assertTrue(all(excel_cell.style == self_cell.style
                         for row_in_excel, row_in_self in zip(rows_in_excel, rows_in_self)
-                        for excel_cell, self_cell in zip(row_in_excel, row_in_self)))
+                        for excel_cell, self_cell in zip(row_in_excel[1:], row_in_self[1:])))
 
     def test_read_excel_with_style_comments_openpyxl_objects(self):
         self.export_and_get_default_sheet(save=True)
@@ -349,13 +366,9 @@ class StyleFrameTest(unittest.TestCase):
         rows_in_self = self.sf.data_df.itertuples()
 
         # making sure styles are the same
-        self.assertTrue(all(excel_cell.style == self_cell.style
-                            # the dataframe's index's styles should be Styler object because
-                            # we don't save the indexes to the excel in the tests
-                            if index == 0
-                            else self_cell.style == Styler.from_openpyxl_style(excel_cell.style, [])
+        self.assertTrue(all(self_cell.style == Styler.from_openpyxl_style(excel_cell.style, [])
                             for row_in_excel, row_in_self in zip(rows_in_excel, rows_in_self)
-                            for index, (excel_cell, self_cell) in enumerate(zip(row_in_excel, row_in_self))))
+                            for excel_cell, self_cell in zip(row_in_excel[1:], row_in_self[1:])))
 
     def test_read_excel_with_style_comments_styler_objects(self):
         self.export_and_get_default_sheet(save=True)
@@ -370,10 +383,7 @@ class StyleFrameTest(unittest.TestCase):
         # making sure styles are the same
         self.assertTrue(all(excel_cell.style == self_cell.style
                             for row_in_excel, row_in_self in zip(rows_in_excel, rows_in_self)
-                            for excel_cell, self_cell in zip(row_in_excel, row_in_self)))
-
-    def test_read_excel_style_and_save(self):
-        StyleFrame.read_excel(TEST_FILENAME, read_style=True).to_excel(TEST_FILENAME).save()
+                            for excel_cell, self_cell in zip(row_in_excel[1:], row_in_self[1:])))
 
     def test_row_indexes(self):
         self.assertEqual(self.sf.row_indexes, (1, 2, 3, 4))

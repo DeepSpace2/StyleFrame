@@ -194,12 +194,12 @@ Used to represent a style.
           fill_pattern_type=utils.fill_pattern_types.solid, indent=0, comment_author=None, comment_text=None)
 
 :bg_color: (str: one of :ref:`utils.colors`, hex string or color name ie `'yellow'` Excel supports) The background color
-:bold: (bool) If true, a bold typeface is used
+:bold: (bool) If `True`, a bold typeface is used
 :font: (str: one of :ref:`utils.fonts` or other font name Excel supports) The font to use
 :font_size: (int) The font size
 :font_color: (str: one of :ref:`utils.colors`, hex string or color name ie `'yellow'` Excel supports) The font color
 :number_format: (str: one of :ref:`utils.number_formats` or any other format Excel supports) The format of the cell's value
-:protection: (bool) If true, the cell/column will be write-protected
+:protection: (bool) If `True`, the cell/column will be write-protected
 :underline: (str: one of :ref:`utils.underline` or any other underline Excel supports) The underline type
 :border_type: (str: one of :ref:`utils.borders` or any other border type Excel supports) The border type
 :horizontal_alignment: (str: one of :ref:`utils.horizontal_alignments` or any other horizontal alignment Excel supports) Text's horizontal alignment
@@ -262,6 +262,9 @@ apply_style_by_indexes
    :complement_style=None: (None | :ref:`styler-class`) `Styler` object that contains the style which will be applied to indexes not in `indexes_to_style`
    :complement_height=None: (None | int | float)  Height for rows whose indexes are not in indexes_to_style. If not provided then
             `height` will be used (if provided).
+   :overwrite_default_style=True: (bool) If `True`, the default style (the style used when initializing StyleFrame)
+            will be overwritten. If `False` then the default style and the provided style wil be combined using
+            Styler.combine method.
 :returns: self
 
 apply_column_style
@@ -270,9 +273,12 @@ apply_column_style
 :arguments:
    :cols_to_style: (str | list | tuple | set) The column names to style.
    :styler_obj: (:ref:`styler-class`) A `Styler` object.
-   :style_header=False: (bool) If True, the column(s) header will also be styled.
-   :use_default_formats=True: (bool) If True, the default formats for date and times will be used.
+   :style_header=False: (bool) If `True`, the column(s) header will also be styled.
+   :use_default_formats=True: (bool) If `True`, the default formats for date and times will be used.
    :width=None: (None | int | float) If provided, the new width for the specified columns.
+   :overwrite_default_style=True: (bool) If `True`, the default style (the style used when initializing StyleFrame)
+            will be overwritten. If `False` then the default style and the provided style wil be combined using
+            Styler.combine method.
 :returns: self
 
 apply_headers_style
@@ -294,7 +300,7 @@ rename
 
 :arguments:
    :columns=None: (dict) A dictionary from old columns names to new columns names.
-   :inplace=False: (bool) If False, a new StyleFrame object will be returned. If True, renames the columns inplace.
+   :inplace=False: (bool) If `False`, a new StyleFrame object will be returned. If `True`, renames the columns inplace.
 :returns: self if inplace is `True`, new StyleFrame object is `False`
 
 set_column_width

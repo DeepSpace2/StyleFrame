@@ -73,6 +73,7 @@ class StyleFrame(object):
         self._rows_height = obj._rows_height if from_another_styleframe else {}
         self._custom_headers_style = obj._custom_headers_style if from_another_styleframe else False
         self._cond_formatting = []
+        self._default_style = styler_obj or Styler()
 
         self._known_attrs = {'at': self.data_df.at,
                              'loc': self.data_df.loc,
@@ -155,10 +156,12 @@ class StyleFrame(object):
 
         def _read_style():
             wb = load_workbook(path)
-            if isinstance(sheet_name, str_type):
+            if isinstance(sheet_name, (str_type, unicode_type)):
                 sheet = wb.get_sheet_by_name(sheet_name)
             elif isinstance(sheet_name, int):
                 sheet = wb.worksheets[sheet_name]
+            else:
+                raise TypeError("'sheet_name' must be a string or int, got {} instead".format(type(sheet_name)))
             theme_colors = _get_scheme_colors_from_excel(wb)
             for col_index, col_name in enumerate(sf.columns, start=1):
                 column_cell = sheet.cell(row=1, column=col_index)
@@ -247,7 +250,7 @@ class StyleFrame(object):
                     return x
 
         def get_column_as_letter(column_to_convert):
-            if not isinstance(column_to_convert, (int, str_type, Container)):
+            if not isinstance(column_to_convert, (int, str_type, unicode_type, Container)):
                 raise TypeError("column must be an index, column letter or column name")
             column_as_letter = None
             if column_to_convert in self.data_df.columns:  # column name
@@ -293,7 +296,7 @@ class StyleFrame(object):
         # noinspection PyTypeChecker
         export_df.index = [row_index.value for row_index in export_df.index]
 
-        if isinstance(excel_writer, str_type):
+        if isinstance(excel_writer, (str_type, unicode_type)):
             excel_writer = self.ExcelWriter(excel_writer)
 
         export_df.to_excel(excel_writer, sheet_name=sheet_name, engine='openpyxl', header=header,
@@ -391,7 +394,7 @@ class StyleFrame(object):
                 raise TypeError("row must be an index and not {}".format(type(row_to_add_filters)))
 
         if columns_and_rows_to_freeze is not None:
-            if not isinstance(columns_and_rows_to_freeze, str_type) or len(columns_and_rows_to_freeze) < 2:
+            if not isinstance(columns_and_rows_to_freeze, (str_type, unicode_type)) or len(columns_and_rows_to_freeze) < 2:
                 raise TypeError("columns_and_rows_to_freeze must be a str for example: 'C3'")
             if columns_and_rows_to_freeze[0] not in sheet.column_dimensions:
                 raise IndexError("column: %s is out of columns range." % columns_and_rows_to_freeze[0])
@@ -419,7 +422,7 @@ class StyleFrame(object):
         return excel_writer
 
     def apply_style_by_indexes(self, indexes_to_style, styler_obj, cols_to_style=None, height=None,
-                               complement_style=None, complement_height=None):
+                               complement_style=None, complement_height=None, overwrite_default_style=True):
         """Applies a certain style to the provided indexes in the dataframe in the provided columns
 
         :param list|tuple|int|Container indexes_to_style: indexes to which the provided style will be applied
@@ -429,6 +432,9 @@ class StyleFrame(object):
         :param None|Styler complement_style: the styler object that contains the style which will be applied to indexes not in indexes_to_style
         :param None|int|float complement_height: height for rows whose indexes are not in indexes_to_style. If not provided then
             height will be used (if provided).
+        :param bool overwrite_default_style: If True, the default style (the style used when initializing StyleFrame)
+            will be overwritten. If False then the default style and the provided style wil be combined using
+            Styler.combine method.
         :return: self
         :rtype: StyleFrame
         """
@@ -452,19 +458,25 @@ class StyleFrame(object):
             cols_to_style = [cols_to_style]
         elif cols_to_style is None:
             cols_to_style = list(self.data_df.columns)
+
+        if overwrite_default_style:
+            style_to_apply = deepcopy(styler_obj)
+        else:
+            style_to_apply = Styler.combine(self._default_style, styler_obj)
+
         for index in indexes_to_style:
             if orig_number_format == utils.number_formats.general:
-                styler_obj.number_format = default_number_formats.get(type(index.value),
-                                                                      utils.number_formats.general)
-            index.style = deepcopy(styler_obj)
+                style_to_apply.number_format = default_number_formats.get(type(index.value),
+                                                                          utils.number_formats.general)
+            index.style = style_to_apply
 
             for col in cols_to_style:
                 cell = self.iloc[index.value, self.columns.get_loc(col)]
                 if orig_number_format == utils.number_formats.general:
-                    styler_obj.number_format = default_number_formats.get(type(cell.value),
-                                                                          utils.number_formats.general)
+                    style_to_apply.number_format = default_number_formats.get(type(cell.value),
+                                                                              utils.number_formats.general)
 
-                cell.style = deepcopy(styler_obj)
+                cell.style = style_to_apply
 
         if height:
             # Add offset 2 since rows do not include the headers and they starts from 1 (not 0).
@@ -477,7 +489,8 @@ class StyleFrame(object):
 
         return self
 
-    def apply_column_style(self, cols_to_style, styler_obj, style_header=False, use_default_formats=True, width=None):
+    def apply_column_style(self, cols_to_style, styler_obj, style_header=False, use_default_formats=True, width=None,
+                           overwrite_default_style=True):
         """apply style to a whole column
 
         :param str|list|tuple|set cols_to_style: the columns to apply the style to
@@ -485,6 +498,9 @@ class StyleFrame(object):
         :param bool style_header: if True, style the headers as well
         :param bool use_default_formats: if True, use predefined styles for dates and times
         :param None|int|float width: non-default width for the given columns
+        :param bool overwrite_default_style: If True, the default style (the style used when initializing StyleFrame)
+            will be overwritten. If False then the default style and the provided style wil be combined using
+            Styler.combine method.
         :return: self
         :rtype: StyleFrame
         """
@@ -496,20 +512,26 @@ class StyleFrame(object):
             cols_to_style = [cols_to_style]
         if not all(col in self.columns for col in cols_to_style):
             raise KeyError("one of the columns in {} wasn't found".format(cols_to_style))
+
+        if overwrite_default_style:
+            style_to_apply = styler_obj
+        else:
+            style_to_apply = Styler.combine(self._default_style, styler_obj)
+
         for col_name in cols_to_style:
             if style_header:
-                self.columns[self.columns.get_loc(col_name)].style = styler_obj
+                self.columns[self.columns.get_loc(col_name)].style = style_to_apply
                 self._custom_headers_style = True
             for index in self.index:
                 if use_default_formats:
                     if isinstance(self.at[index, col_name].value, pd_timestamp):
-                        styler_obj.number_format = utils.number_formats.date_time
+                        style_to_apply.number_format = utils.number_formats.date_time
                     elif isinstance(self.at[index, col_name].value, dt.date):
-                        styler_obj.number_format = utils.number_formats.date
+                        style_to_apply.number_format = utils.number_formats.date
                     elif isinstance(self.at[index, col_name].value, dt.time):
-                        styler_obj.number_format = utils.number_formats.time_24_hours
+                        style_to_apply.number_format = utils.number_formats.time_24_hours
 
-                self.at[index, col_name].style = styler_obj
+                self.at[index, col_name].style = style_to_apply
 
         if width:
             self.set_column_width(columns=cols_to_style, width=width)
@@ -526,8 +548,6 @@ class StyleFrame(object):
 
         if not isinstance(styler_obj, Styler):
             raise TypeError('styler_obj must be {}, got {} instead.'.format(Styler.__name__, type(styler_obj).__name__))
-
-        styler_obj = styler_obj
 
         for column in self.data_df.columns:
             column.style = styler_obj
@@ -554,7 +574,7 @@ class StyleFrame(object):
             raise ValueError('columns width must be positive')
 
         for column in columns:
-            if not isinstance(column, (int, str_type, Container)):
+            if not isinstance(column, (int, str_type, unicode_type, Container)):
                 raise TypeError("column must be an index, column letter or column name")
             self._columns_width[column] = width
 

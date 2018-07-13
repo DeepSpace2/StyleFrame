@@ -136,7 +136,7 @@ class Styler(object):
         border_type = openpyxl_style.border.bottom.border_style
         horizontal_alignment = openpyxl_style.alignment.horizontal
         vertical_alignment = openpyxl_style.alignment.vertical
-        wrap_text = openpyxl_style.alignment.wrap_text
+        wrap_text = openpyxl_style.alignment.wrap_text or False
         shrink_to_fit = openpyxl_style.alignment.shrink_to_fit
         fill_pattern_type = openpyxl_style.fill.patternType
         indent = openpyxl_style.alignment.indent
