@@ -1,3 +1,15 @@
+#### 1.6
+* **Added Python 3.7 support**
+* Added support for pandas <= 0.23.1
+* Added dt and str accessors to Series
+* Added support for passing an integer (sheet index) as `sheet_name` to `StyleFrame.read_excel`
+* `StyleFrame.read_excel` `sheetname` argument changed to `sheet_name`. Using `sheetname` is still allowed but will
+  show deprecation warning.
+* Added `Styler.combine` method.
+* Added `utils.number_formats.decimal_with_num_of_digits` method.
+* Added `overwrite_default_style` argument to `StyleFrame` methods `apply_style_by_indexes` and `apply_column_style`
+
+
 #### 1.5.1
 * Fixed a bug where `read_excel` will fail when using `read_style=True` in cases
   where specific themes are used (See github issue #37).
