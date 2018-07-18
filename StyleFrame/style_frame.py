@@ -371,7 +371,7 @@ class StyleFrame(object):
         if best_fit:
             if not isinstance(best_fit, (list, set, tuple)):
                 best_fit = [best_fit]
-            self.set_column_width_dict({column: (max(self.data_df[column].str.len()) + self.A_FACTOR) * self.P_FACTOR
+            self.set_column_width_dict({column: (max(self.data_df[column].astype(str).str.len()) + self.A_FACTOR) * self.P_FACTOR
                                         for column in best_fit})
 
         for column in self._columns_width:
