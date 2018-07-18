@@ -351,7 +351,7 @@ class StyleFrame(object):
                         data_df_style.font_color = utils.colors.blue
                         data_df_style.underline = utils.underline.single
                     else:
-                        if best_fit and column in best_fit:
+                        if best_fit and column.value in best_fit:
                             data_df_style.wrap_text = False
                             data_df_style.shrink_to_fit = False
                     try:
