@@ -8,6 +8,6 @@ Contents:
 .. toctree::
 
    installation
-   usage_examples
+   getting_started
    api_documentation
    commandline_interface
