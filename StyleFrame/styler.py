@@ -51,7 +51,7 @@ class Styler(object):
         return self.__dict__ == other.__dict__
 
     def __hash__(self):
-        return hash(tuple((k, v) for k, v in self.__dict__.items()))
+        return hash(tuple((k, v) for k, v in sorted(self.__dict__.items())))
 
     def __add__(self, other):
         default = Styler().__dict__
