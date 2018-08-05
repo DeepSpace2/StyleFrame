@@ -145,8 +145,8 @@ class Styler(object):
         indent = openpyxl_style.alignment.indent
 
         if openpyxl_comment:
-            comment_author = openpyxl_comment.author
-            comment_text = openpyxl_comment.text
+            comment_author = openpyxl_style.author
+            comment_text = openpyxl_style.text
         else:
             comment_author = None
             comment_text = None

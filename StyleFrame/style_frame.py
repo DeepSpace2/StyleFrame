@@ -9,8 +9,10 @@ from .deprecations import deprecated_kwargs
 from . import utils
 from copy import deepcopy
 from collections import Iterable
-from openpyxl import cell, load_workbook
+from openpyxl import load_workbook
+from openpyxl.cell.cell import get_column_letter
 from openpyxl.xml.functions import fromstring, QName
+from openpyxl.utils import range_boundaries
 
 PY2 = sys.version_info[0] == 2
 
@@ -166,21 +168,17 @@ class StyleFrame(object):
             for col_index, col_name in enumerate(sf.columns, start=1):
                 column_cell = sheet.cell(row=1, column=col_index)
                 if use_openpyxl_styles:
-                    style_object = column_cell.style
-                    if read_comments:
-                        style_object.comment = column_cell.comment
+                    style_object = column_cell
                 else:
-                    style_object = Styler.from_openpyxl_style(column_cell.style, theme_colors,
+                    style_object = Styler.from_openpyxl_style(column_cell, theme_colors,
                                                               read_comments and column_cell.comment)
                 sf.columns[col_index - 1].style = style_object
                 for row_index, sf_index in enumerate(sf.index, start=2):
                     current_cell = sheet.cell(row=row_index, column=col_index)
                     if use_openpyxl_styles:
-                        style_object = current_cell.style
-                        if read_comments:
-                            style_object.comment = current_cell.comment
+                        style_object = current_cell
                     else:
-                        style_object = Styler.from_openpyxl_style(current_cell.style, theme_colors,
+                        style_object = Styler.from_openpyxl_style(current_cell, theme_colors,
                                                                   read_comments and current_cell.comment)
                     sf.at[sf_index, col_name].style = style_object
 
@@ -249,6 +247,14 @@ class StyleFrame(object):
                 except TypeError:
                     return x
 
+        def within_sheet_boundaries(row='1', column='A'):
+            try:
+                cell_location = range_boundaries('A1:{column}{row}'.format(column=column, row=row))[2:]
+                last_cell_in_sheet_location = range_boundaries(sheet.dimensions)[2:]
+                return cell_location <= last_cell_in_sheet_location
+            except Exception:
+                return False
+
         def get_column_as_letter(column_to_convert):
             if not isinstance(column_to_convert, (int, str_type, unicode_type, Container)):
                 raise TypeError("column must be an index, column letter or column name")
@@ -256,14 +262,13 @@ class StyleFrame(object):
             if column_to_convert in self.data_df.columns:  # column name
                 column_index = self.data_df.columns.get_loc(
                     column_to_convert) + startcol + 1  # worksheet columns index start from 1
-                column_as_letter = cell.get_column_letter(column_index)
-
+                column_as_letter = get_column_letter(column_index)
             elif isinstance(column_to_convert, int) and column_to_convert >= 1:  # column index
-                column_as_letter = cell.get_column_letter(startcol + column_to_convert)
-            elif column_to_convert in sheet.column_dimensions:  # column letter
+                column_as_letter = get_column_letter(startcol + column_to_convert)
+            elif isinstance(column_to_convert, (str_type, unicode_type)):  # column letter
                 column_as_letter = column_to_convert
 
-            if column_as_letter is None or column_as_letter not in sheet.column_dimensions:
+            if column_as_letter is None or not within_sheet_boundaries(column=column_as_letter):
                 raise IndexError("column: %s is out of columns range." % column_to_convert)
 
             return column_as_letter
@@ -302,7 +307,7 @@ class StyleFrame(object):
         export_df.to_excel(excel_writer, sheet_name=sheet_name, engine='openpyxl', header=header,
                            index=index, startcol=startcol, startrow=startrow, na_rep=na_rep, **kwargs)
 
-        sheet = excel_writer.book.get_sheet_by_name(sheet_name)
+        sheet = excel_writer.sheets[sheet_name]
 
         sheet.sheet_view.rightToLeft = right_to_left
 
@@ -379,7 +384,7 @@ class StyleFrame(object):
             sheet.column_dimensions[column_letter].width = self._columns_width[column]
 
         for row in self._rows_height:
-            if row + startrow in sheet.row_dimensions:
+            if within_sheet_boundaries(row=(row + startrow)):
                 sheet.row_dimensions[startrow + row].height = self._rows_height[row]
             else:
                 raise IndexError('row: {} is out of range'.format(row))
@@ -387,7 +392,7 @@ class StyleFrame(object):
         if row_to_add_filters is not None:
             try:
                 row_to_add_filters = int(row_to_add_filters)
-                if (row_to_add_filters + startrow + 1) not in sheet.row_dimensions:
+                if not within_sheet_boundaries(row=(row_to_add_filters + startrow + 1)):
                     raise IndexError('row: {} is out of rows range'.format(row_to_add_filters))
                 sheet.auto_filter.ref = get_range_of_cells(row_index=row_to_add_filters)
             except (TypeError, ValueError):
@@ -396,9 +401,9 @@ class StyleFrame(object):
         if columns_and_rows_to_freeze is not None:
             if not isinstance(columns_and_rows_to_freeze, (str_type, unicode_type)) or len(columns_and_rows_to_freeze) < 2:
                 raise TypeError("columns_and_rows_to_freeze must be a str for example: 'C3'")
-            if columns_and_rows_to_freeze[0] not in sheet.column_dimensions:
+            if not within_sheet_boundaries(column=columns_and_rows_to_freeze[0]):
                 raise IndexError("column: %s is out of columns range." % columns_and_rows_to_freeze[0])
-            if int(columns_and_rows_to_freeze[1]) not in sheet.row_dimensions:
+            if not within_sheet_boundaries(row=columns_and_rows_to_freeze[1]):
                 raise IndexError("row: %s is out of rows range." % columns_and_rows_to_freeze[1])
             sheet.freeze_panes = sheet[columns_and_rows_to_freeze]
 
