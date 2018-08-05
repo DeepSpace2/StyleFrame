@@ -40,7 +40,7 @@ class StyleFrameTest(unittest.TestCase):
                          row_to_add_filters=0, columns_and_rows_to_freeze='A2', allow_protection=True)
         if save:
             self.ew.save()
-        return self.ew.book.get_sheet_by_name('Sheet1')
+        return self.ew.sheets['Sheet1']
 
     def test_init_styler_obj(self):
         self.sf = StyleFrame({'a': [1, 2, 3], 'b': [1, 2, 3]}, styler_obj=self.styler_obj_1)
@@ -50,7 +50,7 @@ class StyleFrameTest(unittest.TestCase):
 
         sheet = self.export_and_get_default_sheet()
 
-        self.assertTrue(all(sheet.cell(row=i, column=j).style == self.openpy_style_obj_1
+        self.assertTrue(all(sheet.cell(row=i, column=j).style == self.openpy_style_obj_1.name
                             for i in range(2, len(self.sf))
                             for j in range(1, len(self.sf.columns))))
 
@@ -114,7 +114,7 @@ class StyleFrameTest(unittest.TestCase):
         self.assertEqual(sheet.column_dimensions['A'].width, 10)
 
         # range starts from 2 since we don't want to check the header's style
-        self.assertTrue(all(sheet.cell(row=i, column=1).style == self.openpy_style_obj_1 for i in range(2, len(self.sf))))
+        self.assertTrue(all(sheet.cell(row=i, column=1).style == self.openpy_style_obj_1.name for i in range(2, len(self.sf))))
 
     def test_apply_column_style_no_override_default_style(self):
         # testing some edge cases
@@ -137,7 +137,7 @@ class StyleFrameTest(unittest.TestCase):
         self.assertEqual(sheet.column_dimensions['A'].width, 10)
 
         # range starts from 2 since we don't want to check the header's style
-        self.assertTrue(all(sheet.cell(row=i, column=1).style == Styler.combine(self.default_styler_obj, self.styler_obj_1).to_openpyxl_style()
+        self.assertTrue(all(sheet.cell(row=i, column=1).style == Styler.combine(self.default_styler_obj, self.styler_obj_1).to_openpyxl_style().name
                             for i in range(2, len(self.sf))))
 
     def test_apply_style_by_indexes_single_col(self):
@@ -188,7 +188,7 @@ class StyleFrameTest(unittest.TestCase):
         sheet = self.export_and_get_default_sheet()
 
         # row=2 since sheet start from row 1 and the headers are row 1
-        self.assertTrue(all(sheet.cell(row=2, column=col).style == self.openpy_style_obj_1
+        self.assertTrue(all(sheet.cell(row=2, column=col).style == self.openpy_style_obj_1.name
                             for col in range(1, len(self.sf.columns))))
 
     def test_apply_style_by_indexes_all_cols_with_multiple_indexes(self):
@@ -200,16 +200,16 @@ class StyleFrameTest(unittest.TestCase):
 
         sheet = self.export_and_get_default_sheet()
 
-        self.assertTrue(all(sheet.cell(row=i, column=j).style == self.openpy_style_obj_1
+        self.assertTrue(all(sheet.cell(row=i, column=j).style == self.openpy_style_obj_1.name
                             for i in [3, 4]  # sheet start from row 1 and headers are row 1
                             for j in range(1, len(self.sf.columns))))
 
     def test_apply_headers_style(self):
         self.apply_headers_style()
-        self.assertEqual(self.sf.columns[0].style.to_openpyxl_style(), self.openpy_style_obj_1)
+        self.assertEqual(self.sf.columns[0].style.to_openpyxl_style().name, self.openpy_style_obj_1.name)
 
         sheet = self.export_and_get_default_sheet()
-        self.assertEqual(sheet.cell(row=1, column=1).style, self.openpy_style_obj_1)
+        self.assertEqual(sheet.cell(row=1, column=1).style, self.openpy_style_obj_1.name)
 
     def test_set_column_width(self):
         # testing some edge cases
@@ -399,7 +399,7 @@ class StyleFrameTest(unittest.TestCase):
         sheet = self.export_and_get_default_sheet()
 
         # sheet start from row 1 and headers are row 1, so need to add 2 when iterating
-        self.assertTrue(all(sheet.cell(row=i.value + 2, column=1).style == openpy_styles[i.value % len(styles)]
+        self.assertTrue(all(sheet.cell(row=i.value + 2, column=1).style == openpy_styles[i.value % len(styles)].name
                             for i in self.sf.index))
 
     def test_add_color_scale_conditional_formatting_start_end(self):
@@ -408,14 +408,14 @@ class StyleFrameTest(unittest.TestCase):
                                                        end_type=utils.conditional_formatting_types.percentile,
                                                        end_value=100, end_color=utils.colors.green)
         sheet = self.export_and_get_default_sheet(save=True)
-        rules_dict = sheet.conditional_formatting.cf_rules['A1:B4']
-        self.assertEqual(rules_dict[0]['type'], 'colorScale')
-        self.assertEqual(rules_dict[0]['colorScale']['color'][0].rgb, utils.colors.red)
-        self.assertEqual(rules_dict[0]['colorScale']['color'][1].rgb, utils.colors.green)
-        self.assertEqual(rules_dict[0]['colorScale']['cfvo'][0]['type'], utils.conditional_formatting_types.percentile)
-        self.assertEqual(rules_dict[0]['colorScale']['cfvo'][0]['val'], '0')
-        self.assertEqual(rules_dict[0]['colorScale']['cfvo'][1]['type'], utils.conditional_formatting_types.percentile)
-        self.assertEqual(rules_dict[0]['colorScale']['cfvo'][1]['val'], '100')
+        rules_dict = sheet.conditional_formatting['A1:B4']
+        self.assertEqual(rules_dict[0].type, 'colorScale')
+        self.assertEqual(rules_dict[0].colorScale.color[0].rgb, utils.colors.red)
+        self.assertEqual(rules_dict[0].colorScale.color[1].rgb, utils.colors.green)
+        self.assertEqual(rules_dict[0].colorScale.cfvo[0].type, utils.conditional_formatting_types.percentile)
+        self.assertEqual(rules_dict[0].colorScale.cfvo[0].val, 0.0)
+        self.assertEqual(rules_dict[0].colorScale.cfvo[1].type, utils.conditional_formatting_types.percentile)
+        self.assertEqual(rules_dict[0].colorScale.cfvo[1].val, 100.0)
 
     def test_add_color_scale_conditional_formatting_start_mid_end(self):
         self.sf.add_color_scale_conditional_formatting(start_type=utils.conditional_formatting_types.percentile,
@@ -425,15 +425,15 @@ class StyleFrameTest(unittest.TestCase):
                                                        end_type=utils.conditional_formatting_types.percentile,
                                                        end_value=100, end_color=utils.colors.green)
         sheet = self.export_and_get_default_sheet(save=True)
-        rules_dict = sheet.conditional_formatting.cf_rules['A1:B4']
+        rules_dict = sheet.conditional_formatting['A1:B4']
 
-        self.assertEqual(rules_dict[0]['type'], 'colorScale')
-        self.assertEqual(rules_dict[0]['colorScale']['color'][0].rgb, utils.colors.red)
-        self.assertEqual(rules_dict[0]['colorScale']['color'][1].rgb, utils.colors.yellow)
-        self.assertEqual(rules_dict[0]['colorScale']['color'][2].rgb, utils.colors.green)
-        self.assertEqual(rules_dict[0]['colorScale']['cfvo'][0]['type'], utils.conditional_formatting_types.percentile)
-        self.assertEqual(rules_dict[0]['colorScale']['cfvo'][0]['val'], '0')
-        self.assertEqual(rules_dict[0]['colorScale']['cfvo'][1]['type'], utils.conditional_formatting_types.percentile)
-        self.assertEqual(rules_dict[0]['colorScale']['cfvo'][1]['val'], '50')
-        self.assertEqual(rules_dict[0]['colorScale']['cfvo'][2]['type'], utils.conditional_formatting_types.percentile)
-        self.assertEqual(rules_dict[0]['colorScale']['cfvo'][2]['val'], '100')
+        self.assertEqual(rules_dict[0].type, 'colorScale')
+        self.assertEqual(rules_dict[0].colorScale.color[0].rgb, utils.colors.red)
+        self.assertEqual(rules_dict[0].colorScale.color[1].rgb, utils.colors.yellow)
+        self.assertEqual(rules_dict[0].colorScale.color[2].rgb, utils.colors.green)
+        self.assertEqual(rules_dict[0].colorScale.cfvo[0].type, utils.conditional_formatting_types.percentile)
+        self.assertEqual(rules_dict[0].colorScale.cfvo[0].val, 0.0)
+        self.assertEqual(rules_dict[0].colorScale.cfvo[1].type, utils.conditional_formatting_types.percentile)
+        self.assertEqual(rules_dict[0].colorScale.cfvo[1].val, 50.0)
+        self.assertEqual(rules_dict[0].colorScale.cfvo[2].type, utils.conditional_formatting_types.percentile)
+        self.assertEqual(rules_dict[0].colorScale.cfvo[2].val, 100.0)
