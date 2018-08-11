@@ -159,7 +159,7 @@ class StyleFrame(object):
         def _read_style():
             wb = load_workbook(path)
             if isinstance(sheet_name, (str_type, unicode_type)):
-                sheet = wb.get_sheet_by_name(sheet_name)
+                sheet = wb[sheet_name]
             elif isinstance(sheet_name, int):
                 sheet = wb.worksheets[sheet_name]
             else:
