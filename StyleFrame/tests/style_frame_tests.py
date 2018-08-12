@@ -42,6 +42,14 @@ class StyleFrameTest(unittest.TestCase):
             self.ew.save()
         return self.ew.sheets['Sheet1']
 
+    def get_cf_rules(self, sheet):
+        conditional_formatting = sheet.conditional_formatting
+        try:
+            return conditional_formatting.cf_rules
+        except AttributeError:
+            return conditional_formatting
+
+
     def test_init_styler_obj(self):
         self.sf = StyleFrame({'a': [1, 2, 3], 'b': [1, 2, 3]}, styler_obj=self.styler_obj_1)
 
@@ -408,7 +416,9 @@ class StyleFrameTest(unittest.TestCase):
                                                        end_type=utils.conditional_formatting_types.percentile,
                                                        end_value=100, end_color=utils.colors.green)
         sheet = self.export_and_get_default_sheet(save=True)
-        rules_dict = sheet.conditional_formatting['A1:B4']
+        cf_rules = self.get_cf_rules(sheet=sheet)
+        rules_dict = cf_rules['A1:B4']
+
         self.assertEqual(rules_dict[0].type, 'colorScale')
         self.assertEqual(rules_dict[0].colorScale.color[0].rgb, utils.colors.red)
         self.assertEqual(rules_dict[0].colorScale.color[1].rgb, utils.colors.green)
@@ -425,7 +435,8 @@ class StyleFrameTest(unittest.TestCase):
                                                        end_type=utils.conditional_formatting_types.percentile,
                                                        end_value=100, end_color=utils.colors.green)
         sheet = self.export_and_get_default_sheet(save=True)
-        rules_dict = sheet.conditional_formatting['A1:B4']
+        cf_rules = self.get_cf_rules(sheet=sheet)
+        rules_dict = cf_rules['A1:B4']
 
         self.assertEqual(rules_dict[0].type, 'colorScale')
         self.assertEqual(rules_dict[0].colorScale.color[0].rgb, utils.colors.red)
