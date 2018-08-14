@@ -118,6 +118,25 @@ class StyleFrame(object):
         except KeyError:
             raise AttributeError("'{}' object has no attribute '{}'".format(type(self).__name__, attr))
 
+    def _get_column_as_letter(self, sheet, column_to_convert, startcol=0):
+        if not isinstance(column_to_convert, (int, str_type, unicode_type, Container)):
+            raise TypeError("column must be an index, column letter or column name")
+        column_as_letter = None
+        if column_to_convert in self.data_df.columns:  # column name
+            column_index = self.data_df.columns.get_loc(
+                column_to_convert) + startcol + 1  # worksheet columns index start from 1
+            column_as_letter = cell.get_column_letter(column_index)
+
+        elif isinstance(column_to_convert, int) and column_to_convert >= 1:  # column index
+            column_as_letter = cell.get_column_letter(startcol + column_to_convert)
+        elif column_to_convert in sheet.column_dimensions:  # column letter
+            column_as_letter = column_to_convert
+
+        if column_as_letter is None or column_as_letter not in sheet.column_dimensions:
+            raise IndexError("column: %s is out of columns range." % column_to_convert)
+
+        return column_as_letter
+
     @classmethod
     @deprecated_kwargs(('sheetname',))
     def read_excel(cls, path, sheet_name=0, read_style=False, use_openpyxl_styles=True,
@@ -183,6 +202,9 @@ class StyleFrame(object):
                         style_object = Styler.from_openpyxl_style(current_cell.style, theme_colors,
                                                                   read_comments and current_cell.comment)
                     sf.at[sf_index, col_name].style = style_object
+                    sf._rows_height[row_index] = sheet.row_dimensions[row_index].height
+
+                sf._columns_width[col_name] = sheet.column_dimensions[sf._get_column_as_letter(sheet, col_name)].width
 
         if 'sheetname' in kwargs:
             sheet_name = kwargs.pop('sheetname')
@@ -249,32 +271,13 @@ class StyleFrame(object):
                 except TypeError:
                     return x
 
-        def get_column_as_letter(column_to_convert):
-            if not isinstance(column_to_convert, (int, str_type, unicode_type, Container)):
-                raise TypeError("column must be an index, column letter or column name")
-            column_as_letter = None
-            if column_to_convert in self.data_df.columns:  # column name
-                column_index = self.data_df.columns.get_loc(
-                    column_to_convert) + startcol + 1  # worksheet columns index start from 1
-                column_as_letter = cell.get_column_letter(column_index)
-
-            elif isinstance(column_to_convert, int) and column_to_convert >= 1:  # column index
-                column_as_letter = cell.get_column_letter(startcol + column_to_convert)
-            elif column_to_convert in sheet.column_dimensions:  # column letter
-                column_as_letter = column_to_convert
-
-            if column_as_letter is None or column_as_letter not in sheet.column_dimensions:
-                raise IndexError("column: %s is out of columns range." % column_to_convert)
-
-            return column_as_letter
-
         def get_range_of_cells(row_index=None, columns=None):
             if columns is None:
-                start_letter = get_column_as_letter(column_to_convert=self.data_df.columns[0])
-                end_letter = get_column_as_letter(column_to_convert=self.data_df.columns[-1])
+                start_letter = self._get_column_as_letter(sheet, self.data_df.columns[0], startcol)
+                end_letter = self._get_column_as_letter(sheet, self.data_df.columns[-1], startcol)
             else:
-                start_letter = get_column_as_letter(column_to_convert=columns[0])
-                end_letter = get_column_as_letter(column_to_convert=columns[-1])
+                start_letter = self._get_column_as_letter(sheet, columns[0], startcol)
+                end_letter = self._get_column_as_letter(sheet, columns[-1], startcol)
             if row_index is None:  # returns cells range for the entire dataframe
                 start_index = startrow + 1
                 end_index = start_index + len(self)
@@ -375,7 +378,7 @@ class StyleFrame(object):
                                         for column in best_fit})
 
         for column in self._columns_width:
-            column_letter = get_column_as_letter(column_to_convert=column)
+            column_letter = self._get_column_as_letter(sheet, column, startcol)
             sheet.column_dimensions[column_letter].width = self._columns_width[column]
 
         for row in self._rows_height:
@@ -412,7 +415,7 @@ class StyleFrame(object):
                 columns_to_hide = [columns_to_hide]
 
             for column in columns_to_hide:
-                column_letter = get_column_as_letter(column_to_convert=column)
+                column_letter = self._get_column_as_letter(sheet, column, startcol)
                 sheet.column_dimensions[column_letter].hidden = True
 
         for cond_formatting in self._cond_formatting:
