@@ -48,9 +48,11 @@ class StyleFrame(object):
 
     def __init__(self, obj, styler_obj=None):
         from_another_styleframe = False
+        from_pandas_dataframe = False
         if styler_obj and not isinstance(styler_obj, Styler):
             raise TypeError('styler_obj must be {}, got {} instead.'.format(Styler.__name__, type(styler_obj).__name__))
         if isinstance(obj, pd.DataFrame):
+            from_pandas_dataframe = True
             if obj.empty:
                 self.data_df = deepcopy(obj)
             else:
@@ -69,11 +71,15 @@ class StyleFrame(object):
         self.data_df.index = [Container(index, deepcopy(styler_obj)) if not isinstance(index, Container) else deepcopy(index)
                               for index in self.data_df.index]
 
+        if from_pandas_dataframe:
+            self.data_df.index.name = obj.index.name
+
         self._columns_width = obj._columns_width if from_another_styleframe else {}
         self._rows_height = obj._rows_height if from_another_styleframe else {}
-        self._custom_headers_style = obj._custom_headers_style if from_another_styleframe else False
+        self._has_custom_headers_style = obj._has_custom_headers_style if from_another_styleframe else False
         self._cond_formatting = []
         self._default_style = styler_obj or Styler()
+        self._index_header_style = obj._index_header_style if from_another_styleframe else self._default_style
 
         self._known_attrs = {'at': self.data_df.at,
                              'loc': self.data_df.loc,
@@ -212,7 +218,7 @@ class StyleFrame(object):
         sf = cls(pd.read_excel(path, sheet_name, **kwargs))
         if read_style:
             _read_style()
-            sf._custom_headers_style = True
+            sf._has_custom_headers_style = True
         return sf
 
     # noinspection PyPep8Naming
@@ -298,6 +304,7 @@ class StyleFrame(object):
         export_df.columns = [col.value for col in export_df.columns]
         # noinspection PyTypeChecker
         export_df.index = [row_index.value for row_index in export_df.index]
+        export_df.index.name = self.data_df.index.name
 
         if isinstance(excel_writer, (str_type, unicode_type)):
             excel_writer = self.ExcelWriter(excel_writer)
@@ -312,6 +319,9 @@ class StyleFrame(object):
         self.data_df.fillna(Container('NaN'), inplace=True)
 
         if index:
+            if self.data_df.index.name:
+                index_name_cell = sheet.cell(row=startrow + 1, column=startcol + 1)
+                index_name_cell.style = self._index_header_style.to_openpyxl_style()
             for row_index, index in enumerate(self.data_df.index):
                 try:
                     style_to_apply = index.style.to_openpyxl_style()
@@ -328,7 +338,7 @@ class StyleFrame(object):
 
             startcol += 1
 
-        if header and not self._custom_headers_style:
+        if header and not self._has_custom_headers_style:
             self.apply_headers_style(Styler.default_header_style())
 
         # Iterating over the dataframe's elements and applying their styles
@@ -524,7 +534,7 @@ class StyleFrame(object):
         for col_name in cols_to_style:
             if style_header:
                 self.columns[self.columns.get_loc(col_name)].style = style_to_apply
-                self._custom_headers_style = True
+                self._has_custom_headers_style = True
             for index in self.index:
                 if use_default_formats:
                     if isinstance(self.at[index, col_name].value, pd_timestamp):
@@ -541,7 +551,7 @@ class StyleFrame(object):
 
         return self
 
-    def apply_headers_style(self, styler_obj):
+    def apply_headers_style(self, styler_obj, apply_to_index_header=True):
         """Apply style to the headers only
 
         :param Styler styler_obj: the styler object that contains the style to be applied
@@ -552,9 +562,12 @@ class StyleFrame(object):
         if not isinstance(styler_obj, Styler):
             raise TypeError('styler_obj must be {}, got {} instead.'.format(Styler.__name__, type(styler_obj).__name__))
 
+        if apply_to_index_header:
+            self._index_header_style = styler_obj
+
         for column in self.data_df.columns:
             column.style = styler_obj
-        self._custom_headers_style = True
+        self._has_custom_headers_style = True
         return self
 
     def set_column_width(self, columns, width):
