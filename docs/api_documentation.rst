@@ -286,6 +286,7 @@ apply_headers_style
 
 :arguments:
    :styler_obj: (:ref:`styler-class`) A `Styler` object.
+   :style_index_header: (bool) If True then the style will also be applied to the header of the index column
 :returns: self
 
 style_alternate_rows

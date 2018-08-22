@@ -551,10 +551,11 @@ class StyleFrame(object):
 
         return self
 
-    def apply_headers_style(self, styler_obj, apply_to_index_header=True):
+    def apply_headers_style(self, styler_obj, style_index_header=True):
         """Apply style to the headers only
 
         :param Styler styler_obj: the styler object that contains the style to be applied
+        :param bool style_index_header: if True then the style will also be applied to the header of the index column
         :return: self
         :rtype: StyleFrame
         """
@@ -562,7 +563,7 @@ class StyleFrame(object):
         if not isinstance(styler_obj, Styler):
             raise TypeError('styler_obj must be {}, got {} instead.'.format(Styler.__name__, type(styler_obj).__name__))
 
-        if apply_to_index_header:
+        if style_index_header:
             self._index_header_style = styler_obj
 
         for column in self.data_df.columns:
