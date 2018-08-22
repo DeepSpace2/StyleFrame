@@ -1,3 +1,9 @@
+#### 1.6.1
+* Reading columns' widths and rows' heights when passing `read_style=True` to `read_excel`.
+* Added support for named indexes.
+* Added `style_index_header` argument to `apply_headers_style`.
+* Added support for pandas <= 0.23.4
+
 #### 1.6
 * **Added Python 3.7 support**
 * Added support for pandas <= 0.23.1
