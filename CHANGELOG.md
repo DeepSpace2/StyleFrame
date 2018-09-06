@@ -1,3 +1,6 @@
+#### 1.6.2
+* Fixed an issue that prevented reading files which used certain theme colors.
+
 #### 1.6.1
 * Reading columns' widths and rows' heights when passing `read_style=True` to `read_excel`.
 * Added support for named indexes.
