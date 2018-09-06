@@ -111,7 +111,7 @@ class Styler(object):
         if not isinstance(bg_color, str):
             try:
                 bg_color = theme_colors[openpyxl_style.fill.fgColor.theme]
-            except (IndexError, TypeError):
+            except (AttributeError, IndexError, TypeError):
                 bg_color = utils.colors.white[:6]
             tint = openpyxl_style.fill.fgColor.tint
             bg_color = _calc_new_hex_from_theme_hex_and_tint(bg_color, tint)
@@ -125,8 +125,8 @@ class Styler(object):
         if not isinstance(font_color, str):
             try:
                 font_color = theme_colors[openpyxl_style.font.color.theme]
-            except (IndexError, AttributeError):
-                font_color = utils.colors.black
+            except (AttributeError, IndexError, TypeError):
+                font_color = utils.colors.black[:6]
             tint = openpyxl_style.font.color.tint
             font_color = _calc_new_hex_from_theme_hex_and_tint(font_color, tint)
 
