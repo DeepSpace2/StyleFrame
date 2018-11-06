@@ -200,7 +200,7 @@ but they can be changed manually
 sf.set_column_width_dict(col_width_dict={
     ('Col A', 'Col B', 'Col C'): 15.3,
     ('Sum', 'Mean'): 30,
-    ('Percentage', ): 12
+    ('Date', 'Percentage', ): 14
 })
 
 # excel rows starts from 1
@@ -291,7 +291,7 @@ ew.save()
 ```
 
 **_the result:_**
-<img src="https://s10.postimg.org/ppt8gt5m1/Untitled.png">
+<img src="https://files.fm/thumb_show.php?i=m2aknfqn">
 
 
 ## Commandline Interface
