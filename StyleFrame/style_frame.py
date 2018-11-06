@@ -247,13 +247,10 @@ class StyleFrame(object):
                 except TypeError:
                     return x
 
-        def within_sheet_boundaries(row='1', column='A'):
-            try:
-                cell_location = range_boundaries('A1:{column}{row}'.format(column=column, row=row))[2:]
-                last_cell_in_sheet_location = range_boundaries(sheet.dimensions)[2:]
-                return cell_location <= last_cell_in_sheet_location
-            except Exception:
-                return False
+        def within_sheet_boundaries(row=1, column='A'):
+            return (1 <= int(row) <= sheet.max_row
+                        and
+                    'A' <= column <= get_column_letter(sheet.max_column))
 
         def get_column_as_letter(column_to_convert):
             if not isinstance(column_to_convert, (int, str_type, unicode_type, Container)):

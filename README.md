@@ -143,8 +143,9 @@ sf.to_excel('output.xlsx',
             # Freeze the columns before column 'A' (=None) and rows above '2' (=1).
             columns_and_rows_to_freeze='A2').save()
 ```    
-The final output saved under output.xlsx:    
-<img src=https://s9.postimg.org/dncq273hr/Screenshot_from_2017-06-05_21_58_26.png />
+The final output saved under output.xlsx:
+
+<img src="https://files.fm/thumb_show.php?i=b3j5zeeu" />
 
 
 ### Advance Example
