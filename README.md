@@ -144,7 +144,7 @@ sf.to_excel('output.xlsx',
             columns_and_rows_to_freeze='A2').save()
 ```    
 The final output saved under output.xlsx:    
-<img src=https://s9.postimg.org/dncq273hr/Screenshot_from_2017-06-05_21_58_26.png />
+<img src="https://files.fm/thumb_show.php?i=b3j5zeeu" />
 
 
 ### Advance Example
@@ -290,7 +290,7 @@ ew.save()
 ```
 
 **_the result:_**
-<img src="https://s10.postimg.org/ppt8gt5m1/Untitled.png">
+<img src="https://files.fm/thumb_show.php?i=m2aknfqn">
 
 
 ## Commandline Interface
