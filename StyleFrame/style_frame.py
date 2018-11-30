@@ -150,7 +150,7 @@ class StyleFrame(object):
 
     @classmethod
     @deprecated_kwargs(('sheetname',))
-    def read_excel(cls, path, sheet_name=0, read_style=False, use_openpyxl_styles=True,
+    def read_excel(cls, path, sheet_name=0, read_style=False, use_openpyxl_styles=False,
                    read_comments=False, **kwargs):
         """Creates a StyleFrame object from an existing Excel.
 

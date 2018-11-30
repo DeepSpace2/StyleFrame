@@ -373,9 +373,8 @@ A classmethod used to create a StyleFrame object from an existing Excel.
    :sheet_name=0: (str | int) The sheet name to read. If an integer is provided then it be used as a zero-based
             sheet index. Default is 0.
    :read_style=False: (bool) If `True` the sheet's style will be loaded to the returned StyleFrame object.
-   :use_openpyxl_styles=True: (bool) If `True` (and `read_style` is also `True`) then the styles in the returned
+   :use_openpyxl_styles=False: (bool) If `True` (and `read_style` is also `True`) then the styles in the returned
             StyleFrame object will be Openpyxl's style objects. If `False`, the styles will be :ref:`styler-class` objects.
-            Defaults to `True` for backward compatibility.
 
    .. note:: Using ``use_openpyxl_styles=False`` is useful if you are going to filter columns or rows by style, for example:
 
