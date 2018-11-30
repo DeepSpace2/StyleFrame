@@ -122,7 +122,10 @@ class Styler(object):
         bold = openpyxl_style.font.bold
         font = openpyxl_style.font.name
         font_size = openpyxl_style.font.size
-        font_color = openpyxl_style.font.color.rgb
+        try:
+            font_color = openpyxl_style.font.color.rgb
+        except AttributeError:
+            font_color = utils.colors.black
 
         # in case we are dealing with a "theme color"
         if not isinstance(font_color, str):
@@ -145,8 +148,8 @@ class Styler(object):
         indent = openpyxl_style.alignment.indent
 
         if openpyxl_comment:
-            comment_author = openpyxl_style.author
-            comment_text = openpyxl_style.text
+            comment_author = openpyxl_comment.author
+            comment_text = openpyxl_comment.text
         else:
             comment_author = None
             comment_text = None

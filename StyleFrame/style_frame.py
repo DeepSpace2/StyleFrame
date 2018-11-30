@@ -12,7 +12,7 @@ from collections import Iterable
 from openpyxl import load_workbook
 from openpyxl.cell.cell import get_column_letter
 from openpyxl.xml.functions import fromstring, QName
-from openpyxl.utils import range_boundaries
+from openpyxl.utils import range_boundaries, cell
 
 PY2 = sys.version_info[0] == 2
 
@@ -135,12 +135,15 @@ class StyleFrame(object):
                 column_to_convert) + startcol + 1  # worksheet columns index start from 1
             column_as_letter = cell.get_column_letter(column_index)
 
-        elif isinstance(column_to_convert, int) and column_to_convert >= 1:  # column index
+        # column index
+        elif isinstance(column_to_convert, int) and column_to_convert >= 1:
             column_as_letter = cell.get_column_letter(startcol + column_to_convert)
-        elif column_to_convert in sheet.column_dimensions:  # column letter
+
+        # assuming we got column letter
+        elif isinstance(column_to_convert, (str_type, unicode_type)) < get_column_letter(sheet.max_column):
             column_as_letter = column_to_convert
 
-        if column_as_letter is None or column_as_letter not in sheet.column_dimensions:
+        if column_as_letter is None or column_as_letter > get_column_letter(sheet.max_column):
             raise IndexError("column: %s is out of columns range." % column_to_convert)
 
         return column_as_letter
@@ -279,24 +282,6 @@ class StyleFrame(object):
             return (1 <= int(row) <= sheet.max_row
                         and
                     'A' <= column <= get_column_letter(sheet.max_column))
-
-        def get_column_as_letter(column_to_convert):
-            if not isinstance(column_to_convert, (int, str_type, unicode_type, Container)):
-                raise TypeError("column must be an index, column letter or column name")
-            column_as_letter = None
-            if column_to_convert in self.data_df.columns:  # column name
-                column_index = self.data_df.columns.get_loc(
-                    column_to_convert) + startcol + 1  # worksheet columns index start from 1
-                column_as_letter = get_column_letter(column_index)
-            elif isinstance(column_to_convert, int) and column_to_convert >= 1:  # column index
-                column_as_letter = get_column_letter(startcol + column_to_convert)
-            elif isinstance(column_to_convert, (str_type, unicode_type)):  # column letter
-                column_as_letter = column_to_convert
-
-            if column_as_letter is None or not within_sheet_boundaries(column=column_as_letter):
-                raise IndexError("column: %s is out of columns range." % column_to_convert)
-
-            return column_as_letter
 
         def get_range_of_cells(row_index=None, columns=None):
             if columns is None:
