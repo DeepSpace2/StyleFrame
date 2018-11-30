@@ -324,7 +324,8 @@ class StyleFrameTest(unittest.TestCase):
 
     def test_read_excel_with_string_sheet_name(self):
         self.export_and_get_default_sheet(save=True)
-        sf_from_excel = StyleFrame.read_excel(TEST_FILENAME, read_style=True, sheet_name='Sheet1')
+        sf_from_excel = StyleFrame.read_excel(TEST_FILENAME, read_style=True, sheet_name='Sheet1',
+                                              use_openpyxl_styles=True)
         # making sure content is the same
         self.assertTrue(all(list(self.sf[col]) == list(sf_from_excel[col]) for col in self.sf.columns))
 
@@ -338,7 +339,7 @@ class StyleFrameTest(unittest.TestCase):
 
     def test_read_excel_with_style_openpyxl_objects(self):
         self.export_and_get_default_sheet(save=True)
-        sf_from_excel = StyleFrame.read_excel(TEST_FILENAME, read_style=True)
+        sf_from_excel = StyleFrame.read_excel(TEST_FILENAME, read_style=True, use_openpyxl_styles=True)
         # making sure content is the same
         self.assertTrue(all(list(self.sf[col]) == list(sf_from_excel[col]) for col in self.sf.columns))
 
@@ -352,7 +353,7 @@ class StyleFrameTest(unittest.TestCase):
 
     def test_read_excel_with_style_styler_objects(self):
         self.export_and_get_default_sheet(save=True)
-        sf_from_excel = StyleFrame.read_excel(TEST_FILENAME, read_style=True, use_openpyxl_styles=False)
+        sf_from_excel = StyleFrame.read_excel(TEST_FILENAME, read_style=True)
         # making sure content is the same
         self.assertTrue(all(list(self.sf[col]) == list(sf_from_excel[col]) for col in self.sf.columns))
 
@@ -366,7 +367,8 @@ class StyleFrameTest(unittest.TestCase):
 
     def test_read_excel_with_style_comments_openpyxl_objects(self):
         self.export_and_get_default_sheet(save=True)
-        sf_from_excel = StyleFrame.read_excel(TEST_FILENAME, read_style=True, read_comments=True)
+        sf_from_excel = StyleFrame.read_excel(TEST_FILENAME, read_style=True, read_comments=True,
+                                              use_openpyxl_styles=True)
         # making sure content is the same
         self.assertTrue(all(list(self.sf[col]) == list(sf_from_excel[col]) for col in self.sf.columns))
 
@@ -380,8 +382,7 @@ class StyleFrameTest(unittest.TestCase):
 
     def test_read_excel_with_style_comments_styler_objects(self):
         self.export_and_get_default_sheet(save=True)
-        sf_from_excel = StyleFrame.read_excel(TEST_FILENAME, read_style=True, use_openpyxl_styles=False,
-                                              read_comments=True)
+        sf_from_excel = StyleFrame.read_excel(TEST_FILENAME, read_style=True, read_comments=True)
         # making sure content is the same
         self.assertTrue(all(list(self.sf[col]) == list(sf_from_excel[col]) for col in self.sf.columns))
 
