@@ -143,8 +143,7 @@ sf.to_excel('output.xlsx',
             # Freeze the columns before column 'A' (=None) and rows above '2' (=1).
             columns_and_rows_to_freeze='A2').save()
 ```    
-The final output saved under output.xlsx:
-
+The final output saved under output.xlsx:    
 <img src="https://files.fm/thumb_show.php?i=b3j5zeeu" />
 
 
@@ -200,7 +199,7 @@ but they can be changed manually
 sf.set_column_width_dict(col_width_dict={
     ('Col A', 'Col B', 'Col C'): 15.3,
     ('Sum', 'Mean'): 30,
-    ('Date', 'Percentage', ): 14
+    ('Percentage', ): 12
 })
 
 # excel rows starts from 1
