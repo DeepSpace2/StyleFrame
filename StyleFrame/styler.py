@@ -1,8 +1,8 @@
 # coding:utf-8
 from . import utils
 from colour import Color
-from openpyxl.formatting import ColorScaleRule
-from openpyxl.styles import PatternFill, Style, Color as OpenPyColor, Border, Side, Font, Alignment, Protection
+from openpyxl.formatting.rule import ColorScaleRule
+from openpyxl.styles import PatternFill, NamedStyle, Color as OpenPyColor, Border, Side, Font, Alignment, Protection
 from openpyxl.comments import Comment
 from pprint import pformat
 
@@ -51,7 +51,7 @@ class Styler(object):
         return self.__dict__ == other.__dict__
 
     def __hash__(self):
-        return hash(tuple((k, v) for k, v in self.__dict__.items()))
+        return hash(tuple((k, v) for k, v in sorted(self.__dict__.items())))
 
     def __add__(self, other):
         default = Styler().__dict__
@@ -79,15 +79,18 @@ class Styler(object):
         except KeyError:
             side = Side(border_style=self.border_type, color=utils.colors.black)
             border = Border(left=side, right=side, top=side, bottom=side)
-            openpyxl_style = self.cache[self] = Style(font=Font(name=self.font, size=self.font_size, color=OpenPyColor(self.font_color),
-                                                      bold=self.bold, underline=self.underline),
-                                                      fill=PatternFill(patternType=self.fill_pattern_type, fgColor=self.bg_color),
-                                                      alignment=Alignment(horizontal=self.horizontal_alignment, vertical=self.vertical_alignment,
-                                                                          wrap_text=self.wrap_text, shrink_to_fit=self.shrink_to_fit,
-                                                                          indent=self.indent),
-                                                      border=border,
-                                                      number_format=self.number_format,
-                                                      protection=Protection(locked=self.protection))
+            openpyxl_style = self.cache[self] = NamedStyle(
+                name=str(hash(self)),
+                font=Font(name=self.font, size=self.font_size, color=OpenPyColor(self.font_color),
+                          bold=self.bold, underline=self.underline),
+                fill=PatternFill(patternType=self.fill_pattern_type, fgColor=self.bg_color),
+                alignment=Alignment(horizontal=self.horizontal_alignment, vertical=self.vertical_alignment,
+                                    wrap_text=self.wrap_text, shrink_to_fit=self.shrink_to_fit,
+                                    indent=self.indent),
+                border=border,
+                number_format=self.number_format,
+                protection=Protection(locked=self.protection)
+            )
         return openpyxl_style
 
     @classmethod
@@ -142,8 +145,8 @@ class Styler(object):
         indent = openpyxl_style.alignment.indent
 
         if openpyxl_comment:
-            comment_author = openpyxl_comment.author
-            comment_text = openpyxl_comment.text
+            comment_author = openpyxl_style.author
+            comment_text = openpyxl_style.text
         else:
             comment_author = None
             comment_text = None
@@ -165,6 +168,7 @@ class ColorScaleConditionalFormatRule(object):
     """Creates a color scale conditional format rule. Wraps openpyxl's ColorScaleRule.
     Mostly should not be used directly, but through StyleFrame.add_color_scale_conditional_formatting
     """
+
     def __init__(self, start_type, start_value, start_color, end_type, end_value, end_color,
                  mid_type=None, mid_value=None, mid_color=None, columns_range=None):
 

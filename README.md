@@ -143,8 +143,9 @@ sf.to_excel('output.xlsx',
             # Freeze the columns before column 'A' (=None) and rows above '2' (=1).
             columns_and_rows_to_freeze='A2').save()
 ```    
-The final output saved under output.xlsx:    
-<img src=https://s9.postimg.org/dncq273hr/Screenshot_from_2017-06-05_21_58_26.png />
+The final output saved under output.xlsx:
+
+<img src="https://files.fm/thumb_show.php?i=b3j5zeeu" />
 
 
 ### Advance Example
@@ -199,7 +200,7 @@ but they can be changed manually
 sf.set_column_width_dict(col_width_dict={
     ('Col A', 'Col B', 'Col C'): 15.3,
     ('Sum', 'Mean'): 30,
-    ('Percentage', ): 12
+    ('Date', 'Percentage', ): 14
 })
 
 # excel rows starts from 1
@@ -290,7 +291,7 @@ ew.save()
 ```
 
 **_the result:_**
-<img src="https://s10.postimg.org/ppt8gt5m1/Untitled.png">
+<img src="https://files.fm/thumb_show.php?i=m2aknfqn">
 
 
 ## Commandline Interface
