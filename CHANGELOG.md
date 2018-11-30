@@ -1,3 +1,7 @@
+#### 2.0
+* **Change supported versions of openpyxl to >= 2.5**
+* Changed `use_openpyxl_styles` argument default value to `False` in `StyleFrame.read_excel`.
+
 #### 1.6.2
 * Fixed an issue that prevented reading files which used certain theme colors.
 
