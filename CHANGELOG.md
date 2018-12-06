@@ -1,3 +1,6 @@
+#### 2.0.1
+* Hotfix: Fixed typo in setup.py
+
 #### 2.0
 * **Change supported versions of openpyxl to >= 2.5**
 * Changed `use_openpyxl_styles` argument default value to `False` in `StyleFrame.read_excel`.
