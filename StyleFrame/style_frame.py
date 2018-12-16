@@ -143,7 +143,7 @@ class StyleFrame(object):
         elif isinstance(column_to_convert, (str_type, unicode_type)) < get_column_letter(sheet.max_column):
             column_as_letter = column_to_convert
 
-        if column_as_letter is None or column_as_letter > get_column_letter(sheet.max_column):
+        if column_as_letter is None or cell.column_index_from_string(column_as_letter) > sheet.max_column:
             raise IndexError("column: %s is out of columns range." % column_to_convert)
 
         return column_as_letter
@@ -281,7 +281,7 @@ class StyleFrame(object):
         def within_sheet_boundaries(row=1, column='A'):
             return (1 <= int(row) <= sheet.max_row
                         and
-                    'A' <= column <= get_column_letter(sheet.max_column))
+                    1 <= cell.column_index_from_string(column) <= sheet.max_column)
 
         def get_range_of_cells(row_index=None, columns=None):
             if columns is None:
