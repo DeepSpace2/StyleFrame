@@ -12,7 +12,7 @@ from collections import Iterable
 from openpyxl import load_workbook
 from openpyxl.cell.cell import get_column_letter
 from openpyxl.xml.functions import fromstring, QName
-from openpyxl.utils import range_boundaries, cell
+from openpyxl.utils import cell
 
 PY2 = sys.version_info[0] == 2
 

@@ -1,3 +1,6 @@
+#### 2.0.2
+* Fixed a "'column' is out of columns range" error when settings a column's width if dataframe has more than 26 columns. 
+
 #### 2.0.1
 * Hotfix: Fixed typo in setup.py
 
