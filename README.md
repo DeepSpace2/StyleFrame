@@ -144,7 +144,7 @@ sf.to_excel('output.xlsx',
             columns_and_rows_to_freeze='A2').save()
 ```    
 The final output saved under output.xlsx:    
-<img src="https://files.fm/thumb_show.php?i=b3j5zeeu" />
+![Example 1](readme-images/example1.PNG?raw=true)
 
 
 ### Advance Example
@@ -190,7 +190,9 @@ sf = StyleFrame({'Date': [date(1995, 9, 5), date(1947, 11, 29), date(2000, 1, 15
                  'Col A': [1, 2004, -3],
                  'Col B': [15, 3, 116],
                  'Col C': [33, -6, 9],
-                 'Percentage': [0.113, 0.504, 0.005]})
+                 'Percentage': [0.113, 0.504, 0.005],
+                 'Sum': [49, 2001, 122],
+                 'Mean': [16.333333, 667.000000, 40.666667]})
 ```
 
 The StyleFrame object will auto-adjust the columns width and the rows height
@@ -290,8 +292,17 @@ ew.save()
 ```
 
 **_the result:_**
-<img src="https://files.fm/thumb_show.php?i=m2aknfqn">
+Sheet 1:
 
+![Example 2 sheet 1](readme-images/example2-sheet-1.PNG?raw=true)
+
+Sheet 2:
+
+![Example 2 sheet 2](readme-images/example2-sheet-2.PNG?raw=true)
+
+Note that Sheet 1 is protected:
+
+![Example 2 sheets](readme-images/example2-sheets.PNG?raw=true)
 
 ## Commandline Interface
 #### General Information
