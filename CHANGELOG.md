@@ -1,3 +1,6 @@
+#### 2.0.3
+* Fixing pandas dependency for different Python versions, related to #52, #53
+
 #### 2.0.2
 * Fixed a "'column' is out of columns range" error when settings a column's width if dataframe has more than 26 columns. 
 
