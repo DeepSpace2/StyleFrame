@@ -49,38 +49,32 @@ class Container(object):
     def __eq__(self, other):
         if isinstance(other, self.__class__):
             return other.value == self.value
-        else:
-            return other == self.value
+        return other == self.value
 
     def __ne__(self, other):
         if isinstance(other, self.__class__):
             return other.value != self.value
-        else:
-            return other != self.value
+        return other != self.value
 
     def __gt__(self, other):
         if isinstance(other, self.__class__):
             return other.value < self.value
-        else:
-            return other < self.value
+        return other < self.value
 
     def __ge__(self, other):
         if isinstance(other, self.__class__):
             return other.value <= self.value
-        else:
-            return other <= self.value
+        return other <= self.value
 
     def __lt__(self, other):
         if isinstance(other, self.__class__):
             return other.value > self.value
-        else:
-            return other > self.value
+        return other > self.value
 
     def __le__(self, other):
         if isinstance(other, self.__class__):
             return other.value >= self.value
-        else:
-            return other >= self.value
+        return other >= self.value
 
     def __add__(self, other):
         if isinstance(other, self.__class__):

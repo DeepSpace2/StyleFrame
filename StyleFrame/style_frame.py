@@ -104,10 +104,9 @@ class StyleFrame(object):
     def __getitem__(self, item):
         if isinstance(item, pd.Series):
             return self.data_df.__getitem__(item).index
-        elif isinstance(item, list):
+        if isinstance(item, list):
             return StyleFrame(self.data_df.__getitem__(item))
-        else:
-            return Series(self.data_df.__getitem__(item))
+        return Series(self.data_df.__getitem__(item))
 
     def __setitem__(self, key, value):
         if isinstance(value, (Iterable, pd.Series)):
@@ -435,8 +434,8 @@ class StyleFrame(object):
                 sheet.column_dimensions[column_letter].hidden = True
 
         for cond_formatting in self._cond_formatting:
-                sheet.conditional_formatting.add(get_range_of_cells(columns=cond_formatting.columns),
-                                                 cond_formatting.rule)
+            sheet.conditional_formatting.add(get_range_of_cells(columns=cond_formatting.columns),
+                                             cond_formatting.rule)
 
         return excel_writer
 
