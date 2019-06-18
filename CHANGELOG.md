@@ -1,3 +1,7 @@
+#### 2.0.4
+* Fixed a bug that caused `apply_style_by_indexes` not to work in case the dataframe had non-integer indexes in some cases
+* Added support for text rotation
+
 #### 2.0.3
 * Fixing pandas dependency for different Python versions, related to #52, #53
 
