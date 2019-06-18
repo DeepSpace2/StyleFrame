@@ -191,7 +191,8 @@ Used to represent a style.
           number_format=utils.number_formats.general, protection=False, underline=None,
           border_type=utils.borders.thin, horizontal_alignment=utils.horizontal_alignments.center,
           vertical_alignment=utils.vertical_alignments.center, wrap_text=True, shrink_to_fit=True,
-          fill_pattern_type=utils.fill_pattern_types.solid, indent=0, comment_author=None, comment_text=None)
+          fill_pattern_type=utils.fill_pattern_types.solid, indent=0, comment_author=None, comment_text=None,
+          text_rotation=0)
 
 :bg_color: (str: one of :ref:`utils.colors`, hex string or color name ie `'yellow'` Excel supports) The background color
 :bold: (bool) If `True`, a bold typeface is used
@@ -210,6 +211,7 @@ Used to represent a style.
 :indent: (int)
 :comment_author: (str)
 :comment_text: (str)
+:text_rotation: (int) 1 - 180
 
 Methods
 *******
