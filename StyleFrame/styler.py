@@ -18,7 +18,8 @@ class Styler(object):
                  number_format=utils.number_formats.general, protection=False, underline=None,
                  border_type=utils.borders.thin, horizontal_alignment=utils.horizontal_alignments.center,
                  vertical_alignment=utils.vertical_alignments.center, wrap_text=True, shrink_to_fit=True,
-                 fill_pattern_type=utils.fill_pattern_types.solid, indent=0, comment_author=None, comment_text=None):
+                 fill_pattern_type=utils.fill_pattern_types.solid, indent=0, comment_author=None, comment_text=None,
+                 text_rotation=0):
 
         def get_color_from_string(color_str, default_color=None):
             if color_str and color_str.startswith('#'):
@@ -44,6 +45,7 @@ class Styler(object):
         self.indent = indent
         self.comment_author = comment_author
         self.comment_text = comment_text
+        self.text_rotation = text_rotation
 
     def __eq__(self, other):
         if not isinstance(other, self.__class__):
@@ -86,7 +88,7 @@ class Styler(object):
                 fill=PatternFill(patternType=self.fill_pattern_type, fgColor=self.bg_color),
                 alignment=Alignment(horizontal=self.horizontal_alignment, vertical=self.vertical_alignment,
                                     wrap_text=self.wrap_text, shrink_to_fit=self.shrink_to_fit,
-                                    indent=self.indent),
+                                    indent=self.indent, text_rotation=self.text_rotation),
                 border=border,
                 number_format=self.number_format,
                 protection=Protection(locked=self.protection)
@@ -146,6 +148,7 @@ class Styler(object):
         shrink_to_fit = openpyxl_style.alignment.shrink_to_fit
         fill_pattern_type = openpyxl_style.fill.patternType
         indent = openpyxl_style.alignment.indent
+        text_rotation = openpyxl_style.alignment.text_rotation
 
         if openpyxl_comment:
             comment_author = openpyxl_comment.author
@@ -158,7 +161,7 @@ class Styler(object):
                    number_format, protection, underline,
                    border_type, horizontal_alignment,
                    vertical_alignment, wrap_text, shrink_to_fit,
-                   fill_pattern_type, indent, comment_author, comment_text)
+                   fill_pattern_type, indent, comment_author, comment_text, text_rotation)
 
     @classmethod
     def combine(cls, *styles):
