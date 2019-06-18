@@ -489,7 +489,7 @@ class StyleFrame(object):
             index.style = style_to_apply
 
             for col in cols_to_style:
-                cell = self.iloc[index.value, self.columns.get_loc(col)]
+                cell = self.iloc[self.index.get_loc(index), self.columns.get_loc(col)]
                 if orig_number_format == utils.number_formats.general:
                     style_to_apply.number_format = default_number_formats.get(type(cell.value),
                                                                               utils.number_formats.general)
