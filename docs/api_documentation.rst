@@ -24,9 +24,9 @@ It is possible to directly use a value that is not present in the utils module a
     .. py:attribute:: date_time = 'DD/MM/YY HH:MM'
     .. py:attribute:: date_time_with_seconds = 'DD/MM/YY HH:MM:SS'
 
-    .. py:function:: decimal_with_num_of_digits(num_of_digits)
+    .. py:method:: decimal_with_num_of_digits(num_of_digits)
 
-        :param num_of_digits: (int) Number of digits after the decimal point
+        :param int num_of_digits: Number of digits after the decimal point
         :return: A format string that represents a floating point number with the provided number of digits after the
             decimal point. For example, ``utils.number_formats.decimal_with_num_of_digits(2)`` will return ``'0.00'``
         :rtype: str
