@@ -252,6 +252,8 @@ Represent a stylized dataframe
 Methods
 *******
 
+.. _apply_style_by_indexes:
+
 apply_style_by_indexes
 """"""""""""""""""""""
 
@@ -293,6 +295,8 @@ apply_headers_style
 
 style_alternate_rows
 """"""""""""""""""""
+
+.. note:: ``style_alternate_rows`` also accepts all arguments that :ref:`StyleFrame.apply_style_by_indexes <apply_style_by_indexes>` accepts as kwargs.
 
 :arguments:
    :styles: (list | tuple | set) List or tuple of :ref:`styler-class` objects to be applied to rows in an alternating manner

@@ -680,7 +680,7 @@ class StyleFrame(object):
                                   if old_col_name in sf._columns_width})
         return sf
 
-    def style_alternate_rows(self, styles):
+    def style_alternate_rows(self, styles, **kwargs):
         """Applies the provided styles to rows in an alternating manner.
 
         :param list|tuple|set styles: styles to apply
@@ -690,7 +690,7 @@ class StyleFrame(object):
         num_of_styles = len(styles)
         split_indexes = (self.index[i::num_of_styles] for i in range(num_of_styles))
         for i, indexes in enumerate(split_indexes):
-            self.apply_style_by_indexes(indexes, styles[i])
+            self.apply_style_by_indexes(indexes, styles[i], **kwargs)
         return self
 
     def add_color_scale_conditional_formatting(self, start_type, start_value, start_color, end_type, end_value, end_color,
