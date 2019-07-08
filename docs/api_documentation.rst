@@ -158,24 +158,33 @@ This module contains classes that represent styles.
 
     Used to represent a style.
 
-    :param bg_color: (str: one of :ref:`utils.colors <utils.colors_>`, hex string or color name ie `'yellow'` Excel supports) The background color
+    :param bg_color: The background color
+    :type bg_color: str: one of :ref:`utils.colors <utils.colors_>`, hex string or color name ie `'yellow'` Excel supports
     :param bool bold: If `True`, a bold typeface is used
-    :param font: (str: one of :ref:`utils.fonts <utils.fonts_>` or other font name Excel supports) The font to use
+    :param font: The font to use
+    :type font: str: one of :ref:`utils.fonts <utils.fonts_>` or other font name Excel supports
     :param int font_size: The font size
-    :param font_color: (str: one of :ref:`utils.colors <utils.colors_>`, hex string or color name ie `'yellow'` Excel supports) The font color
-    :param number_format: (str: one of :ref:`utils.number_formats <utils.number_formats_>` or any other format Excel supports) The format of the cell's value
+    :param font_color: The font color
+    :type font_color: str: one of :ref:`utils.colors <utils.colors_>`, hex string or color name ie `'yellow'` Excel supports
+    :param number_format: The format of the cell's value
+    :type number_format: str: one of :ref:`utils.number_formats <utils.number_formats_>` or any other format Excel supports
     :param bool protection: If `True`, the cell/column will be write-protected
-    :param underline: (str: one of :ref:`utils.underline <utils.underline_>` or any other underline Excel supports) The underline type
-    :param border_type: (str: one of :ref:`utils.borders <utils.borders_>` or any other border type Excel supports) The border type
-    :param horizontal_alignment: (str: one of :ref:`utils.horizontal_alignments <utils.horizontal_alignments_>` or any other horizontal alignment Excel supports) Text's horizontal alignment
-    :param vertical_alignment: (str: one of :ref:`utils.vertical_alignments <utils.vertical_alignments_>` or any other vertical alignment Excel supports) Text's vertical alignment
+    :param underline: The underline type
+    :type underline: str: one of :ref:`utils.underline <utils.underline_>` or any other underline Excel supports
+    :param border_type: The border type
+    :type border_type: str: one of :ref:`utils.borders <utils.borders_>` or any other border type Excel supports
+    :param horizontal_alignment: Text's horizontal alignment
+    :type horizontal_alignment: str: one of :ref:`utils.horizontal_alignments <utils.horizontal_alignments_>` or any other horizontal alignment Excel supports
+    :param vertical_alignment: Text's vertical alignment
+    :type vertical_alignment: str: one of :ref:`utils.vertical_alignments <utils.vertical_alignments_>` or any other vertical alignment Excel supports
     :param bool wrap_text:
     :param bool shrink_to_fit:
-    :param fill_pattern_type: (str: one of :ref:`utils.fill_pattern_types <utils.fill_pattern_types_>` or any other fill pattern type Excel supports) Cells's fill pattern type
+    :param fill_pattern_type: Cells's fill pattern type
+    :type fill_pattern_type: str: one of :ref:`utils.fill_pattern_types <utils.fill_pattern_types_>` or any other fill pattern type Excel supports
     :param int indent:
     :param str comment_author:
     :param str comment_text:
-    :param int text_rotation: 1 - 180
+    :param int text_rotation: Integer in the range 0 - 180
 
     .. py:method:: combine(styles)
 
