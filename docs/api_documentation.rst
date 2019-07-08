@@ -7,170 +7,144 @@ utils module
 This module contains the most widely used values for styling elements such as colors and border types for convenience.
 It is possible to directly use a value that is not present in the utils module as long as Excel recognises it.
 
-.. _utils.number_formats:
+.. _utils.number_formats_:
 
-utils.number_formats
-^^^^^^^^^^^^^^^^^^^^
-::
+.. py:class:: utils.number_formats
 
-   general = 'General'
-   general_integer = '0'
-   general_float = '0.00'
-   percent = '0.0%'
-   thousands_comma_sep = '#,##0'
-   date = 'DD/MM/YY'
-   time_24_hours = 'HH:MM'
-   time_24_hours_with_seconds = 'HH:MM:SS'
-   time_12_hours = 'h:MM AM/PM'
-   time_12_hours_with_seconds = 'h:MM:SS AM/PM'
-   date_time = 'DD/MM/YY HH:MM'
-   date_time_with_seconds = 'DD/MM/YY HH:MM:SS'
+    .. py:attribute:: general = 'General'
+    .. py:attribute:: general_integer = '0'
+    .. py:attribute:: general_float = '0.00'
+    .. py:attribute:: percent = '0.0%'
+    .. py:attribute:: thousands_comma_sep = '#,##0'
+    .. py:attribute:: date = 'DD/MM/YY'
+    .. py:attribute:: time_24_hours = 'HH:MM'
+    .. py:attribute:: time_24_hours_with_seconds = 'HH:MM:SS'
+    .. py:attribute:: time_12_hours = 'h:MM AM/PM'
+    .. py:attribute:: time_12_hours_with_seconds = 'h:MM:SS AM/PM'
+    .. py:attribute:: date_time = 'DD/MM/YY HH:MM'
+    .. py:attribute:: date_time_with_seconds = 'DD/MM/YY HH:MM:SS'
 
-decimal_with_num_of_digits
-**************************
+    .. py:function:: decimal_with_num_of_digits(num_of_digits)
 
-:arguments:
-  :num_of_digits: (int) Number of digits after the decimal point
-:returns: A format string that represents a floating point number with the provided number of digits after the
-          decimal point. For example, ``utils.number_formats.decimal_with_num_of_digits(2)`` will return ``'0.00'``
+        :param num_of_digits: (int) Number of digits after the decimal point
+        :return: A format string that represents a floating point number with the provided number of digits after the
+            decimal point. For example, ``utils.number_formats.decimal_with_num_of_digits(2)`` will return ``'0.00'``
+        :rtype: str
 
-.. _utils.colors:
+.. _utils.colors_:
 
-utils.colors
-^^^^^^^^^^^^
-::
+.. py:class:: utils.colors
 
-   white = op_colors.WHITE
-   blue = op_colors.BLUE
-   dark_blue = op_colors.DARKBLUE
-   yellow = op_colors.YELLOW
-   dark_yellow = op_colors.DARKYELLOW
-   green = op_colors.GREEN
-   dark_green = op_colors.DARKGREEN
-   black = op_colors.BLACK
-   red = op_colors.RED
-   dark_red = op_colors.DARKRED
-   purple = '800080'
-   grey = 'D3D3D3'
+   .. py:attribute:: white = op_colors.WHITE
+   .. py:attribute:: blue = op_colors.BLUE
+   .. py:attribute:: dark_blue = op_colors.DARKBLUE
+   .. py:attribute:: yellow = op_colors.YELLOW
+   .. py:attribute:: dark_yellow = op_colors.DARKYELLOW
+   .. py:attribute:: green = op_colors.GREEN
+   .. py:attribute:: dark_green = op_colors.DARKGREEN
+   .. py:attribute:: black = op_colors.BLACK
+   .. py:attribute:: red = op_colors.RED
+   .. py:attribute:: dark_red = op_colors.DARKRED
+   .. py:attribute:: purple = '800080'
+   .. py:attribute:: grey = 'D3D3D3'
 
+.. _utils.fonts_:
 
-.. _utils.fonts:
+.. py:class:: utils.fonts
 
-utils.fonts
-^^^^^^^^^^^
-::
+   .. py:attribute:: aegean = 'Aegean'
+   .. py:attribute:: aegyptus = 'Aegyptus'
+   .. py:attribute:: aharoni = 'Aharoni CLM'
+   .. py:attribute:: anaktoria = 'Anaktoria'
+   .. py:attribute:: analecta = 'Analecta'
+   .. py:attribute:: anatolian = 'Anatolian'
+   .. py:attribute:: arial = 'Arial'
+   .. py:attribute:: calibri = 'Calibri'
+   .. py:attribute:: david = 'David CLM'
+   .. py:attribute:: dejavu_sans = 'DejaVu Sans'
+   .. py:attribute:: ellinia = 'Ellinia CLM'
 
-   aegean = 'Aegean'
-   aegyptus = 'Aegyptus'
-   aharoni = 'Aharoni CLM'
-   anaktoria = 'Anaktoria'
-   analecta = 'Analecta'
-   anatolian = 'Anatolian'
-   arial = 'Arial'
-   calibri = 'Calibri'
-   david = 'David CLM'
-   dejavu_sans = 'DejaVu Sans'
-   ellinia = 'Ellinia CLM'
+.. _utils.borders_:
 
+.. py:class:: utils.borders
 
-.. _utils.borders:
+   .. py:attribute:: dash_dot = 'dashDot'
+   .. py:attribute:: dash_dot_dot = 'dashDotDot'
+   .. py:attribute:: dashed = 'dashed'
+   .. py:attribute:: dotted = 'dotted'
+   .. py:attribute:: double = 'double'
+   .. py:attribute:: hair = 'hair'
+   .. py:attribute:: medium = 'medium'
+   .. py:attribute:: medium_dash_dot = 'mediumDashDot'
+   .. py:attribute:: medium_dash_dot_dot = 'mediumDashDotDot'
+   .. py:attribute:: medium_dashed = 'mediumDashed'
+   .. py:attribute:: slant_dash_dot = 'slantDashDot'
+   .. py:attribute:: thick = 'thick'
+   .. py:attribute:: thin = 'thin'
 
-utils.borders
-^^^^^^^^^^^^^
-::
+.. _utils.horizontal_alignments_:
 
-   dash_dot = 'dashDot'
-   dash_dot_dot = 'dashDotDot'
-   dashed = 'dashed'
-   dotted = 'dotted'
-   double = 'double'
-   hair = 'hair'
-   medium = 'medium'
-   medium_dash_dot = 'mediumDashDot'
-   medium_dash_dot_dot = 'mediumDashDotDot'
-   medium_dashed = 'mediumDashed'
-   slant_dash_dot = 'slantDashDot'
-   thick = 'thick'
-   thin = 'thin'
+.. py:class:: utils.horizontal_alignments
 
+    .. py:attribute:: general = 'general'
+    .. py:attribute:: left = 'left'
+    .. py:attribute:: center = 'center'
+    .. py:attribute:: right = 'right'
+    .. py:attribute:: fill = 'fill'
+    .. py:attribute:: justify = 'justify'
+    .. py:attribute:: center_continuous = 'centerContinuous'
+    .. py:attribute:: distributed = 'distributed'
 
-.. _utils.horizontal_alignments:
+.. _utils.vertical_alignments_:
 
-utils.horizontal_alignments
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
-::
+.. py:class:: utils.vertical_alignments
 
-    general = 'general'
-    left = 'left'
-    center = 'center'
-    right = 'right'
-    fill = 'fill'
-    justify = 'justify'
-    center_continuous = 'centerContinuous'
-    distributed = 'distributed'
+    .. py:attribute:: top = 'top'
+    .. py:attribute:: center = 'center'
+    .. py:attribute:: bottom = 'bottom'
+    .. py:attribute:: justify = 'justify'
+    .. py:attribute:: distributed = 'distributed'
 
+.. _utils.underline_:
 
-.. _utils.vertical_alignments:
+.. py:class:: utils.underline
 
-utils.vertical_alignments
-^^^^^^^^^^^^^^^^^^^^^^^^^
-::
+   .. py:attribute:: single = 'single'
+   .. py:attribute:: double = 'double'
 
-    top = 'top'
-    center = 'center'
-    bottom = 'bottom'
-    justify = 'justify'
-    distributed = 'distributed'
+.. _utils.fill_pattern_types_:
 
+.. py:class:: utils.fill_pattern_types
 
-.. _utils.underline:
+  .. py:attribute:: solid = 'solid'
+  .. py:attribute:: dark_down = 'darkDown'
+  .. py:attribute:: dark_gray = 'darkGray'
+  .. py:attribute:: dark_grid = 'darkGrid'
+  .. py:attribute:: dark_horizontal = 'darkHorizontal'
+  .. py:attribute:: dark_trellis = 'darkTrellis'
+  .. py:attribute:: dark_up = 'darkUp'
+  .. py:attribute:: dark_vertical = 'darkVertical'
+  .. py:attribute:: gray0625 = 'gray0625'
+  .. py:attribute:: gray125 = 'gray125'
+  .. py:attribute:: light_down = 'lightDown'
+  .. py:attribute:: light_gray = 'lightGray'
+  .. py:attribute:: light_grid = 'lightGrid'
+  .. py:attribute:: light_horizontal = 'lightHorizontal'
+  .. py:attribute:: light_trellis = 'lightTrellis'
+  .. py:attribute:: light_up = 'lightUp'
+  .. py:attribute:: light_vertical = 'lightVertical'
+  .. py:attribute:: medium_gray = 'mediumGray'
 
-utils.underline
-^^^^^^^^^^^^^^^
-::
+.. _utils.conditional_formatting_types_:
 
-   single = 'single'
-   double = 'double'
+.. py:class:: utils.conditional_formatting_types
 
-
-.. _utils.fill_pattern_types:
-
-utils.fill_pattern_types
-^^^^^^^^^^^^^^^^^^^^^^^^
-::
-
-  solid = 'solid'
-  dark_down = 'darkDown'
-  dark_gray = 'darkGray'
-  dark_grid = 'darkGrid'
-  dark_horizontal = 'darkHorizontal'
-  dark_trellis = 'darkTrellis'
-  dark_up = 'darkUp'
-  dark_vertical = 'darkVertical'
-  gray0625 = 'gray0625'
-  gray125 = 'gray125'
-  light_down = 'lightDown'
-  light_gray = 'lightGray'
-  light_grid = 'lightGrid'
-  light_horizontal = 'lightHorizontal'
-  light_trellis = 'lightTrellis'
-  light_up = 'lightUp'
-  light_vertical = 'lightVertical'
-  medium_gray = 'mediumGray'
-
-
-.. _utils.conditional_formatting_types:
-
-utils.conditional_formatting_types
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-::
-
-    num = 'num'
-    percent = 'percent'
-    max = 'max'
-    min = 'min'
-    formula = 'formula'
-    percentile = 'percentile'
+    .. py:attribute:: num = 'num'
+    .. py:attribute:: percent = 'percent'
+    .. py:attribute:: max = 'max'
+    .. py:attribute:: min = 'min'
+    .. py:attribute:: formula = 'formula'
+    .. py:attribute:: percentile = 'percentile'
 
 
 styler module
@@ -194,20 +168,20 @@ Used to represent a style.
           fill_pattern_type=utils.fill_pattern_types.solid, indent=0, comment_author=None, comment_text=None,
           text_rotation=0)
 
-:bg_color: (str: one of :ref:`utils.colors`, hex string or color name ie `'yellow'` Excel supports) The background color
+:bg_color: (str: one of :ref:`utils.colors <utils.colors_>`, hex string or color name ie `'yellow'` Excel supports) The background color
 :bold: (bool) If `True`, a bold typeface is used
-:font: (str: one of :ref:`utils.fonts` or other font name Excel supports) The font to use
+:font: (str: one of :ref:`utils.fonts <utils.fonts_>` or other font name Excel supports) The font to use
 :font_size: (int) The font size
-:font_color: (str: one of :ref:`utils.colors`, hex string or color name ie `'yellow'` Excel supports) The font color
-:number_format: (str: one of :ref:`utils.number_formats` or any other format Excel supports) The format of the cell's value
+:font_color: (str: one of :ref:`utils.colors <utils.colors_>`, hex string or color name ie `'yellow'` Excel supports) The font color
+:number_format: (str: one of :ref:`utils.number_formats <utils.number_formats_>` or any other format Excel supports) The format of the cell's value
 :protection: (bool) If `True`, the cell/column will be write-protected
-:underline: (str: one of :ref:`utils.underline` or any other underline Excel supports) The underline type
-:border_type: (str: one of :ref:`utils.borders` or any other border type Excel supports) The border type
-:horizontal_alignment: (str: one of :ref:`utils.horizontal_alignments` or any other horizontal alignment Excel supports) Text's horizontal alignment
-:vertical_alignment: (str: one of :ref:`utils.vertical_alignments` or any other vertical alignment Excel supports) Text's vertical alignment
+:underline: (str: one of :ref:`utils.underline <utils.underline_>` or any other underline Excel supports) The underline type
+:border_type: (str: one of :ref:`utils.borders <utils.borders_>` or any other border type Excel supports) The border type
+:horizontal_alignment: (str: one of :ref:`utils.horizontal_alignments <utils.horizontal_alignments_>` or any other horizontal alignment Excel supports) Text's horizontal alignment
+:vertical_alignment: (str: one of :ref:`utils.vertical_alignments <utils.vertical_alignments_>` or any other vertical alignment Excel supports) Text's vertical alignment
 :wrap_text: (bool)
 :shrink_to_fit: (bool)
-:fill_pattern_type: (str: one of :ref:`utils.fill_pattern_types` or any other fill pattern type Excel supports) Cells's fill pattern type
+:fill_pattern_type: (str: one of :ref:`utils.fill_pattern_types <utils.fill_pattern_types_>` or any other fill pattern type Excel supports) Cells's fill pattern type
 :indent: (int)
 :comment_author: (str)
 :comment_text: (str)
@@ -358,20 +332,20 @@ Methods
 .. py:function:: add_color_scale_conditional_formatting(start_type, start_value, start_color, end_type, end_value, end_color, mid_type=None, mid_value=None, mid_color=None, columns_range=None)
 
     :param start_type: The type for the minimum bound
-    :type start_type: str: one of :ref:`utils.conditional_formatting_types` or any other type Excel supports
+    :type start_type: str: one of :ref:`utils.conditional_formatting_types <utils.conditional_formatting_types_>` or any other type Excel supports
     :param start_value: The threshold for the minimum bound
     :param start_color: The color for the minimum bound
-    :type start_color: str: one of :ref:`utils.colors`, hex string or color name ie `'yellow'` Excel supports
+    :type start_color: str: one of :ref:`utils.colors <utils.colors_>`, hex string or color name ie `'yellow'` Excel supports
     :param end_type: The type for the maximum bound
-    :type end_type: str: one of :ref:`utils.conditional_formatting_types` or any other type Excel supports
+    :type end_type: str: one of :ref:`utils.conditional_formatting_types <utils.conditional_formatting_types_>` or any other type Excel supports
     :param end_value: The threshold for the maximum bound
     :param end_color: The color for the maximum bound
-    :type end_color: str: one of :ref:`utils.colors`, hex string or color name ie `'yellow'` Excel supports
+    :type end_color: str: one of :ref:`utils.colors <utils.colors_>`, hex string or color name ie `'yellow'` Excel supports
     :param mid_type: The type for the middle bound
-    :type mid_type: None or str: one of :ref:`utils.conditional_formatting_types` or any other type Excel supports
+    :type mid_type: None or str: one of :ref:`utils.conditional_formatting_types <utils.conditional_formatting_types_>` or any other type Excel supports
     :param mid_value: The threshold for the middle bound
     :param mid_color: The color for the middle bound
-    :type mid_color: None or str: one of :ref:`utils.colors`, hex string or color name ie `'yellow'` Excel supports
+    :type mid_color: None or str: one of :ref:`utils.colors <utils.colors_>`, hex string or color name ie `'yellow'` Excel supports
     :param columns_range: A two-elements list or tuple of columns to which the conditional formatting will be added
             to.
             If not provided at all the conditional formatting will be added to all columns.
