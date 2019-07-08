@@ -1,157 +1,6 @@
 API Documentation
 =================
 
-utils module
-------------
-
-This module contains the most widely used values for styling elements such as colors and border types for convenience.
-It is possible to directly use a value that is not present in the utils module as long as Excel recognises it.
-
-.. _utils.number_formats_:
-
-.. py:class:: utils.number_formats
-
-    .. py:attribute:: general = 'General'
-    .. py:attribute:: general_integer = '0'
-    .. py:attribute:: general_float = '0.00'
-    .. py:attribute:: percent = '0.0%'
-    .. py:attribute:: thousands_comma_sep = '#,##0'
-    .. py:attribute:: date = 'DD/MM/YY'
-    .. py:attribute:: time_24_hours = 'HH:MM'
-    .. py:attribute:: time_24_hours_with_seconds = 'HH:MM:SS'
-    .. py:attribute:: time_12_hours = 'h:MM AM/PM'
-    .. py:attribute:: time_12_hours_with_seconds = 'h:MM:SS AM/PM'
-    .. py:attribute:: date_time = 'DD/MM/YY HH:MM'
-    .. py:attribute:: date_time_with_seconds = 'DD/MM/YY HH:MM:SS'
-
-    .. py:method:: decimal_with_num_of_digits(num_of_digits)
-
-        :param int num_of_digits: Number of digits after the decimal point
-        :return: A format string that represents a floating point number with the provided number of digits after the
-            decimal point. For example, ``utils.number_formats.decimal_with_num_of_digits(2)`` will return ``'0.00'``
-        :rtype: str
-
-.. _utils.colors_:
-
-.. py:class:: utils.colors
-
-   .. py:attribute:: white = op_colors.WHITE
-   .. py:attribute:: blue = op_colors.BLUE
-   .. py:attribute:: dark_blue = op_colors.DARKBLUE
-   .. py:attribute:: yellow = op_colors.YELLOW
-   .. py:attribute:: dark_yellow = op_colors.DARKYELLOW
-   .. py:attribute:: green = op_colors.GREEN
-   .. py:attribute:: dark_green = op_colors.DARKGREEN
-   .. py:attribute:: black = op_colors.BLACK
-   .. py:attribute:: red = op_colors.RED
-   .. py:attribute:: dark_red = op_colors.DARKRED
-   .. py:attribute:: purple = '800080'
-   .. py:attribute:: grey = 'D3D3D3'
-
-.. _utils.fonts_:
-
-.. py:class:: utils.fonts
-
-   .. py:attribute:: aegean = 'Aegean'
-   .. py:attribute:: aegyptus = 'Aegyptus'
-   .. py:attribute:: aharoni = 'Aharoni CLM'
-   .. py:attribute:: anaktoria = 'Anaktoria'
-   .. py:attribute:: analecta = 'Analecta'
-   .. py:attribute:: anatolian = 'Anatolian'
-   .. py:attribute:: arial = 'Arial'
-   .. py:attribute:: calibri = 'Calibri'
-   .. py:attribute:: david = 'David CLM'
-   .. py:attribute:: dejavu_sans = 'DejaVu Sans'
-   .. py:attribute:: ellinia = 'Ellinia CLM'
-
-.. _utils.borders_:
-
-.. py:class:: utils.borders
-
-   .. py:attribute:: dash_dot = 'dashDot'
-   .. py:attribute:: dash_dot_dot = 'dashDotDot'
-   .. py:attribute:: dashed = 'dashed'
-   .. py:attribute:: dotted = 'dotted'
-   .. py:attribute:: double = 'double'
-   .. py:attribute:: hair = 'hair'
-   .. py:attribute:: medium = 'medium'
-   .. py:attribute:: medium_dash_dot = 'mediumDashDot'
-   .. py:attribute:: medium_dash_dot_dot = 'mediumDashDotDot'
-   .. py:attribute:: medium_dashed = 'mediumDashed'
-   .. py:attribute:: slant_dash_dot = 'slantDashDot'
-   .. py:attribute:: thick = 'thick'
-   .. py:attribute:: thin = 'thin'
-
-.. _utils.horizontal_alignments_:
-
-.. py:class:: utils.horizontal_alignments
-
-    .. py:attribute:: general = 'general'
-    .. py:attribute:: left = 'left'
-    .. py:attribute:: center = 'center'
-    .. py:attribute:: right = 'right'
-    .. py:attribute:: fill = 'fill'
-    .. py:attribute:: justify = 'justify'
-    .. py:attribute:: center_continuous = 'centerContinuous'
-    .. py:attribute:: distributed = 'distributed'
-
-.. _utils.vertical_alignments_:
-
-.. py:class:: utils.vertical_alignments
-
-    .. py:attribute:: top = 'top'
-    .. py:attribute:: center = 'center'
-    .. py:attribute:: bottom = 'bottom'
-    .. py:attribute:: justify = 'justify'
-    .. py:attribute:: distributed = 'distributed'
-
-.. _utils.underline_:
-
-.. py:class:: utils.underline
-
-   .. py:attribute:: single = 'single'
-   .. py:attribute:: double = 'double'
-
-.. _utils.fill_pattern_types_:
-
-.. py:class:: utils.fill_pattern_types
-
-  .. py:attribute:: solid = 'solid'
-  .. py:attribute:: dark_down = 'darkDown'
-  .. py:attribute:: dark_gray = 'darkGray'
-  .. py:attribute:: dark_grid = 'darkGrid'
-  .. py:attribute:: dark_horizontal = 'darkHorizontal'
-  .. py:attribute:: dark_trellis = 'darkTrellis'
-  .. py:attribute:: dark_up = 'darkUp'
-  .. py:attribute:: dark_vertical = 'darkVertical'
-  .. py:attribute:: gray0625 = 'gray0625'
-  .. py:attribute:: gray125 = 'gray125'
-  .. py:attribute:: light_down = 'lightDown'
-  .. py:attribute:: light_gray = 'lightGray'
-  .. py:attribute:: light_grid = 'lightGrid'
-  .. py:attribute:: light_horizontal = 'lightHorizontal'
-  .. py:attribute:: light_trellis = 'lightTrellis'
-  .. py:attribute:: light_up = 'lightUp'
-  .. py:attribute:: light_vertical = 'lightVertical'
-  .. py:attribute:: medium_gray = 'mediumGray'
-
-.. _utils.conditional_formatting_types_:
-
-.. py:class:: utils.conditional_formatting_types
-
-    .. py:attribute:: num = 'num'
-    .. py:attribute:: percent = 'percent'
-    .. py:attribute:: max = 'max'
-    .. py:attribute:: min = 'min'
-    .. py:attribute:: formula = 'formula'
-    .. py:attribute:: percentile = 'percentile'
-
-
-styler module
--------------
-
-This module contains classes that represent styles.
-
 .. _styler-class:
 
 .. py:class:: Styler(bg_color=None, bold=False, font=utils.fonts.arial, font_size=12, font_color=None, number_format=utils.number_formats.general, protection=False, underline=None,border_type=utils.borders.thin, horizontal_alignment=utils.horizontal_alignments.center, vertical_alignment=utils.vertical_alignments.center, wrap_text=True, shrink_to_fit=True, fill_pattern_type=utils.fill_pattern_types.solid, indent=0, comment_author=None, comment_text=None, text_rotation=0)
@@ -210,8 +59,151 @@ This module contains classes that represent styles.
 
         :return: `openpyxl` style object.
 
-style_frame module
-------------------
+.. py:module:: utils
+
+This module contains the most widely used values for styling elements such as colors and border types for convenience.
+It is possible to directly use a value that is not present in the utils module as long as Excel recognises it.
+
+.. _utils.number_formats_:
+
+.. py:class:: number_formats
+
+    .. py:attribute:: general = 'General'
+    .. py:attribute:: general_integer = '0'
+    .. py:attribute:: general_float = '0.00'
+    .. py:attribute:: percent = '0.0%'
+    .. py:attribute:: thousands_comma_sep = '#,##0'
+    .. py:attribute:: date = 'DD/MM/YY'
+    .. py:attribute:: time_24_hours = 'HH:MM'
+    .. py:attribute:: time_24_hours_with_seconds = 'HH:MM:SS'
+    .. py:attribute:: time_12_hours = 'h:MM AM/PM'
+    .. py:attribute:: time_12_hours_with_seconds = 'h:MM:SS AM/PM'
+    .. py:attribute:: date_time = 'DD/MM/YY HH:MM'
+    .. py:attribute:: date_time_with_seconds = 'DD/MM/YY HH:MM:SS'
+
+    .. py:method:: decimal_with_num_of_digits(num_of_digits)
+
+        :param int num_of_digits: Number of digits after the decimal point
+        :return: A format string that represents a floating point number with the provided number of digits after the
+            decimal point. For example, ``utils.number_formats.decimal_with_num_of_digits(2)`` will return ``'0.00'``
+        :rtype: str
+
+.. _utils.colors_:
+
+.. py:class:: colors
+
+   .. py:attribute:: white = op_colors.WHITE
+   .. py:attribute:: blue = op_colors.BLUE
+   .. py:attribute:: dark_blue = op_colors.DARKBLUE
+   .. py:attribute:: yellow = op_colors.YELLOW
+   .. py:attribute:: dark_yellow = op_colors.DARKYELLOW
+   .. py:attribute:: green = op_colors.GREEN
+   .. py:attribute:: dark_green = op_colors.DARKGREEN
+   .. py:attribute:: black = op_colors.BLACK
+   .. py:attribute:: red = op_colors.RED
+   .. py:attribute:: dark_red = op_colors.DARKRED
+   .. py:attribute:: purple = '800080'
+   .. py:attribute:: grey = 'D3D3D3'
+
+.. _utils.fonts_:
+
+.. py:class:: fonts
+
+   .. py:attribute:: aegean = 'Aegean'
+   .. py:attribute:: aegyptus = 'Aegyptus'
+   .. py:attribute:: aharoni = 'Aharoni CLM'
+   .. py:attribute:: anaktoria = 'Anaktoria'
+   .. py:attribute:: analecta = 'Analecta'
+   .. py:attribute:: anatolian = 'Anatolian'
+   .. py:attribute:: arial = 'Arial'
+   .. py:attribute:: calibri = 'Calibri'
+   .. py:attribute:: david = 'David CLM'
+   .. py:attribute:: dejavu_sans = 'DejaVu Sans'
+   .. py:attribute:: ellinia = 'Ellinia CLM'
+
+.. _utils.borders_:
+
+.. py:class:: borders
+
+   .. py:attribute:: dash_dot = 'dashDot'
+   .. py:attribute:: dash_dot_dot = 'dashDotDot'
+   .. py:attribute:: dashed = 'dashed'
+   .. py:attribute:: dotted = 'dotted'
+   .. py:attribute:: double = 'double'
+   .. py:attribute:: hair = 'hair'
+   .. py:attribute:: medium = 'medium'
+   .. py:attribute:: medium_dash_dot = 'mediumDashDot'
+   .. py:attribute:: medium_dash_dot_dot = 'mediumDashDotDot'
+   .. py:attribute:: medium_dashed = 'mediumDashed'
+   .. py:attribute:: slant_dash_dot = 'slantDashDot'
+   .. py:attribute:: thick = 'thick'
+   .. py:attribute:: thin = 'thin'
+
+.. _utils.horizontal_alignments_:
+
+.. py:class:: horizontal_alignments
+
+    .. py:attribute:: general = 'general'
+    .. py:attribute:: left = 'left'
+    .. py:attribute:: center = 'center'
+    .. py:attribute:: right = 'right'
+    .. py:attribute:: fill = 'fill'
+    .. py:attribute:: justify = 'justify'
+    .. py:attribute:: center_continuous = 'centerContinuous'
+    .. py:attribute:: distributed = 'distributed'
+
+.. _utils.vertical_alignments_:
+
+.. py:class:: vertical_alignments
+
+    .. py:attribute:: top = 'top'
+    .. py:attribute:: center = 'center'
+    .. py:attribute:: bottom = 'bottom'
+    .. py:attribute:: justify = 'justify'
+    .. py:attribute:: distributed = 'distributed'
+
+.. _utils.underline_:
+
+.. py:class:: underline
+
+   .. py:attribute:: single = 'single'
+   .. py:attribute:: double = 'double'
+
+.. _utils.fill_pattern_types_:
+
+.. py:class:: fill_pattern_types
+
+  .. py:attribute:: solid = 'solid'
+  .. py:attribute:: dark_down = 'darkDown'
+  .. py:attribute:: dark_gray = 'darkGray'
+  .. py:attribute:: dark_grid = 'darkGrid'
+  .. py:attribute:: dark_horizontal = 'darkHorizontal'
+  .. py:attribute:: dark_trellis = 'darkTrellis'
+  .. py:attribute:: dark_up = 'darkUp'
+  .. py:attribute:: dark_vertical = 'darkVertical'
+  .. py:attribute:: gray0625 = 'gray0625'
+  .. py:attribute:: gray125 = 'gray125'
+  .. py:attribute:: light_down = 'lightDown'
+  .. py:attribute:: light_gray = 'lightGray'
+  .. py:attribute:: light_grid = 'lightGrid'
+  .. py:attribute:: light_horizontal = 'lightHorizontal'
+  .. py:attribute:: light_trellis = 'lightTrellis'
+  .. py:attribute:: light_up = 'lightUp'
+  .. py:attribute:: light_vertical = 'lightVertical'
+  .. py:attribute:: medium_gray = 'mediumGray'
+
+.. _utils.conditional_formatting_types_:
+
+.. py:class:: conditional_formatting_types
+
+    .. py:attribute:: num = 'num'
+    .. py:attribute:: percent = 'percent'
+    .. py:attribute:: max = 'max'
+    .. py:attribute:: min = 'min'
+    .. py:attribute:: formula = 'formula'
+    .. py:attribute:: percentile = 'percentile'
+
+.. py:module:: StyleFrame
 
 .. py:class:: StyleFrame(obj, styler_obj=None)
 
