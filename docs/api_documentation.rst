@@ -59,9 +59,11 @@ API Documentation
 
         :return: `openpyxl` style object.
 
+-----
+
 .. py:module:: utils
 
-This module contains the most widely used values for styling elements such as colors and border types for convenience.
+The `utils` module contains the most widely used values for styling elements such as colors and border types for convenience.
 It is possible to directly use a value that is not present in the utils module as long as Excel recognises it.
 
 .. _utils.number_formats_:
@@ -203,7 +205,11 @@ It is possible to directly use a value that is not present in the utils module a
     .. py:attribute:: formula = 'formula'
     .. py:attribute:: percentile = 'percentile'
 
+-----
+
 .. py:module:: StyleFrame
+
+The `StyleFrame` module contains a single class `StyleFrame` which servers as the main interaction point.
 
 .. py:class:: StyleFrame(obj, styler_obj=None)
 
