@@ -59,7 +59,9 @@ API Documentation
 
         :return: `openpyxl` style object.
 
------
+=====
+utils
+=====
 
 .. py:module:: utils
 
@@ -205,7 +207,9 @@ It is possible to directly use a value that is not present in the utils module a
     .. py:attribute:: formula = 'formula'
     .. py:attribute:: percentile = 'percentile'
 
------
+==========
+StyleFrame
+==========
 
 .. py:module:: StyleFrame
 
@@ -218,7 +222,7 @@ The `StyleFrame` module contains a single class `StyleFrame` which servers as th
     :param obj: Any object that pandas' dataframe can be initialized with: an existing dataframe, a dictionary,
           a list of dictionaries or another StyleFrame.
     :param styler_obj: A Styler object. Will be used as the default style of all cells.
-    :type styler_obj: (:ref:`Styler <styler-class>`)
+    :type styler_obj: :ref:`Styler <styler-class>`
 
     .. _apply_style_by_indexes_:
 

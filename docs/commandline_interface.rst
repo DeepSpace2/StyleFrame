@@ -253,7 +253,7 @@ An example JSON:
 style
 ^^^^^
 
-Corresponds to: :ref:`styler-class`.
+Corresponds to :ref:`Styler <styler-class>` class.
 
 This entity uses the arguments of ``Styler.__init__()`` as keys.
 Any missing keys in the JSON will be given the same default values.
