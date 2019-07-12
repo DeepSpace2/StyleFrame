@@ -556,11 +556,11 @@ class StyleFrame(object):
 
         return self
 
-    def apply_headers_style(self, styler_obj, style_index_header=True):
+    def apply_headers_style(self, styler_obj, style_index_header=True, cols_to_style=None):
         """Apply style to the headers only
-
         :param Styler styler_obj: the styler object that contains the style to be applied
         :param bool style_index_header: if True then the style will also be applied to the header of the index column
+        :param None|str|list|tuple|set cols_to_style: the columns to apply the style to, if not provided all the columns will be styled
         :return: self
         :rtype: StyleFrame
         """
@@ -568,11 +568,18 @@ class StyleFrame(object):
         if not isinstance(styler_obj, Styler):
             raise TypeError('styler_obj must be {}, got {} instead.'.format(Styler.__name__, type(styler_obj).__name__))
 
+        if cols_to_style is None:
+            cols_to_style = self.data_df.columns
+        if not isinstance(cols_to_style, (list, tuple, set, pd.Index)):
+            cols_to_style = [cols_to_style]
+        if not all(col in self.columns for col in cols_to_style):
+            raise KeyError("one of the columns in {} wasn't found".format(cols_to_style))
+
         if style_index_header:
             self._index_header_style = styler_obj
 
-        for column in self.data_df.columns:
-            column.style = styler_obj
+        for column in cols_to_style:
+            self.columns[self.columns.get_loc(column)].style = styler_obj
         self._has_custom_headers_style = True
         return self
 

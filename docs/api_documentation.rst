@@ -253,7 +253,7 @@ The `StyleFrame` module contains a single class `StyleFrame` which servers as th
         :param cols_to_style: The column names to style.
         :type cols_to_style: str or list or tuple or set
         :param styler_obj: A `Styler` object.
-        :type styler_obj: (:ref:`Styler <styler-class>`)
+        :type styler_obj: :ref:`Styler <styler-class>`
         :param bool style_header: If `True`, the column(s) header will also be styled.
         :param bool use_default_formats: If `True`, the default formats for date and times will be used.
         :param width: If provided, the new width for the specified columns.
@@ -264,11 +264,13 @@ The `StyleFrame` module contains a single class `StyleFrame` which servers as th
         :return: self
         :rtype: StyleFrame
 
-    .. py:method:: apply_headers_style(styler_obj, style_index_header)
+    .. py:method:: apply_headers_style(styler_obj, style_index_header, cols_to_style)
 
         :param styler_obj: A `Styler` object.
         :type styler_obj: :ref:`Styler <styler-class>`
         :param bool style_index_header: If True then the style will also be applied to the header of the index column
+        :param cols_to_style: the columns to apply the style to, if not provided all the columns will be styled
+        :type cols_to_style: None or str or list[str] or tuple[str] or set[str]
         :return: self
         :rtype: StyleFrame
 
