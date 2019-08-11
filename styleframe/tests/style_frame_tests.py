@@ -1,5 +1,7 @@
+from __future__ import unicode_literals
 import unittest
 import pandas as pd
+from pandas.util.testing import assert_frame_equal
 import os
 
 from functools import partial
@@ -12,11 +14,12 @@ class StyleFrameTest(unittest.TestCase):
     def setUpClass(cls):
         cls.default_styler_obj = Styler(wrap_text=False)
         cls.styler_obj_1 = Styler(bg_color=utils.colors.blue, bold=True, font='Impact', font_color=utils.colors.yellow,
-                                  font_size=20, underline=utils.underline.single,
+                                  font_size=20.0, underline=utils.underline.single,
                                   horizontal_alignment=utils.horizontal_alignments.left,
                                   vertical_alignment=utils.vertical_alignments.center,
-                                  comment_text='styler_obj_1 comment')
-        cls.styler_obj_2 = Styler(bg_color=utils.colors.yellow, comment_text='styler_obj_2 comment')
+                                  comment_author='Author 1', comment_text='styler_obj_1 comment')
+        cls.styler_obj_2 = Styler(bg_color=utils.colors.yellow,
+                                  comment_author='Author 2', comment_text='styler_obj_2 comment')
         cls.openpy_style_obj_1 = cls.styler_obj_1.to_openpyxl_style()._style
         cls.openpy_style_obj_2 = cls.styler_obj_2.to_openpyxl_style()._style
 
@@ -48,7 +51,6 @@ class StyleFrameTest(unittest.TestCase):
             return conditional_formatting.cf_rules
         except AttributeError:
             return conditional_formatting
-
 
     def test_init_styler_obj(self):
         self.sf = StyleFrame({'a': [1, 2, 3], 'b': [1, 2, 3]}, styler_obj=self.styler_obj_1)
@@ -393,6 +395,138 @@ class StyleFrameTest(unittest.TestCase):
         self.assertTrue(all(excel_cell.style == self_cell.style
                             for row_in_excel, row_in_self in zip(rows_in_excel, rows_in_self)
                             for excel_cell, self_cell in zip(row_in_excel[1:], row_in_self[1:])))
+
+    def test_read_excel_template_equal_boundaries(self):
+        template_sf = StyleFrame(
+                        obj={
+                            'a': ['col_a_row_1', 'col_a_row_2', 'col_a_row_3'],
+                            'b': ['col_b_row_1', 'col_b_row_2', 'col_b_row_3']
+                        },
+                        styler_obj=self.styler_obj_1
+                    )
+        template_sf.index[0].style = self.styler_obj_2
+        template_sf.to_excel(TEST_FILENAME, index=True).save()
+
+        df = pd.DataFrame(
+                    data={
+                        'A': [1, 2, 3],
+                        'B': [3, 2, 1]
+                    },
+                    columns=['A', 'B']
+                )
+        sf = StyleFrame.read_excel_as_template(path=TEST_FILENAME, df=df, use_df_boundaries=False,
+                                               index_col=0, read_comments=True)
+        for template_rows, sf_rows in zip(template_sf.data_df.itertuples(), sf.data_df.itertuples()):
+            for template_cell, sf_cell in zip(template_rows, sf_rows):
+                self.assertEqual(template_cell.style, sf_cell.style,
+                                 'Different styles in template cell {template_cell} with style {template_style}'
+                                 '\nand read from template cell {sf_cell} with style {sf_style}'.format(
+                                     template_cell=template_cell, template_style=template_cell.style,
+                                     sf_cell=sf_cell, sf_style=sf_cell.style
+                                 ))
+
+        # Assert values are equals to df and not to the original values from template
+        assert_frame_equal(sf.data_df, df,
+                           check_index_type=False,
+                           check_dtype=False,
+                           check_column_type=False)
+
+    def test_read_excel_template_larger_than_df(self):
+        template_sf = StyleFrame(
+                        obj={
+                            'a': ['col_a_row_1', 'col_a_row_2'],
+                            'b': ['col_b_row_1', 'col_b_row_2']
+                        },
+                        styler_obj=self.styler_obj_1
+                    )
+        template_sf.to_excel(TEST_FILENAME).save()
+
+        df = pd.DataFrame(
+                    data={
+                        'A': [1],
+                    },
+                    columns=['A']
+                )
+        sf = StyleFrame.read_excel_as_template(path=TEST_FILENAME, df=df, use_df_boundaries=False, read_comments=True)
+
+        self.assertListEqual([col.value for col in sf.columns], ['A', 'b'])
+
+        self.assertEqual(template_sf['a'][0].style, sf['A'][0].style,
+                         'Different styles in template cell with style {template_style}'
+                         '\nand read from template cell with style {sf_style}'.format(
+                             template_style=template_sf['a'][0].style, sf_style=sf['A'][0].style)
+                         )
+        self.assertEqual(sf['A'][0].value, 1)
+
+        # Assert new row exists and equals
+        self.assertListEqual(list(sf['b']), list(template_sf['b']))
+
+        # Assert new row exists and equals
+        self.assertListEqual(list(sf.iloc[1]), list(template_sf.iloc[1]))
+
+    def test_read_excel_template_smaller_than_df(self):
+        template_sf = StyleFrame(
+                        obj={
+                            'a': ['col_a_row_1', 'col_a_row_2', 'col_a_row_3'],
+                            'b': ['col_b_row_1', 'col_b_row_2', 'col_b_row_3']
+                        },
+                        styler_obj=self.styler_obj_1
+                    )
+        template_sf.index[0].style = self.styler_obj_2
+        template_sf.to_excel(TEST_FILENAME, index=True).save()
+
+        df = pd.DataFrame(
+                    data={
+                        'A': [1, 2, 3, 4],
+                        'B': [3, 2, 1, 4],
+                        'C': [-1, -2, -3, -4],
+                    },
+                    columns=['A', 'B', 'C']
+                )
+        sf = StyleFrame.read_excel_as_template(path=TEST_FILENAME, df=df, use_df_boundaries=False,
+                                               index_col=0, read_comments=True)
+        for template_rows, sf_rows in zip(template_sf.data_df.itertuples(), sf.data_df.itertuples()):
+            for template_cell, sf_cell in zip(template_rows, sf_rows):
+                self.assertEqual(template_cell.style, sf_cell.style,
+                                 'Different styles in template cell {template_cell} with style {template_style}'
+                                 '\nand read from template cell {sf_cell} with style {sf_style}'.format(
+                                     template_cell=template_cell, template_style=template_cell.style,
+                                     sf_cell=sf_cell, sf_style=sf_cell.style
+                                 ))
+
+        # Assert values are equals to df and not to the original values from template
+        assert_frame_equal(sf.data_df, df,
+                           check_index_type=False,
+                           check_dtype=False,
+                           check_column_type=False)
+
+    def test_read_excel_template_with_use_df_boundaries(self):
+        template_sf = StyleFrame(
+            obj={
+                'a': ['col_a_row_1', 'col_a_row_2'],
+                'b': ['col_b_row_1', 'col_b_row_2']
+            },
+            styler_obj=self.styler_obj_1
+        )
+        template_sf.to_excel(TEST_FILENAME).save()
+
+        df = pd.DataFrame(
+            data={
+                'A': [1],
+            },
+            columns=['A']
+        )
+        sf = StyleFrame.read_excel_as_template(path=TEST_FILENAME, df=df, use_df_boundaries=True, read_comments=True)
+
+        self.assertListEqual([col.value for col in sf.columns], ['A'])
+        self.assertEqual(len(df), len(sf))
+
+        self.assertEqual(template_sf['a'][0].style, sf['A'][0].style,
+                         'Different styles in template cell with style {template_style}'
+                         '\nand read from template cell with style {sf_style}'.format(
+                             template_style=template_sf['a'][0].style, sf_style=sf['A'][0].style)
+                         )
+        self.assertEqual(sf['A'][0].value, 1)
 
     def test_row_indexes(self):
         self.assertEqual(self.sf.row_indexes, (1, 2, 3, 4))
