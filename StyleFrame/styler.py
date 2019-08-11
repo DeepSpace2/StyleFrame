@@ -14,11 +14,11 @@ class Styler(object):
 
     cache = {}
 
-    def __init__(self, bg_color=None, bold=False, font=utils.fonts.arial, font_size=12, font_color=None,
+    def __init__(self, bg_color=None, bold=False, font=utils.fonts.arial, font_size=12.0, font_color=None,
                  number_format=utils.number_formats.general, protection=False, underline=None,
                  border_type=utils.borders.thin, horizontal_alignment=utils.horizontal_alignments.center,
                  vertical_alignment=utils.vertical_alignments.center, wrap_text=True, shrink_to_fit=True,
-                 fill_pattern_type=utils.fill_pattern_types.solid, indent=0, comment_author=None, comment_text=None,
+                 fill_pattern_type=utils.fill_pattern_types.solid, indent=0.0, comment_author=None, comment_text=None,
                  text_rotation=0):
 
         def get_color_from_string(color_str, default_color=None):
