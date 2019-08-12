@@ -130,6 +130,11 @@ class StyleFrame(object):
     def columns(self):
         return self.data_df.columns
 
+    @columns.setter
+    def columns(self, columns):
+        self.data_df.columns = [col if isinstance(col, Container) else Container(value=col)
+                                for col in columns]
+
     def _get_column_as_letter(self, sheet, column_to_convert, startcol=0):
         col = column_to_convert.value if isinstance(column_to_convert, Container) else column_to_convert
         if not isinstance(col, (int, str_type, unicode_type)):
