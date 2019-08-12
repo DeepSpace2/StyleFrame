@@ -583,3 +583,8 @@ class StyleFrameTest(unittest.TestCase):
         self.assertEqual(rules_dict[0].colorScale.cfvo[1].val, 50.0)
         self.assertEqual(rules_dict[0].colorScale.cfvo[2].type, utils.conditional_formatting_types.percentile)
         self.assertEqual(rules_dict[0].colorScale.cfvo[2].val, 100.0)
+
+    def test_columns_setter(self):
+        self.sf.columns = ['c', 'd']
+        self.assertTrue(all(isinstance(col, Container) for col in self.sf.columns))
+        self.assertEqual([col.value for col in self.sf.columns], ['c', 'd'])
