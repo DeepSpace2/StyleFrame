@@ -1,4 +1,5 @@
 # coding:utf-8
+from __future__ import unicode_literals
 from . import utils
 from colour import Color
 from openpyxl.formatting.rule import ColorScaleRule
