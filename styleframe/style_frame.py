@@ -212,6 +212,15 @@ class StyleFrame(object):
 
     @classmethod
     def read_excel_as_template(cls, path, df, use_df_boundaries=False, **kwargs):
+        """Create a StyleFrame object from an excel template with data of the given DataFrame.
+
+        :param str path: The path to the Excel file to read.
+        :param pandas.DataFrame df: The data to apply on the given template.
+        :param bool use_df_boundaries: If True the template will be cut according to the boundaries of the given
+            DataFrame.
+        :param kwargs: Any keyword argument `read_excel` supports besides read_style which must be True.
+        :rtype: StyleFrame
+        """
         sf = cls.read_excel(path=path, read_style=True, **kwargs)
 
         num_of_rows, num_of_cols = len(df.index), len(df.columns)
@@ -227,7 +236,7 @@ class StyleFrame(object):
         for extra_col in df.columns[template_num_of_cols:]:
             sf[extra_col] = df[extra_col][:template_num_of_rows]
         for row_index in df.index[template_num_of_rows:]:
-            sf_index = Container(value=row_index, styler=Styler(bg_color=utils.colors.blue))
+            sf_index = Container(value=row_index)
             sf.loc[sf_index] = list(map(Container, df.loc[row_index]))
 
         sf.rename({sf.columns[col_index].value: df_col
@@ -236,8 +245,6 @@ class StyleFrame(object):
 
         if use_df_boundaries:
             sf.data_df = sf.data_df.iloc[:num_of_rows, :num_of_cols]
-        # sf['A'][0].style = Styler(bg_color=utils.colors.blue)
-        # sf['A'][0].value = 111
 
         return sf
 

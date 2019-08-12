@@ -1,4 +1,3 @@
-from __future__ import unicode_literals
 import unittest
 import pandas as pd
 from pandas.util.testing import assert_frame_equal
@@ -420,7 +419,7 @@ class StyleFrameTest(unittest.TestCase):
             for template_cell, sf_cell in zip(template_rows, sf_rows):
                 self.assertEqual(template_cell.style, sf_cell.style,
                                  'Different styles in template cell {template_cell} with style {template_style}'
-                                 '\nand read from template cell {sf_cell} with style {sf_style}'.format(
+                                 '\nand "read from template cell" {sf_cell} with style {sf_style}'.format(
                                      template_cell=template_cell, template_style=template_cell.style,
                                      sf_cell=sf_cell, sf_style=sf_cell.style
                                  ))
@@ -449,19 +448,20 @@ class StyleFrameTest(unittest.TestCase):
                 )
         sf = StyleFrame.read_excel_as_template(path=TEST_FILENAME, df=df, use_df_boundaries=False, read_comments=True)
 
+        # Since template is larger than the df and use_df_boundaries is false, 'b' column stays the same.
         self.assertListEqual([col.value for col in sf.columns], ['A', 'b'])
 
         self.assertEqual(template_sf['a'][0].style, sf['A'][0].style,
                          'Different styles in template cell with style {template_style}'
-                         '\nand read from template cell with style {sf_style}'.format(
+                         '\nand "read from template" cell with style {sf_style}'.format(
                              template_style=template_sf['a'][0].style, sf_style=sf['A'][0].style)
                          )
         self.assertEqual(sf['A'][0].value, 1)
 
-        # Assert new row exists and equals
+        # Assert extra column equals
         self.assertListEqual(list(sf['b']), list(template_sf['b']))
 
-        # Assert new row exists and equals
+        # Assert extra row exists and equals
         self.assertListEqual(list(sf.iloc[1]), list(template_sf.iloc[1]))
 
     def test_read_excel_template_smaller_than_df(self):
@@ -489,7 +489,7 @@ class StyleFrameTest(unittest.TestCase):
             for template_cell, sf_cell in zip(template_rows, sf_rows):
                 self.assertEqual(template_cell.style, sf_cell.style,
                                  'Different styles in template cell {template_cell} with style {template_style}'
-                                 '\nand read from template cell {sf_cell} with style {sf_style}'.format(
+                                 '\nand "read from template" cell {sf_cell} with style {sf_style}'.format(
                                      template_cell=template_cell, template_style=template_cell.style,
                                      sf_cell=sf_cell, sf_style=sf_cell.style
                                  ))
@@ -523,7 +523,7 @@ class StyleFrameTest(unittest.TestCase):
 
         self.assertEqual(template_sf['a'][0].style, sf['A'][0].style,
                          'Different styles in template cell with style {template_style}'
-                         '\nand read from template cell with style {sf_style}'.format(
+                         '\nand "read from template" cell with style {sf_style}'.format(
                              template_style=template_sf['a'][0].style, sf_style=sf['A'][0].style)
                          )
         self.assertEqual(sf['A'][0].value, 1)
