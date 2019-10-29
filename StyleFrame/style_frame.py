@@ -556,11 +556,11 @@ class StyleFrame(object):
 
         return self
 
-    def apply_headers_style(self, styler_obj, style_index_header=True):
+    def apply_headers_style(self, styler_obj, style_index_header=True, cols_to_style=None):
         """Apply style to the headers only
-
         :param Styler styler_obj: the styler object that contains the style to be applied
         :param bool style_index_header: if True then the style will also be applied to the header of the index column
+        :param None|str|list|tuple|set cols_to_style: the columns to apply the style to, if not provided all the columns will be styled
         :return: self
         :rtype: StyleFrame
         """
@@ -568,11 +568,18 @@ class StyleFrame(object):
         if not isinstance(styler_obj, Styler):
             raise TypeError('styler_obj must be {}, got {} instead.'.format(Styler.__name__, type(styler_obj).__name__))
 
+        if cols_to_style is None:
+            cols_to_style = self.data_df.columns
+        if not isinstance(cols_to_style, (list, tuple, set, pd.Index)):
+            cols_to_style = [cols_to_style]
+        if not all(col in self.columns for col in cols_to_style):
+            raise KeyError("one of the columns in {} wasn't found".format(cols_to_style))
+
         if style_index_header:
             self._index_header_style = styler_obj
 
-        for column in self.data_df.columns:
-            column.style = styler_obj
+        for column in cols_to_style:
+            self.columns[self.columns.get_loc(column)].style = styler_obj
         self._has_custom_headers_style = True
         return self
 
@@ -680,7 +687,7 @@ class StyleFrame(object):
                                   if old_col_name in sf._columns_width})
         return sf
 
-    def style_alternate_rows(self, styles):
+    def style_alternate_rows(self, styles, **kwargs):
         """Applies the provided styles to rows in an alternating manner.
 
         :param list|tuple|set styles: styles to apply
@@ -690,7 +697,7 @@ class StyleFrame(object):
         num_of_styles = len(styles)
         split_indexes = (self.index[i::num_of_styles] for i in range(num_of_styles))
         for i, indexes in enumerate(split_indexes):
-            self.apply_style_by_indexes(indexes, styles[i])
+            self.apply_style_by_indexes(indexes, styles[i], **kwargs)
         return self
 
     def add_color_scale_conditional_formatting(self, start_type, start_value, start_color, end_type, end_value, end_color,

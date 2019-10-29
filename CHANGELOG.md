@@ -1,3 +1,7 @@
+#### 2.0.5
+* `style_alternate_rows` can accept all arguments that `apply_style_by_indexes` accepts as kwargs.
+* Added `cols_to_style` argument to `apply_headers_style`
+
 #### 2.0.4
 * Fixed a bug that caused `apply_style_by_indexes` not to work in case the dataframe had non-integer indexes in some cases
 * Added support for text rotation

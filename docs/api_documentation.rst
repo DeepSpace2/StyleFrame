@@ -1,421 +1,413 @@
 API Documentation
 =================
 
-utils module
-------------
-
-This module contains the most widely used values for styling elements such as colors and border types for convenience.
-It is possible to directly use a value that is not present in the utils module as long as Excel recognises it.
-
-.. _utils.number_formats:
-
-utils.number_formats
-^^^^^^^^^^^^^^^^^^^^
-::
-
-   general = 'General'
-   general_integer = '0'
-   general_float = '0.00'
-   percent = '0.0%'
-   thousands_comma_sep = '#,##0'
-   date = 'DD/MM/YY'
-   time_24_hours = 'HH:MM'
-   time_24_hours_with_seconds = 'HH:MM:SS'
-   time_12_hours = 'h:MM AM/PM'
-   time_12_hours_with_seconds = 'h:MM:SS AM/PM'
-   date_time = 'DD/MM/YY HH:MM'
-   date_time_with_seconds = 'DD/MM/YY HH:MM:SS'
-
-decimal_with_num_of_digits
-**************************
-
-:arguments:
-  :num_of_digits: (int) Number of digits after the decimal point
-:returns: A format string that represents a floating point number with the provided number of digits after the
-          decimal point. For example, ``utils.number_formats.decimal_with_num_of_digits(2)`` will return ``'0.00'``
-
-.. _utils.colors:
-
-utils.colors
-^^^^^^^^^^^^
-::
-
-   white = op_colors.WHITE
-   blue = op_colors.BLUE
-   dark_blue = op_colors.DARKBLUE
-   yellow = op_colors.YELLOW
-   dark_yellow = op_colors.DARKYELLOW
-   green = op_colors.GREEN
-   dark_green = op_colors.DARKGREEN
-   black = op_colors.BLACK
-   red = op_colors.RED
-   dark_red = op_colors.DARKRED
-   purple = '800080'
-   grey = 'D3D3D3'
-
-
-.. _utils.fonts:
-
-utils.fonts
-^^^^^^^^^^^
-::
-
-   aegean = 'Aegean'
-   aegyptus = 'Aegyptus'
-   aharoni = 'Aharoni CLM'
-   anaktoria = 'Anaktoria'
-   analecta = 'Analecta'
-   anatolian = 'Anatolian'
-   arial = 'Arial'
-   calibri = 'Calibri'
-   david = 'David CLM'
-   dejavu_sans = 'DejaVu Sans'
-   ellinia = 'Ellinia CLM'
-
-
-.. _utils.borders:
-
-utils.borders
-^^^^^^^^^^^^^
-::
-
-   dash_dot = 'dashDot'
-   dash_dot_dot = 'dashDotDot'
-   dashed = 'dashed'
-   dotted = 'dotted'
-   double = 'double'
-   hair = 'hair'
-   medium = 'medium'
-   medium_dash_dot = 'mediumDashDot'
-   medium_dash_dot_dot = 'mediumDashDotDot'
-   medium_dashed = 'mediumDashed'
-   slant_dash_dot = 'slantDashDot'
-   thick = 'thick'
-   thin = 'thin'
-
-
-.. _utils.horizontal_alignments:
-
-utils.horizontal_alignments
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
-::
-
-    general = 'general'
-    left = 'left'
-    center = 'center'
-    right = 'right'
-    fill = 'fill'
-    justify = 'justify'
-    center_continuous = 'centerContinuous'
-    distributed = 'distributed'
-
-
-.. _utils.vertical_alignments:
-
-utils.vertical_alignments
-^^^^^^^^^^^^^^^^^^^^^^^^^
-::
-
-    top = 'top'
-    center = 'center'
-    bottom = 'bottom'
-    justify = 'justify'
-    distributed = 'distributed'
-
-
-.. _utils.underline:
-
-utils.underline
-^^^^^^^^^^^^^^^
-::
-
-   single = 'single'
-   double = 'double'
-
-
-.. _utils.fill_pattern_types:
-
-utils.fill_pattern_types
-^^^^^^^^^^^^^^^^^^^^^^^^
-::
-
-  solid = 'solid'
-  dark_down = 'darkDown'
-  dark_gray = 'darkGray'
-  dark_grid = 'darkGrid'
-  dark_horizontal = 'darkHorizontal'
-  dark_trellis = 'darkTrellis'
-  dark_up = 'darkUp'
-  dark_vertical = 'darkVertical'
-  gray0625 = 'gray0625'
-  gray125 = 'gray125'
-  light_down = 'lightDown'
-  light_gray = 'lightGray'
-  light_grid = 'lightGrid'
-  light_horizontal = 'lightHorizontal'
-  light_trellis = 'lightTrellis'
-  light_up = 'lightUp'
-  light_vertical = 'lightVertical'
-  medium_gray = 'mediumGray'
-
-
-.. _utils.conditional_formatting_types:
-
-utils.conditional_formatting_types
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-::
-
-    num = 'num'
-    percent = 'percent'
-    max = 'max'
-    min = 'min'
-    formula = 'formula'
-    percentile = 'percentile'
-
-
-styler module
--------------
-
-This module contains classes that represent styles.
-
 .. _styler-class:
 
-Styler Class
-^^^^^^^^^^^^
+.. py:class:: Styler(bg_color=None, bold=False, font=utils.fonts.arial, font_size=12, font_color=None, number_format=utils.number_formats.general, protection=False, underline=None,border_type=utils.borders.thin, horizontal_alignment=utils.horizontal_alignments.center, vertical_alignment=utils.vertical_alignments.center, wrap_text=True, shrink_to_fit=True, fill_pattern_type=utils.fill_pattern_types.solid, indent=0, comment_author=None, comment_text=None, text_rotation=0)
 
-Used to represent a style.
+    Used to represent a style.
 
-::
+    :param bg_color: The background color
+    :type bg_color: str: one of :ref:`utils.colors <utils.colors_>`, hex string or color name ie `'yellow'` Excel supports
+    :param bool bold: If `True`, a bold typeface is used
+    :param font: The font to use
+    :type font: str: one of :ref:`utils.fonts <utils.fonts_>` or other font name Excel supports
+    :param int font_size: The font size
+    :param font_color: The font color
+    :type font_color: str: one of :ref:`utils.colors <utils.colors_>`, hex string or color name ie `'yellow'` Excel supports
+    :param number_format: The format of the cell's value
+    :type number_format: str: one of :ref:`utils.number_formats <utils.number_formats_>` or any other format Excel supports
+    :param bool protection: If `True`, the cell/column will be write-protected
+    :param underline: The underline type
+    :type underline: str: one of :ref:`utils.underline <utils.underline_>` or any other underline Excel supports
+    :param border_type: The border type
+    :type border_type: str: one of :ref:`utils.borders <utils.borders_>` or any other border type Excel supports
+    :param horizontal_alignment: Text's horizontal alignment
+    :type horizontal_alignment: str: one of :ref:`utils.horizontal_alignments <utils.horizontal_alignments_>` or any other horizontal alignment Excel supports
+    :param vertical_alignment: Text's vertical alignment
+    :type vertical_alignment: str: one of :ref:`utils.vertical_alignments <utils.vertical_alignments_>` or any other vertical alignment Excel supports
+    :param bool wrap_text:
+    :param bool shrink_to_fit:
+    :param fill_pattern_type: Cells's fill pattern type
+    :type fill_pattern_type: str: one of :ref:`utils.fill_pattern_types <utils.fill_pattern_types_>` or any other fill pattern type Excel supports
+    :param int indent:
+    :param str comment_author:
+    :param str comment_text:
+    :param int text_rotation: Integer in the range 0 - 180
 
-   Styler(bg_color=None, bold=False, font=utils.fonts.arial, font_size=12, font_color=None,
-          number_format=utils.number_formats.general, protection=False, underline=None,
-          border_type=utils.borders.thin, horizontal_alignment=utils.horizontal_alignments.center,
-          vertical_alignment=utils.vertical_alignments.center, wrap_text=True, shrink_to_fit=True,
-          fill_pattern_type=utils.fill_pattern_types.solid, indent=0, comment_author=None, comment_text=None,
-          text_rotation=0)
+    .. py:method:: combine(styles)
 
-:bg_color: (str: one of :ref:`utils.colors`, hex string or color name ie `'yellow'` Excel supports) The background color
-:bold: (bool) If `True`, a bold typeface is used
-:font: (str: one of :ref:`utils.fonts` or other font name Excel supports) The font to use
-:font_size: (int) The font size
-:font_color: (str: one of :ref:`utils.colors`, hex string or color name ie `'yellow'` Excel supports) The font color
-:number_format: (str: one of :ref:`utils.number_formats` or any other format Excel supports) The format of the cell's value
-:protection: (bool) If `True`, the cell/column will be write-protected
-:underline: (str: one of :ref:`utils.underline` or any other underline Excel supports) The underline type
-:border_type: (str: one of :ref:`utils.borders` or any other border type Excel supports) The border type
-:horizontal_alignment: (str: one of :ref:`utils.horizontal_alignments` or any other horizontal alignment Excel supports) Text's horizontal alignment
-:vertical_alignment: (str: one of :ref:`utils.vertical_alignments` or any other vertical alignment Excel supports) Text's vertical alignment
-:wrap_text: (bool)
-:shrink_to_fit: (bool)
-:fill_pattern_type: (str: one of :ref:`utils.fill_pattern_types` or any other fill pattern type Excel supports) Cells's fill pattern type
-:indent: (int)
-:comment_author: (str)
-:comment_text: (str)
-:text_rotation: (int) 1 - 180
+        A classmethod used to combine :ref:`Styler <styler-class>` objects. The right-most object has precedence.
+        For example:
 
-Methods
-*******
+        ::
 
-combine
-"""""""
-A classmethod used to combine :ref:`styler-class` objects. The right-most object has precedence.
-For example: ``Styler.combine(Styler(bg_color='yellow', font_size=24), Styler(bg_color='blue'))`` will return
-``Styler(bg_color='blue', font_size=24)``
+            Styler.combine(Styler(bg_color='yellow', font_size=24), Styler(bg_color='blue'))
 
-:arguments:
-  :styles: Arbitrary number of Styler objects
-:returns: :ref:`styler-class` object
+        will return
 
+        ::
 
-to_openpyxl_style
-"""""""""""""""""
+            Styler(bg_color='blue', font_size=24)
 
-:arguments: None
-:returns: `openpyxl` style object.
+        :param styles: Iterable of Styler objects
+        :type styles: list or tuple or set
+        :return: self
+        :rtype: :ref:`Styler <styler-class>`
 
-style_frame module
-------------------
+    .. py:method:: to_openpyxl_style
 
-StyleFrame Class
-^^^^^^^^^^^^^^^^
+        :return: `openpyxl` style object.
 
-Represent a stylized dataframe
+=====
+utils
+=====
 
-::
+.. py:module:: utils
 
-   StyleFrame(obj, styler_obj=None)
+The `utils` module contains the most widely used values for styling elements such as colors and border types for convenience.
+It is possible to directly use a value that is not present in the utils module as long as Excel recognises it.
 
-:obj: Any object that pandas' dataframe can be initialized with: an existing dataframe, a dictionary,
-      a list of dictionaries or another StyleFrame.
-:styler_obj: (:ref:`styler-class`) A Styler object. Will be used as the default style of all cells.
+.. _utils.number_formats_:
 
-Methods
-*******
+.. py:class:: number_formats
 
-apply_style_by_indexes
-""""""""""""""""""""""
+    .. py:attribute:: general = 'General'
+    .. py:attribute:: general_integer = '0'
+    .. py:attribute:: general_float = '0.00'
+    .. py:attribute:: percent = '0.0%'
+    .. py:attribute:: thousands_comma_sep = '#,##0'
+    .. py:attribute:: date = 'DD/MM/YY'
+    .. py:attribute:: time_24_hours = 'HH:MM'
+    .. py:attribute:: time_24_hours_with_seconds = 'HH:MM:SS'
+    .. py:attribute:: time_12_hours = 'h:MM AM/PM'
+    .. py:attribute:: time_12_hours_with_seconds = 'h:MM:SS AM/PM'
+    .. py:attribute:: date_time = 'DD/MM/YY HH:MM'
+    .. py:attribute:: date_time_with_seconds = 'DD/MM/YY HH:MM:SS'
 
-:arguments:
-   :indexes_to_style: (list | tuple | int | Container) The StyleFrame indexes to style. This usually passed as pandas selecting syntax.
-                      For example, ``sf[sf['some_col'] = 20]``
-   :styler_obj: (:ref:`styler-class`) `Styler` object that contains the style which will be applied to indexes in `indexes_to_style`
-   :cols_to_style=None: (None | str | list | tuple | set) The column names to apply the provided style to. If ``None`` all columns will be styled.
-   :height=None: (None | int | float) If provided, height for rows whose indexes are in indexes_to_style.
-   :complement_style=None: (None | :ref:`styler-class`) `Styler` object that contains the style which will be applied to indexes not in `indexes_to_style`
-   :complement_height=None: (None | int | float)  Height for rows whose indexes are not in indexes_to_style. If not provided then
-            `height` will be used (if provided).
-   :overwrite_default_style=True: (bool) If `True`, the default style (the style used when initializing StyleFrame)
-            will be overwritten. If `False` then the default style and the provided style wil be combined using
-            Styler.combine method.
-:returns: self
+    .. py:method:: decimal_with_num_of_digits(num_of_digits)
 
-apply_column_style
-""""""""""""""""""
+        :param int num_of_digits: Number of digits after the decimal point
+        :return: A format string that represents a floating point number with the provided number of digits after the
+            decimal point. For example, ``utils.number_formats.decimal_with_num_of_digits(2)`` will return ``'0.00'``
+        :rtype: str
 
-:arguments:
-   :cols_to_style: (str | list | tuple | set) The column names to style.
-   :styler_obj: (:ref:`styler-class`) A `Styler` object.
-   :style_header=False: (bool) If `True`, the column(s) header will also be styled.
-   :use_default_formats=True: (bool) If `True`, the default formats for date and times will be used.
-   :width=None: (None | int | float) If provided, the new width for the specified columns.
-   :overwrite_default_style=True: (bool) If `True`, the default style (the style used when initializing StyleFrame)
-            will be overwritten. If `False` then the default style and the provided style wil be combined using
-            Styler.combine method.
-:returns: self
+.. _utils.colors_:
 
-apply_headers_style
-"""""""""""""""""""
+.. py:class:: colors
 
-:arguments:
-   :styler_obj: (:ref:`styler-class`) A `Styler` object.
-   :style_index_header: (bool) If True then the style will also be applied to the header of the index column
-:returns: self
+   .. py:attribute:: white = op_colors.WHITE
+   .. py:attribute:: blue = op_colors.BLUE
+   .. py:attribute:: dark_blue = op_colors.DARKBLUE
+   .. py:attribute:: yellow = op_colors.YELLOW
+   .. py:attribute:: dark_yellow = op_colors.DARKYELLOW
+   .. py:attribute:: green = op_colors.GREEN
+   .. py:attribute:: dark_green = op_colors.DARKGREEN
+   .. py:attribute:: black = op_colors.BLACK
+   .. py:attribute:: red = op_colors.RED
+   .. py:attribute:: dark_red = op_colors.DARKRED
+   .. py:attribute:: purple = '800080'
+   .. py:attribute:: grey = 'D3D3D3'
 
-style_alternate_rows
-""""""""""""""""""""
+.. _utils.fonts_:
 
-:arguments:
-   :styles: (list | tuple | set) List or tuple of :ref:`styler-class` objects to be applied to rows in an alternating manner
-:returns: self
+.. py:class:: fonts
 
-rename
-""""""
+   .. py:attribute:: aegean = 'Aegean'
+   .. py:attribute:: aegyptus = 'Aegyptus'
+   .. py:attribute:: aharoni = 'Aharoni CLM'
+   .. py:attribute:: anaktoria = 'Anaktoria'
+   .. py:attribute:: analecta = 'Analecta'
+   .. py:attribute:: anatolian = 'Anatolian'
+   .. py:attribute:: arial = 'Arial'
+   .. py:attribute:: calibri = 'Calibri'
+   .. py:attribute:: david = 'David CLM'
+   .. py:attribute:: dejavu_sans = 'DejaVu Sans'
+   .. py:attribute:: ellinia = 'Ellinia CLM'
 
-:arguments:
-   :columns=None: (dict) A dictionary from old columns names to new columns names.
-   :inplace=False: (bool) If `False`, a new StyleFrame object will be returned. If `True`, renames the columns inplace.
-:returns: self if inplace is `True`, new StyleFrame object is `False`
+.. _utils.borders_:
 
-set_column_width
-""""""""""""""""
+.. py:class:: borders
 
-:arguments:
-    :columns: (str | list| tuple) Column name(s).
-    :width: (int | float) The new width for the specified columns.
-:returns: self
+   .. py:attribute:: dash_dot = 'dashDot'
+   .. py:attribute:: dash_dot_dot = 'dashDotDot'
+   .. py:attribute:: dashed = 'dashed'
+   .. py:attribute:: dotted = 'dotted'
+   .. py:attribute:: double = 'double'
+   .. py:attribute:: hair = 'hair'
+   .. py:attribute:: medium = 'medium'
+   .. py:attribute:: medium_dash_dot = 'mediumDashDot'
+   .. py:attribute:: medium_dash_dot_dot = 'mediumDashDotDot'
+   .. py:attribute:: medium_dashed = 'mediumDashed'
+   .. py:attribute:: slant_dash_dot = 'slantDashDot'
+   .. py:attribute:: thick = 'thick'
+   .. py:attribute:: thin = 'thin'
 
-set_column_width_dict
-"""""""""""""""""""""
+.. _utils.horizontal_alignments_:
 
-:arguments:
-   :col_width_dict: (dict) A dictionary from column names to width.
-:returns: self
+.. py:class:: horizontal_alignments
 
-set_row_height
-""""""""""""""
+    .. py:attribute:: general = 'general'
+    .. py:attribute:: left = 'left'
+    .. py:attribute:: center = 'center'
+    .. py:attribute:: right = 'right'
+    .. py:attribute:: fill = 'fill'
+    .. py:attribute:: justify = 'justify'
+    .. py:attribute:: center_continuous = 'centerContinuous'
+    .. py:attribute:: distributed = 'distributed'
 
-:arguments:
-   :rows: (int | list | tuple | set) Row(s) index.
-   :height: (int | float) The new height for the specified indexes.
-:returns: self
+.. _utils.vertical_alignments_:
 
-set_row_height_dict
-"""""""""""""""""""
+.. py:class:: vertical_alignments
 
-:arguments:
-    :row_height_dict: (dict) A dictionary from row indexes to height.
-:returns: self
+    .. py:attribute:: top = 'top'
+    .. py:attribute:: center = 'center'
+    .. py:attribute:: bottom = 'bottom'
+    .. py:attribute:: justify = 'justify'
+    .. py:attribute:: distributed = 'distributed'
 
-add_color_scale_conditional_formatting
-""""""""""""""""""""""""""""""""""""""
+.. _utils.underline_:
 
-:arguments:
+.. py:class:: underline
 
-    :start_type: (str: one of :ref:`utils.conditional_formatting_types` or any other type Excel supports) The type for the minimum bound
-    :start_value: The threshold for the minimum bound
-    :start_color: (str: one of :ref:`utils.colors`, hex string or color name ie `'yellow'` Excel supports) The color for the minimum bound
-    :end_type: (str: one of :ref:`utils.conditional_formatting_types` or any other type Excel supports) The type for the maximum bound
-    :end_value: The threshold for the maximum bound
-    :end_color: (str: one of :ref:`utils.colors`, hex string or color name ie `'yellow'` Excel supports) The color for the maximum bound
-    :mid_type=None: (None | str: one of :ref:`utils.conditional_formatting_types` or any other type Excel supports) The type for the middle bound
-    :mid_value=None: The threshold for the middle bound
-    :mid_color=None: (None | str: one of :ref:`utils.colors`, hex string or color name ie `'yellow'` Excel supports) The color for the middle bound
-    :columns_range=None: (None | list | tuple) A two-elements list or tuple of columns to which the conditional formatting will be added
-            to.
-            If not provided at all the conditional formatting will be added to all columns.
-            If a single element is provided then the conditional formatting will be added to the provided column.
-            If two elements are provided then the conditional formatting will start in the first column and end in the second.
-            The provided columns can be a column name, letter or index.
-:returns: self
+   .. py:attribute:: single = 'single'
+   .. py:attribute:: double = 'double'
 
-read_excel
-""""""""""
+.. _utils.fill_pattern_types_:
 
-A classmethod used to create a StyleFrame object from an existing Excel.
+.. py:class:: fill_pattern_types
 
-.. note:: ``read_excel`` also accepts all arguments that ``pandas.read_excel`` accepts as kwargs.
+  .. py:attribute:: solid = 'solid'
+  .. py:attribute:: dark_down = 'darkDown'
+  .. py:attribute:: dark_gray = 'darkGray'
+  .. py:attribute:: dark_grid = 'darkGrid'
+  .. py:attribute:: dark_horizontal = 'darkHorizontal'
+  .. py:attribute:: dark_trellis = 'darkTrellis'
+  .. py:attribute:: dark_up = 'darkUp'
+  .. py:attribute:: dark_vertical = 'darkVertical'
+  .. py:attribute:: gray0625 = 'gray0625'
+  .. py:attribute:: gray125 = 'gray125'
+  .. py:attribute:: light_down = 'lightDown'
+  .. py:attribute:: light_gray = 'lightGray'
+  .. py:attribute:: light_grid = 'lightGrid'
+  .. py:attribute:: light_horizontal = 'lightHorizontal'
+  .. py:attribute:: light_trellis = 'lightTrellis'
+  .. py:attribute:: light_up = 'lightUp'
+  .. py:attribute:: light_vertical = 'lightVertical'
+  .. py:attribute:: medium_gray = 'mediumGray'
 
-:arguments:
-   :path: (str) The path to the Excel file to read.
-   :sheetname:
+.. _utils.conditional_formatting_types_:
 
-      .. deprecated:: 1.6
-         Use ``sheet_name`` instead.
+.. py:class:: conditional_formatting_types
 
-   :sheet_name=0: (str | int) The sheet name to read. If an integer is provided then it be used as a zero-based
-            sheet index. Default is 0.
-   :read_style=False: (bool) If `True` the sheet's style will be loaded to the returned StyleFrame object.
-   :use_openpyxl_styles=False: (bool) If `True` (and `read_style` is also `True`) then the styles in the returned
-            StyleFrame object will be Openpyxl's style objects. If `False`, the styles will be :ref:`styler-class` objects.
+    .. py:attribute:: num = 'num'
+    .. py:attribute:: percent = 'percent'
+    .. py:attribute:: max = 'max'
+    .. py:attribute:: min = 'min'
+    .. py:attribute:: formula = 'formula'
+    .. py:attribute:: percentile = 'percentile'
 
-   .. note:: Using ``use_openpyxl_styles=False`` is useful if you are going to filter columns or rows by style, for example:
+==========
+StyleFrame
+==========
 
-             ::
+.. py:module:: StyleFrame
 
-                sf = sf[[col for col in sf.columns if col.style.font == utils.fonts.arial]]
+The `StyleFrame` module contains a single class `StyleFrame` which servers as the main interaction point.
 
-   :read_comments=False: (bool) If `True` (and `read_style` is also `True`) cells' comments will be loaded to the returned StyleFrame object. Note
-            that reading comments without reading styles is currently not supported.
+.. py:class:: StyleFrame(obj, styler_obj=None)
 
-:returns: StyleFrame object
+    Represent a stylized dataframe
 
-to_excel
-""""""""
+    :param obj: Any object that pandas' dataframe can be initialized with: an existing dataframe, a dictionary,
+          a list of dictionaries or another StyleFrame.
+    :param styler_obj: A Styler object. Will be used as the default style of all cells.
+    :type styler_obj: :ref:`Styler <styler-class>`
 
-.. note:: ``to_excel`` also accepts all arguments that ``pandas.DataFrame.to_excel`` accepts as kwargs.
+    .. _apply_style_by_indexes_:
 
-:arguments:
-   :excel_writer='output.xlsx': (str | pandas.ExcelWriter) File path or existing ExcelWriter
-   :sheet_name='Sheet1': (str) Name of sheet the StyleFrame will be exported to
-   :allow_protection=False: (bool) Allow to protect the cells that specified as protected. If used ``protection=True``
-                             in a Styler object this must be set to `True`.
-   :right_to_left=False: (bool) Makes the sheet right-to-left.
-   :columns_to_hide=None: (None | str | list | tuple | set) Columns names to hide.
-   :row_to_add_filters=None: (None | int) Add filters to the given row index, starts from 0 (which will add filters to header row).
-   :columns_and_rows_to_freeze=None: (None | str) Column and row string to freeze.
-                                     For example "C3" will freeze columns: A, B and rows: 1, 2.
-   :best_fit=None: (None | str | list | tuple | set) single column, list, set or tuple of columns names to attempt to best fit the width
-                                for.
+    .. py:method:: apply_style_by_indexes(indexes_to_style, styler_obj, cols_to_style=None, height=None, complement_style=None, complement_height=None, overwrite_default_style=True)
 
-   .. note:: ``best_fit`` will attempt to calculate the correct column-width based on the longest value in each provided
-              column. However this isn't guaranteed to work for all fonts (works best with monospaced fonts). The formula
-              used to calculate a column's width is equivalent to
+        :param indexes_to_style: The StyleFrame indexes to style. Usually passed as pandas selecting syntax.
+                          For example, ``sf[sf['some_col'] = 20]``
+        :type indexes_to_style: list or tuple or int or Container
+        :param styler_obj: `Styler` object that contains the style which will be applied to indexes in `indexes_to_style`
+        :type styler_obj: :ref:`Styler <styler-class>`
+        :param cols_to_style: The column names to apply the provided style to. If ``None`` all columns will be styled.
+        :type cols_to_style: None or str or list[str] or tuple[str] or set[str]
+        :param height: If provided, height for rows whose indexes are in indexes_to_style.
+        :type height: None or int or float
+        :param complement_style: `Styler` object that contains the style which will be applied to indexes not in `indexes_to_style`
+        :type complement_style: None or :ref:`Styler <styler-class>`
+        :param complement_height: Height for rows whose indexes are not in indexes_to_style. If not provided then
+                `height` will be used (if provided).
+        :type complement_height: None or int or float
+        :param bool overwrite_default_style: If `True`, the default style (the style used when initializing StyleFrame)
+                will be overwritten. If `False` then the default style and the provided style wil be combined using
+                Styler.combine method.
+        :return: self
+        :rtype: StyleFrame
 
-              ::
+    .. py:method:: apply_column_style(cols_to_style, styler_obj, style_header=False, use_default_formats=True, width=None, overwrite_default_style=True)
 
-                (len(longest_value_in_column) + A_FACTOR) * P_FACTOR
+        :param cols_to_style: The column names to style.
+        :type cols_to_style: str or list or tuple or set
+        :param styler_obj: A `Styler` object.
+        :type styler_obj: :ref:`Styler <styler-class>`
+        :param bool style_header: If `True`, the column(s) header will also be styled.
+        :param bool use_default_formats: If `True`, the default formats for date and times will be used.
+        :param width: If provided, the new width for the specified columns.
+        :type width: None or int or float
+        :param bool overwrite_default_style: (bool) If `True`, the default style (the style used when initializing StyleFrame)
+                will be overwritten. If `False` then the default style and the provided style wil be combined using
+                Styler.combine method.
+        :return: self
+        :rtype: StyleFrame
 
-              The default values for ``A_FACTOR`` and ``P_FACTOR`` are 13 and 1.3 respectively, and can be modified before
-              calling ``StyleFrame.to_excel`` by directly modifying ``StyleFrame.A_FACTOR`` and ``StyleFrame.P_FACTOR``
+    .. py:method:: apply_headers_style(styler_obj, style_index_header, cols_to_style)
 
-:returns: self
+        :param styler_obj: A `Styler` object.
+        :type styler_obj: :ref:`Styler <styler-class>`
+        :param bool style_index_header: If True then the style will also be applied to the header of the index column
+        :param cols_to_style: the columns to apply the style to, if not provided all the columns will be styled
+        :type cols_to_style: None or str or list[str] or tuple[str] or set[str]
+        :return: self
+        :rtype: StyleFrame
+
+    .. py:method:: style_alternate_rows(styles)
+
+        .. note:: ``style_alternate_rows`` also accepts all arguments that :ref:`StyleFrame.apply_style_by_indexes <apply_style_by_indexes_>` accepts as kwargs.
+
+        :param styles: List, tuple or set of :ref:`Styler <styler-class>` objects to be applied to rows in an alternating manner
+        :type styles: list[:ref:`Styler <styler-class>`] or tuple[:ref:`Styler <styler-class>`] or set[:ref:`Styler <styler-class>`]
+        :return: self
+        :rtype: StyleFrame
+
+    .. py:method:: rename(columns, inplace=False)
+
+        :param dict columns: A dictionary from old columns names to new columns names.
+        :param bool inplace: If `False`, a new StyleFrame object will be returned. If `True`, renames the columns inplace.
+        :return: self if inplace is `True`, new StyleFrame object is `False`
+        :rtype: StyleFrame
+
+    .. py:method:: set_column_width(columns, width)
+
+        :param columns: Column name(s).
+        :type columns: str or list[str] or tuple[str]
+        :param width: The new width for the specified columns.
+        :type width: int or float
+        :return: self
+        :rtype: StyleFrame
+
+    .. py:method:: set_column_width_dict(col_width_dict)
+
+        :param col_width_dict: A dictionary from column names to width.
+        :type col_width_dict: dict[str, int or float]
+        :return: self
+        :rtype: StyleFrame
+
+    .. py:method:: set_row_height(rows, height)
+
+        :param rows: Row(s) index.
+        :type rows: int or list[int] or tuple[int] or set[int]
+        :param height: The new height for the specified indexes.
+        :type height: int or float
+        :return: self
+        :rtype: StyleFrame
+
+    .. py:method:: set_row_height_dict(row_height_dict)
+
+        :param row_height_dict: A dictionary from row indexes to height.
+        :type row_height_dict: dict[int, int or float]
+        :return: self
+        :rtype: StyleFrame
+
+    .. py:method:: add_color_scale_conditional_formatting(start_type, start_value, start_color, end_type, end_value, end_color, mid_type=None, mid_value=None, mid_color=None, columns_range=None)
+
+        :param start_type: The type for the minimum bound
+        :type start_type: str: one of :ref:`utils.conditional_formatting_types <utils.conditional_formatting_types_>` or any other type Excel supports
+        :param start_value: The threshold for the minimum bound
+        :param start_color: The color for the minimum bound
+        :type start_color: str: one of :ref:`utils.colors <utils.colors_>`, hex string or color name ie `'yellow'` Excel supports
+        :param end_type: The type for the maximum bound
+        :type end_type: str: one of :ref:`utils.conditional_formatting_types <utils.conditional_formatting_types_>` or any other type Excel supports
+        :param end_value: The threshold for the maximum bound
+        :param end_color: The color for the maximum bound
+        :type end_color: str: one of :ref:`utils.colors <utils.colors_>`, hex string or color name ie `'yellow'` Excel supports
+        :param mid_type: The type for the middle bound
+        :type mid_type: None or str: one of :ref:`utils.conditional_formatting_types <utils.conditional_formatting_types_>` or any other type Excel supports
+        :param mid_value: The threshold for the middle bound
+        :param mid_color: The color for the middle bound
+        :type mid_color: None or str: one of :ref:`utils.colors <utils.colors_>`, hex string or color name ie `'yellow'` Excel supports
+        :param columns_range: A two-elements list or tuple of columns to which the conditional formatting will be added
+                to.
+                If not provided at all the conditional formatting will be added to all columns.
+                If a single element is provided then the conditional formatting will be added to the provided column.
+                If two elements are provided then the conditional formatting will start in the first column and end in the second.
+                The provided columns can be a column name, letter or index.
+        :type columns_range: None or list[str or int] or tuple[str or int])
+        :return: self
+        :rtype: StyleFrame
+
+    .. py:method:: read_excel(path, sheet_name=0, read_style=False, use_openpyxl_styles=False, read_comments=False)
+
+        A classmethod used to create a StyleFrame object from an existing Excel.
+
+        .. note:: ``read_excel`` also accepts all arguments that ``pandas.read_excel`` accepts as kwargs.
+
+        :param str path: The path to the Excel file to read.
+        :param sheetname:
+              .. deprecated:: 1.6
+                 Use ``sheet_name`` instead.
+        :param sheet_name: The sheet name to read. If an integer is provided then it be used as a zero-based
+                sheet index. Default is 0.
+        :type sheet_name: str or int
+        :param bool read_style: If `True` the sheet's style will be loaded to the returned StyleFrame object.
+        :param bool use_openpyxl_styles: If `True` (and `read_style` is also `True`) then the styles in the returned
+            StyleFrame object will be Openpyxl's style objects. If `False`, the styles will be :ref:`Styler <styler-class>` objects.
+
+            .. note:: Using ``use_openpyxl_styles=False`` is useful if you are going to filter columns or rows by style, for example:
+
+                     ::
+
+                        sf = sf[[col for col in sf.columns if col.style.font == utils.fonts.arial]]
+
+        :param bool read_comments: If `True` (and `read_style` is also `True`) cells' comments will be loaded to the returned StyleFrame object. Note
+                that reading comments without reading styles is currently not supported.
+
+        :return: StyleFrame object
+        :rtype: StyleFrame
+
+    .. py:method:: to_excel(excel_writer='output.xlsx', sheet_name='Sheet1', allow_protection=False, right_to_left=False, columns_to_hide=None, row_to_add_filters=None, columns_and_rows_to_freeze=None, best_fit=None)
+
+        .. note:: ``to_excel`` also accepts all arguments that ``pandas.DataFrame.to_excel`` accepts as kwargs.
+
+        :param excel_writer: File path or existing ExcelWriter
+        :type excel_writer: str or pandas.ExcelWriter
+        :param str sheet_name: Name of sheet the StyleFrame will be exported to
+        :param bool allow_protection: Allow to protect the cells that specified as protected. If used ``protection=True``
+            in a Styler object this must be set to `True`.
+        :param bool right_to_lef: Makes the sheet right-to-left.
+        :param columns_to_hide: Columns names to hide.
+        :type columns_to_hide: None or str or list or tuple or set
+        :param row_to_add_filters: Add filters to the given row index, starts from 0 (which will add filters to header row).
+        :type row_to_add_filters: None or int
+        :param columns_and_rows_to_freeze: Column and row string to freeze.
+            For example "C3" will freeze columns: A, B and rows: 1, 2.
+        :type columns_and_rows_to_freeze: None or str
+        :param best_fit: single column, list, set or tuple of columns names to attempt to best fit the width for.
+
+            .. note:: ``best_fit`` will attempt to calculate the correct column-width based on the longest value in each provided
+                      column. However this isn't guaranteed to work for all fonts (works best with monospaced fonts). The formula
+                      used to calculate a column's width is equivalent to
+
+                      ::
+
+                        (len(longest_value_in_column) + A_FACTOR) * P_FACTOR
+
+                      The default values for ``A_FACTOR`` and ``P_FACTOR`` are 13 and 1.3 respectively, and can be modified before
+                      calling ``StyleFrame.to_excel`` by directly modifying ``StyleFrame.A_FACTOR`` and ``StyleFrame.P_FACTOR``
+
+        :type best_fit: None or str or list or tuple or set
+        :return: self
+        :rtype: StyleFrame
