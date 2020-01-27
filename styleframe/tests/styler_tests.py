@@ -1,6 +1,6 @@
 import unittest
 
-from StyleFrame import Styler, utils
+from styleframe import Styler, utils
 
 
 class StylerTests(unittest.TestCase):

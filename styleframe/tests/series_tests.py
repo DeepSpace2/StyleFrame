@@ -1,7 +1,7 @@
 import unittest
 import pandas as pd
 
-from StyleFrame import Container, Series
+from styleframe import Container, Series
 
 
 class SeriesTest(unittest.TestCase):

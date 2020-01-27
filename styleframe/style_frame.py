@@ -27,9 +27,9 @@ if PY2:
 
 # Python 3
 else:
-    from StyleFrame.container import Container
-    from StyleFrame.styler import Styler, ColorScaleConditionalFormatRule
-    from StyleFrame.series import Series
+    from styleframe.container import Container
+    from styleframe.styler import Styler, ColorScaleConditionalFormatRule
+    from styleframe.series import Series
 
 try:
     pd_timestamp = pd.Timestamp

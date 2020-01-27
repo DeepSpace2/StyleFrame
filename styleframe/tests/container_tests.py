@@ -1,6 +1,6 @@
 import unittest
 
-from StyleFrame import Container
+from styleframe import Container
 
 
 class ContainerTest(unittest.TestCase):

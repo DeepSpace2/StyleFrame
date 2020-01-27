@@ -1,9 +1,9 @@
 import unittest
 import os
 
-from StyleFrame import CommandLineInterface, Styler, utils
-from StyleFrame.command_line.tests import TEST_JSON_FILE, TEST_JSON_STRING_FILE
-from StyleFrame.tests import TEST_FILENAME
+from styleframe import CommandLineInterface, Styler, utils
+from styleframe.command_line.tests import TEST_JSON_FILE, TEST_JSON_STRING_FILE
+from styleframe.tests import TEST_FILENAME
 
 
 class CommandlineInterfaceTest(unittest.TestCase):

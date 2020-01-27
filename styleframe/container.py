@@ -12,7 +12,7 @@ if PY2:
     from styler import Styler
 # Python 3
 else:
-    from StyleFrame.styler import Styler
+    from styleframe.styler import Styler
 try:
     pd_timestamp = pd.Timestamp
 except AttributeError:

@@ -1,4 +1,4 @@
-import StyleFrame as sf
+import styleframe as sf
 import os
 
 tests_dir = os.path.join(os.path.dirname(sf.__file__), 'tests')

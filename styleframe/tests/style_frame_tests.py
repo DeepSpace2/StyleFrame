@@ -3,8 +3,8 @@ import pandas as pd
 import os
 
 from functools import partial
-from StyleFrame import Container, StyleFrame, Styler, utils
-from StyleFrame.tests import TEST_FILENAME
+from styleframe import Container, StyleFrame, Styler, utils
+from styleframe.tests import TEST_FILENAME
 
 
 class StyleFrameTest(unittest.TestCase):
