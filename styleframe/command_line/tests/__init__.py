@@ -1,4 +1,4 @@
-import StyleFrame as sf
+import styleframe as sf
 import os
 
 tests_commandline_dir = os.path.join(os.path.dirname(sf.__file__),

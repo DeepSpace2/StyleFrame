@@ -1,4 +1,3 @@
-# coding:utf-8
 from . import utils
 from colour import Color
 from openpyxl.formatting.rule import ColorScaleRule

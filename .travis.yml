@@ -2,7 +2,6 @@ language: python
 sudo: required
 dist: xenial
 python:
-  - 2.7
   - 3.4
   - 3.5
   - 3.6
@@ -17,7 +16,7 @@ install:
   - if [ $PANDAS = latest ]; then pip install pandas -U; fi
   - pip install codecov
 before_script:
-- cd StyleFrame/tests/
+- cd styleframe/tests/
 - chmod +x tests.py
 script: coverage run tests.py
 notifications:

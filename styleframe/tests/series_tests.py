@@ -3,7 +3,7 @@ import pandas as pd
 
 from pandas.testing import assert_frame_equal
 
-from StyleFrame import StyleFrame, Styler, Container, Series, utils
+from styleframe import StyleFrame, Styler, Container, Series, utils
 
 
 class SeriesTest(unittest.TestCase):

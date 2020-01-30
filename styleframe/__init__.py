@@ -10,4 +10,4 @@ from .version import _version_, _versions_, _openpyxl_version_, _pandas_version_
 from . import deprecations
 
 if 'utrunner' not in sys.argv[0]:
-    from StyleFrame.tests import tests
+    from styleframe.tests import tests

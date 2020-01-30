@@ -3,7 +3,6 @@ import json
 import jsonschema
 import inspect
 import pandas as pd
-import sys
 
 from collections import defaultdict
 from pprint import pprint
@@ -11,13 +10,7 @@ from pprint import pprint
 from .. import StyleFrame, Container, Styler, version
 from .tests.json_schema import commandline_json_schema
 
-PY2 = sys.version_info[0] == 2
-
-if PY2:
-    styler_kwargs = set(inspect.getargspec(Styler.__init__).args)
-    styler_kwargs.remove('self')
-else:
-    styler_kwargs = set(inspect.signature(Styler).parameters.keys())
+styler_kwargs = set(inspect.signature(Styler).parameters.keys())
 
 
 class CommandLineInterface(object):
