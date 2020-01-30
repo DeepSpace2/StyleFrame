@@ -6,7 +6,7 @@ from setuptools import setup, find_packages
 
 DESCRIPTION = 'A library that wraps pandas and openpyxl and allows easy styling of dataframes in excel. Documentation can be found at http://styleframe.readthedocs.org'
 
-here = os.path.abspath(os.path.dirname(__file__))
+here = os.path.abspath(os.path.dirname(__file__)).lower()
 
 
 def read(*parts):
