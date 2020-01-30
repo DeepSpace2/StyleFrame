@@ -1,9 +1,6 @@
-# coding:utf-8
-
 import datetime as dt
 import numpy as np
 import pandas as pd
-import sys
 
 from .deprecations import deprecated_kwargs
 from . import utils
@@ -14,30 +11,14 @@ from openpyxl.cell.cell import get_column_letter
 from openpyxl.xml.functions import fromstring, QName
 from openpyxl.utils import cell
 
-PY2 = sys.version_info[0] == 2
-
-# Python 2
-if PY2:
-    # noinspection PyUnresolvedReferences
-    from container import Container
-    # noinspection PyUnresolvedReferences
-    from series import Series
-    # noinspection PyUnresolvedReferences
-    from styler import Styler, ColorScaleConditionalFormatRule
-
-# Python 3
-else:
-    from styleframe.container import Container
-    from styleframe.styler import Styler, ColorScaleConditionalFormatRule
-    from styleframe.series import Series
+from styleframe.container import Container
+from styleframe.series import Series
+from styleframe.styler import Styler, ColorScaleConditionalFormatRule
 
 try:
     pd_timestamp = pd.Timestamp
 except AttributeError:
     pd_timestamp = pd.tslib.Timestamp
-
-str_type = basestring if PY2 else str
-unicode_type = unicode if PY2 else str
 
 
 class StyleFrame(object):
@@ -95,9 +76,6 @@ class StyleFrame(object):
     def __str__(self):
         return str(self.data_df)
 
-    def __unicode__(self):
-        return unicode_type(self.data_df)
-
     def __len__(self):
         return len(self.data_df)
 
@@ -126,7 +104,7 @@ class StyleFrame(object):
             raise AttributeError("'{}' object has no attribute '{}'".format(type(self).__name__, attr))
 
     def _get_column_as_letter(self, sheet, column_to_convert, startcol=0):
-        if not isinstance(column_to_convert, (int, str_type, unicode_type, Container)):
+        if not isinstance(column_to_convert, (int, str, Container)):
             raise TypeError("column must be an index, column letter or column name")
         column_as_letter = None
         if column_to_convert in self.data_df.columns:  # column name
@@ -139,7 +117,7 @@ class StyleFrame(object):
             column_as_letter = cell.get_column_letter(startcol + column_to_convert)
 
         # assuming we got column letter
-        elif isinstance(column_to_convert, (str_type, unicode_type)) < get_column_letter(sheet.max_column):
+        elif isinstance(column_to_convert, str) < get_column_letter(sheet.max_column):
             column_as_letter = column_to_convert
 
         if column_as_letter is None or cell.column_index_from_string(column_as_letter) > sheet.max_column:
@@ -185,7 +163,7 @@ class StyleFrame(object):
 
         def _read_style():
             wb = load_workbook(path)
-            if isinstance(sheet_name, (str_type, unicode_type)):
+            if isinstance(sheet_name, str):
                 sheet = wb[sheet_name]
             elif isinstance(sheet_name, int):
                 sheet = wb.worksheets[sheet_name]
@@ -311,7 +289,7 @@ class StyleFrame(object):
         export_df.index = [row_index.value for row_index in export_df.index]
         export_df.index.name = self.data_df.index.name
 
-        if isinstance(excel_writer, (str_type, unicode_type)):
+        if isinstance(excel_writer, str):
             excel_writer = self.ExcelWriter(excel_writer)
 
         export_df.to_excel(excel_writer, sheet_name=sheet_name, engine='openpyxl', header=header,
@@ -365,7 +343,7 @@ class StyleFrame(object):
                 current_cell = sheet.cell(row=row_index + startrow + 2, column=col_index + startcol + 1)
                 data_df_style = self.data_df.at[index, column].style
                 try:
-                    if '=HYPERLINK' in unicode_type(current_cell.value):
+                    if '=HYPERLINK' in str(current_cell.value):
                         data_df_style.font_color = utils.colors.blue
                         data_df_style.underline = utils.underline.single
                     else:
@@ -412,7 +390,7 @@ class StyleFrame(object):
                 raise TypeError("row must be an index and not {}".format(type(row_to_add_filters)))
 
         if columns_and_rows_to_freeze is not None:
-            if not isinstance(columns_and_rows_to_freeze, (str_type, unicode_type)) or len(columns_and_rows_to_freeze) < 2:
+            if not isinstance(columns_and_rows_to_freeze, str) or len(columns_and_rows_to_freeze) < 2:
                 raise TypeError("columns_and_rows_to_freeze must be a str for example: 'C3'")
             if not within_sheet_boundaries(column=columns_and_rows_to_freeze[0]):
                 raise IndexError("column: %s is out of columns range." % columns_and_rows_to_freeze[0])
@@ -603,7 +581,7 @@ class StyleFrame(object):
             raise ValueError('columns width must be positive')
 
         for column in columns:
-            if not isinstance(column, (int, str_type, unicode_type, Container)):
+            if not isinstance(column, (int, str, Container)):
                 raise TypeError("column must be an index, column letter or column name")
             self._columns_width[column] = width
 
