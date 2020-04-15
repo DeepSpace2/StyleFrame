@@ -31,3 +31,8 @@ class Series(pd.Series):
     @property
     def style(self):
         return Series(i.style for i in self)
+
+    @style.setter
+    def style(self, value):
+        for v in self:
+            v.style = value
