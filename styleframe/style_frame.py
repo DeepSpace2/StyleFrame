@@ -5,7 +5,7 @@ import pandas as pd
 from .deprecations import deprecated_kwargs
 from . import utils
 from copy import deepcopy
-from collections import Iterable
+from collections.abc import Iterable
 from openpyxl import load_workbook
 from openpyxl.cell.cell import get_column_letter
 from openpyxl.xml.functions import fromstring, QName
