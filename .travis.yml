@@ -7,10 +7,14 @@ python:
   - 3.6
   - 3.7
   - 3.8
+  - "nightly"
 cache: pip
 env:
   - PANDAS=specific
   - PANDAS=latest
+jobs:
+  allow_failures:
+    - python: "nightly"
 install:
   - pip install -r requirements.txt
   - if [ $PANDAS = latest ]; then pip install pandas -U; fi
