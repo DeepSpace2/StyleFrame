@@ -5,7 +5,7 @@ StyleFrame's ``init`` supports all the ways you are used to initiate pandas data
 An existing dataframe, a dictionary or a list of dictionaries:
 ::
 
-    from StyleFrame import StyleFrame, Styler, utils
+    from styleframe import StyleFrame, Styler, utils
 
     sf = StyleFrame({'col_a': range(100)})
 

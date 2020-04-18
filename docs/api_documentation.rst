@@ -208,12 +208,12 @@ It is possible to directly use a value that is not present in the utils module a
     .. py:attribute:: percentile = 'percentile'
 
 ==========
-StyleFrame
+styleframe
 ==========
 
-.. py:module:: StyleFrame
+.. py:module:: styleframe
 
-The `StyleFrame` module contains a single class `StyleFrame` which servers as the main interaction point.
+The `styleframe` module contains a single class `StyleFrame` which servers as the main interaction point.
 
 .. py:class:: StyleFrame(obj, styler_obj=None)
 

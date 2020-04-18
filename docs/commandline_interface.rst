@@ -4,7 +4,7 @@ Commandline Interface
 General Information
 -------------------
 
-Starting with version 1.1 StyleFrame offers a commandline interface
+Starting with version 1.1 styleframe offers a commandline interface
 that lets you create an xlsx file from a json file.
 
 Usage
@@ -13,7 +13,7 @@ Usage
 =================   =========================================================================
 Flag                Explanation
 =================   =========================================================================
-``-v``              Displays the installed versions of StyleFrame and its dependencies
+``-v``              Displays the installed versions of styleframe and its dependencies
 ``--json_path``     Path to the json file
 ``--json``          json string
 ``--output_path``   Path to the output xlsx file. If not provided defaults to ``output.xlsx``
