@@ -72,6 +72,7 @@ class borders(BaseDefClass):
     dash_dot = 'dashDot'
     dash_dot_dot = 'dashDotDot'
     dashed = 'dashed'
+    default_grid = 'default_grid'
     dotted = 'dotted'
     double = 'double'
     hair = 'hair'

@@ -46,6 +46,12 @@ class Styler(object):
         self.comment_text = comment_text
         self.text_rotation = text_rotation
 
+        if self.border_type == utils.borders.default_grid:
+            if self.bg_color is not None:
+                raise ValueError('bg_color and border_type={} can not be used together'.format(utils.borders.default_grid))
+            self.border_type = None
+            self.fill_pattern_type = None
+
     def __eq__(self, other):
         if not isinstance(other, self.__class__):
             return False
