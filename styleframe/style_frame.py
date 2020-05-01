@@ -127,7 +127,6 @@ class StyleFrame(object):
             column_as_letter = cell.get_column_letter(startcol + col)
 
         # assuming we got column letter
-
         elif isinstance(col, str) < get_column_letter(sheet.max_column):
             column_as_letter = col
 

@@ -490,6 +490,7 @@ class StyleFrameTest(unittest.TestCase):
                 self.assertEqual(template_cell.style, sf_cell.style,
                                  'Different styles in template cell {template_cell} with style {template_style}'
                                  '\nand "read from template" cell {sf_cell} with style {sf_style}'.format(
+
                                      template_cell=template_cell, template_style=template_cell.style,
                                      sf_cell=sf_cell, sf_style=sf_cell.style
                                  ))
