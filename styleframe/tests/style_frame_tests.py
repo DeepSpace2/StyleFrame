@@ -430,7 +430,7 @@ class StyleFrameTest(unittest.TestCase):
                            check_dtype=False,
                            check_column_type=False)
 
-    def test_read_excel_template_larger_than_df(self):
+    def test_read_excel_template_boundaries_with_more_rows_and_columns_than_df(self):
         template_sf = StyleFrame(
                         obj={
                             'a': ['col_a_row_1', 'col_a_row_2'],
@@ -466,7 +466,7 @@ class StyleFrameTest(unittest.TestCase):
         # Assert extra row exists and equals
         self.assertListEqual(list(sf_from_template.iloc[1]), list(template_sf.iloc[1]))
 
-    def test_read_excel_template_smaller_than_df(self):
+    def test_read_excel_template_boundaries_with_less_rows_and_columns_than_df(self):
         template_sf = StyleFrame(
                         obj={
                             'a': ['col_a_row_1', 'col_a_row_2', 'col_a_row_3'],
