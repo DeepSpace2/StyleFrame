@@ -219,10 +219,10 @@ class StyleFrame(object):
         """Create a StyleFrame object from an excel template with data of the given DataFrame.
 
         :param str path: The path to the Excel file to read.
-        :param pandas.DataFrame df: The data to apply on the given template.
+        :param pandas.DataFrame df: The data to apply to the given template.
         :param bool use_df_boundaries: If True the template will be cut according to the boundaries of the given
             DataFrame.
-        :param kwargs: Any keyword argument `read_excel` supports besides read_style which must be True.
+        :param kwargs: Any keyword argument `read_excel` supports except for read_style which must be True.
         :rtype: StyleFrame
         """
         sf = cls.read_excel(path=path, read_style=True, **kwargs)
