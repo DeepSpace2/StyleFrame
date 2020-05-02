@@ -378,6 +378,19 @@ The `styleframe` module contains a single class `StyleFrame` which servers as th
         :return: StyleFrame object
         :rtype: StyleFrame
 
+    .. py:method:: read_excel_as_template(path, df, use_df_boundaries=False)
+
+        A classmethod used to create a StyleFrame object from excel template with the data from the given dataframe.
+
+        .. note:: ``read_excel_as_template`` also accepts all arguments that ``read_excel`` accepts as kwargs beside ``read_style`` which must be ``True``.
+
+        :param str path: The path to the Excel file to read.
+        :param pandas.DataFrame df: The data to apply on the given template.
+        :param bool use_df_boundarie: If True the template will be cut according to the boundaries of the given DataFrame.
+
+        :return: StyleFrame object
+        :rtype: StyleFrame
+
     .. py:method:: to_excel(excel_writer='output.xlsx', sheet_name='Sheet1', allow_protection=False, right_to_left=False, columns_to_hide=None, row_to_add_filters=None, columns_and_rows_to_freeze=None, best_fit=None)
 
         .. note:: ``to_excel`` also accepts all arguments that ``pandas.DataFrame.to_excel`` accepts as kwargs.
