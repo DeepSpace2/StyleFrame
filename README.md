@@ -114,24 +114,26 @@ df = pd.DataFrame({
 """
    
 # Create StyleFrame object that wrap our DataFrame and assign default style.
-defaults = {'font': utils.fonts.aharoni, 'font_size': 14}
-sf = StyleFrame(df, styler_obj=Styler(**defaults))
+default_style = Styler(font=utils.fonts.aharoni, font_size=14)
+sf = StyleFrame(df, styler_obj=default_style)
    
 # Style the headers of the table
 header_style = Styler(bold=True, font_size=18)
 sf.apply_headers_style(styler_obj=header_style)
    
 # Set the background color to green where the test marked as 'passed'
-passed_style = Styler(bg_color=utils.colors.green, font_color=utils.colors.white, **defaults)
+passed_style = Styler(bg_color=utils.colors.green, font_color=utils.colors.white)
 sf.apply_style_by_indexes(indexes_to_style=sf[sf['Pass/Fail'] == 'Passed'],
                           cols_to_style='Pass/Fail',
-                          styler_obj=passed_style)
+                          styler_obj=passed_style,
+                          overwrite_default_style=False)
    
 # Set the background color to red where the test marked as 'failed'
-failed_style = Styler(bg_color=utils.colors.red, font_color=utils.colors.white, **defaults)
+failed_style = Styler(bg_color=utils.colors.red, font_color=utils.colors.white)
 sf.apply_style_by_indexes(indexes_to_style=sf[sf['Pass/Fail'] == 'Failed'],
                           cols_to_style='Pass/Fail',
-                          styler_obj=failed_style)
+                          styler_obj=failed_style,
+                          overwrite_default_style=False)
    
 # Change the columns width and the rows height
 sf.set_column_width(columns=sf.columns, width=20)
