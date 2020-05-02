@@ -413,19 +413,19 @@ class StyleFrameTest(unittest.TestCase):
                     },
                     columns=['A', 'B']
                 )
-        sf = StyleFrame.read_excel_as_template(path=TEST_FILENAME, df=df, use_df_boundaries=False,
-                                               index_col=0, read_comments=True)
-        for template_rows, sf_rows in zip(template_sf.data_df.itertuples(), sf.data_df.itertuples()):
-            for template_cell, sf_cell in zip(template_rows, sf_rows):
-                self.assertEqual(template_cell.style, sf_cell.style,
+        sf_from_template = StyleFrame.read_excel_as_template(path=TEST_FILENAME, df=df, use_df_boundaries=False,
+                                                             index_col=0, read_comments=True)
+        for template_rows, sf_rows in zip(template_sf.data_df.itertuples(), sf_from_template.data_df.itertuples()):
+            for template_cell, actual_cell in zip(template_rows, sf_rows):
+                self.assertEqual(template_cell.style, actual_cell.style,
                                  'Different styles in template cell {template_cell} with style {template_style}'
-                                 '\nand "read from template cell" {sf_cell} with style {sf_style}'.format(
+                                 '\nand actual cell {actual_cell} with style {actual_cell_style}'.format(
                                      template_cell=template_cell, template_style=template_cell.style,
-                                     sf_cell=sf_cell, sf_style=sf_cell.style
+                                     actual_cell=actual_cell, actual_cell_style=actual_cell.style
                                  ))
 
         # Assert values are equals to df and not to the original values from template
-        assert_frame_equal(sf.data_df, df,
+        assert_frame_equal(sf_from_template.data_df, df,
                            check_index_type=False,
                            check_dtype=False,
                            check_column_type=False)
@@ -446,23 +446,25 @@ class StyleFrameTest(unittest.TestCase):
                     },
                     columns=['A']
                 )
-        sf = StyleFrame.read_excel_as_template(path=TEST_FILENAME, df=df, use_df_boundaries=False, read_comments=True)
+        sf_from_template = StyleFrame.read_excel_as_template(path=TEST_FILENAME, df=df, use_df_boundaries=False,
+                                                             read_comments=True)
 
-        # Since template is larger than the df and use_df_boundaries is false, 'b' column stays the same.
-        self.assertListEqual([col.value for col in sf.columns], ['A', 'b'])
+        # Since template is larger than the df and use_df_boundaries is false, 'b' column shouldn't change
+        # and be left from the original template
+        self.assertListEqual([col.value for col in sf_from_template.columns], ['A', 'b'])
 
-        self.assertEqual(template_sf['a'][0].style, sf['A'][0].style,
+        self.assertEqual(template_sf['a'][0].style, sf_from_template['A'][0].style,
                          'Different styles in template cell with style {template_style}'
-                         '\nand "read from template" cell with style {sf_style}'.format(
-                             template_style=template_sf['a'][0].style, sf_style=sf['A'][0].style)
+                         '\nand actual cell with style {actual_cell_style}'.format(
+                             template_style=template_sf['a'][0].style, actual_cell_style=sf_from_template['A'][0].style)
                          )
-        self.assertEqual(sf['A'][0].value, 1)
+        self.assertEqual(sf_from_template['A'][0].value, 1)
 
         # Assert extra column equals
-        self.assertListEqual(list(sf['b']), list(template_sf['b']))
+        self.assertListEqual(list(sf_from_template['b']), list(template_sf['b']))
 
         # Assert extra row exists and equals
-        self.assertListEqual(list(sf.iloc[1]), list(template_sf.iloc[1]))
+        self.assertListEqual(list(sf_from_template.iloc[1]), list(template_sf.iloc[1]))
 
     def test_read_excel_template_smaller_than_df(self):
         template_sf = StyleFrame(
@@ -483,20 +485,19 @@ class StyleFrameTest(unittest.TestCase):
                     },
                     columns=['A', 'B', 'C']
                 )
-        sf = StyleFrame.read_excel_as_template(path=TEST_FILENAME, df=df, use_df_boundaries=False,
-                                               index_col=0, read_comments=True)
-        for template_rows, sf_rows in zip(template_sf.data_df.itertuples(), sf.data_df.itertuples()):
-            for template_cell, sf_cell in zip(template_rows, sf_rows):
-                self.assertEqual(template_cell.style, sf_cell.style,
+        sf_from_template = StyleFrame.read_excel_as_template(path=TEST_FILENAME, df=df, use_df_boundaries=False,
+                                                             index_col=0, read_comments=True)
+        for template_rows, sf_rows in zip(template_sf.data_df.itertuples(), sf_from_template.data_df.itertuples()):
+            for template_cell, actual_cell in zip(template_rows, sf_rows):
+                self.assertEqual(template_cell.style, actual_cell.style,
                                  'Different styles in template cell {template_cell} with style {template_style}'
-                                 '\nand "read from template" cell {sf_cell} with style {sf_style}'.format(
-
+                                 '\nand actual cell {actual_cell} with style {actual_cell_style}'.format(
                                      template_cell=template_cell, template_style=template_cell.style,
-                                     sf_cell=sf_cell, sf_style=sf_cell.style
+                                     actual_cell=actual_cell, actual_cell_style=actual_cell.style
                                  ))
 
         # Assert values are equals to df and not to the original values from template
-        assert_frame_equal(sf.data_df, df,
+        assert_frame_equal(sf_from_template.data_df, df,
                            check_index_type=False,
                            check_dtype=False,
                            check_column_type=False)
@@ -517,17 +518,21 @@ class StyleFrameTest(unittest.TestCase):
             },
             columns=['A']
         )
-        sf = StyleFrame.read_excel_as_template(path=TEST_FILENAME, df=df, use_df_boundaries=True, read_comments=True)
+        sf_from_template = StyleFrame.read_excel_as_template(path=TEST_FILENAME, df=df, use_df_boundaries=True,
+                                                             read_comments=True)
 
-        self.assertListEqual([col.value for col in sf.columns], ['A'])
-        self.assertEqual(len(df), len(sf))
+        self.assertListEqual([col.value for col in sf_from_template.columns], ['A'])
+        self.assertEqual(len(df), len(sf_from_template))
 
-        self.assertEqual(template_sf['a'][0].style, sf['A'][0].style,
+        expected_cell_style = template_sf['a'][0].style
+        actual_cell_style = sf_from_template['A'][0].style
+
+        self.assertEqual(actual_cell_style, expected_cell_style,
                          'Different styles in template cell with style {template_style}'
-                         '\nand "read from template" cell with style {sf_style}'.format(
-                             template_style=template_sf['a'][0].style, sf_style=sf['A'][0].style)
+                         '\nand actual cell with style {actual_cell_style}'.format(
+                             template_style=expected_cell_style, actual_cell_style=actual_cell_style)
                          )
-        self.assertEqual(sf['A'][0].value, 1)
+        self.assertEqual(sf_from_template['A'][0].value, 1)
 
     def test_row_indexes(self):
         self.assertEqual(self.sf.row_indexes, (1, 2, 3, 4))
