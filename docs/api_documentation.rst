@@ -292,8 +292,8 @@ The `styleframe` module contains a single class `StyleFrame` which servers as th
 
     .. py:method:: set_column_width(columns, width)
 
-        :param columns: Column name(s).
-        :type columns: str or list[str] or tuple[str]
+        :param columns: Column name(s) or index(es).
+        :type columns: str or list[str] or tuple[str] or int or list[int] or tuple[int]
         :param width: The new width for the specified columns.
         :type width: int or float
         :return: self

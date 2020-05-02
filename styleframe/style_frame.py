@@ -7,6 +7,7 @@ import pandas as pd
 from .deprecations import deprecated_kwargs
 from . import utils
 from copy import deepcopy
+from collections import OrderedDict
 from collections.abc import Iterable
 from openpyxl import load_workbook
 from openpyxl.cell.cell import get_column_letter
@@ -59,8 +60,8 @@ class StyleFrame(object):
         if from_pandas_dataframe:
             self.data_df.index.name = obj.index.name
 
-        self._columns_width = obj._columns_width if from_another_styleframe else {}
-        self._rows_height = obj._rows_height if from_another_styleframe else {}
+        self._columns_width = obj._columns_width if from_another_styleframe else OrderedDict()
+        self._rows_height = obj._rows_height if from_another_styleframe else OrderedDict()
         self._has_custom_headers_style = obj._has_custom_headers_style if from_another_styleframe else False
         self._cond_formatting = []
         self._default_style = styler_obj or Styler()
@@ -127,9 +128,11 @@ class StyleFrame(object):
             column_as_letter = cell.get_column_letter(startcol + col)
 
         # assuming we got column letter
-        elif isinstance(col, str) < get_column_letter(sheet.max_column):
+        elif isinstance(col, str) and col <= get_column_letter(sheet.max_column):
             column_as_letter = col
 
+        if column_as_letter is None or cell.column_index_from_string(column_as_letter) > sheet.max_column:
+            raise IndexError("column: %s is out of columns range." % column_to_convert)
         return column_as_letter
 
     @classmethod
@@ -249,7 +252,10 @@ class StyleFrame(object):
 
         if use_df_boundaries:
             sf.data_df = sf.data_df.iloc[:num_of_rows, :num_of_cols]
-
+            sf._rows_height = {k: v for i, (k, v) in enumerate(sf._rows_height.items())
+                               if i in range(num_of_rows)}
+            sf._columns_width = {k: v for i, (k, v) in enumerate(sf._columns_width.items())
+                                 if i in range(num_of_cols)}
         return sf
 
     # noinspection PyPep8Naming
@@ -430,6 +436,8 @@ class StyleFrame(object):
         for row in self._rows_height:
             if within_sheet_boundaries(row=(row + startrow)):
                 sheet.row_dimensions[startrow + row].height = self._rows_height[row]
+            else:
+                raise IndexError('row: {} is out of range'.format(row))
 
         if row_to_add_filters is not None:
             try:
@@ -615,7 +623,7 @@ class StyleFrame(object):
     def set_column_width(self, columns, width):
         """Set the width of the given columns
 
-        :param set|list|tuple columns: a single or a list/tuple/set of column name, index or letter to change their width
+        :param int|str|set|list|tuple columns: a single or a list/tuple/set of column name, index or letter to change their width
         :param int|float width: numeric positive value of the new width
         :return: self
         :rtype: StyleFrame
