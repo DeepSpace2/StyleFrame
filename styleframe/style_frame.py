@@ -252,10 +252,19 @@ class StyleFrame(object):
 
         if use_df_boundaries:
             sf.data_df = sf.data_df.iloc[:num_of_rows, :num_of_cols]
-            sf._rows_height = {k: v for i, (k, v) in enumerate(sf._rows_height.items())
-                               if i in range(num_of_rows)}
-            sf._columns_width = {k: v for i, (k, v) in enumerate(sf._columns_width.items())
-                                 if i in range(num_of_cols)}
+            rows_height = OrderedDict()
+            rows_height_range = range(num_of_rows)
+            for i, (k, v) in enumerate(sf._rows_height.items()):
+                if i in rows_height_range:
+                    rows_height[k] = v
+            sf._rows_height = rows_height
+
+            columns_width = OrderedDict()
+            columns_width_range = range(num_of_cols)
+            for i, (k, v) in enumerate(sf._columns_width.items()):
+                if i in columns_width_range:
+                    columns_width[k] = v
+            sf._columns_width = columns_width
         return sf
 
     # noinspection PyPep8Naming
