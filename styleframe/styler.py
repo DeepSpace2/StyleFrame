@@ -33,7 +33,6 @@ class Styler(object):
         self.number_format = number_format
         self.protection = protection
         self.underline = underline
-        self.border_type = border_type
         self.horizontal_alignment = horizontal_alignment
         self.vertical_alignment = vertical_alignment
         self.bg_color = get_color_from_string(bg_color, default_color=utils.colors.white)
@@ -45,6 +44,16 @@ class Styler(object):
         self.comment_author = comment_author
         self.comment_text = comment_text
         self.text_rotation = text_rotation
+
+        if isinstance(border_type, set):
+            self._borders = {border_location: utils.borders.thin for border_location in border_type}
+            self.border_type = None
+        elif isinstance(border_type, dict):
+            self._borders = border_type
+            self.border_type = None
+        else:
+            self.border_type = border_type
+            self._borders = None
 
         if self.border_type == utils.borders.default_grid:
             if self.bg_color is not None:
@@ -58,12 +67,21 @@ class Styler(object):
         return self.__dict__ == other.__dict__
 
     def __hash__(self):
-        return hash(tuple((k, v) for k, v in sorted(self.__dict__.items())))
+        return hash(tuple((k, v) if not isinstance(v, dict) else hash(tuple(v.items()))
+                          for k, v in sorted(self.__dict__.items())))
 
     def __add__(self, other):
         default = Styler().__dict__
         d = dict(self.__dict__)
         for k, v in other.__dict__.items():
+            # TODO this will break the following:
+            #    Styler(border_type={utils.border_locations.right: 'medium',
+            #                               utils.border_locations.left: 'mediumDashDot'})
+            #           + Styler(bg_color='yellow')
+            #  fix and add tests
+            if k.startswith('_'):
+                d.pop(k)
+                continue
             if v != default[k]:
                 d[k] = v
         return Styler(**d)
@@ -84,8 +102,14 @@ class Styler(object):
         try:
             openpyxl_style = self.cache[self]
         except KeyError:
-            side = Side(border_style=self.border_type, color=utils.colors.black)
-            border = Border(left=side, right=side, top=side, bottom=side)
+            # TODO add tests
+            if isinstance(self.border_type, str):
+                side = Side(border_style=self.border_type, color=utils.colors.black)
+                border = Border(left=side, right=side, top=side, bottom=side)
+            else:
+                border = Border(**{border_location: Side(border_style=border_type, color=utils.colors.black)
+                                   for border_location, border_type in self._borders.items()})
+
             openpyxl_style = self.cache[self] = NamedStyle(
                 name=str(hash(self)),
                 font=Font(name=self.font, size=self.font_size, color=OpenPyColor(self.font_color),
@@ -102,6 +126,9 @@ class Styler(object):
 
     @classmethod
     def from_openpyxl_style(cls, openpyxl_style, theme_colors, openpyxl_comment=None):
+
+        # TODO implement same logic as in to_openpyxl_style regarding _borders and border_style
+        #    add tests
         def _calc_new_hex_from_theme_hex_and_tint(theme_hex, color_tint):
             if not theme_hex.startswith('#'):
                 theme_hex = '#' + theme_hex

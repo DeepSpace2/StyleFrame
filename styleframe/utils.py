@@ -85,6 +85,13 @@ class borders(BaseDefClass):
     thin = 'thin'
 
 
+class border_locations(BaseDefClass):
+    top = 'top'
+    bottom = 'bottom'
+    left = 'left'
+    right = 'right'
+
+
 class horizontal_alignments(BaseDefClass):
     general = 'general'
     left = 'left'
