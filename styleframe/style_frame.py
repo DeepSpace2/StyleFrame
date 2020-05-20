@@ -398,14 +398,14 @@ class StyleFrame(object):
             try:
                 style_to_apply = column.style.to_openpyxl_style()
             except AttributeError:
-                style_to_apply = column.style
+                style_to_apply = Styler.from_openpyxl_style(column.style, [],
+                                                            openpyxl_comment=column.style.comment).to_openpyxl_style()
             column_header_cell = sheet.cell(row=startrow + 1, column=col_index + startcol + 1)
             column_header_cell.style = style_to_apply
             if isinstance(column.style, Styler):
                 column_header_cell.comment = column.style.generate_comment()
             else:
-                if hasattr(column.style, 'comment'):
-                    column.style.comment.parent = None
+                if hasattr(column.style, 'comment') and column.style.comment is not None:
                     column_header_cell.comment = column.style.comment
             for row_index, index in enumerate(self.data_df.index):
                 current_cell = sheet.cell(row=row_index + startrow + 2, column=col_index + startcol + 1)
@@ -421,13 +421,13 @@ class StyleFrame(object):
                     try:
                         style_to_apply = data_df_style.to_openpyxl_style()
                     except AttributeError:
-                        style_to_apply = data_df_style
+                        style_to_apply = Styler.from_openpyxl_style(data_df_style, [],
+                                                                    openpyxl_comment=data_df_style.comment).to_openpyxl_style()
                     current_cell.style = style_to_apply
                     if isinstance(data_df_style, Styler):
                         current_cell.comment = data_df_style.generate_comment()
                     else:
-                        if hasattr(data_df_style, 'comment'):
-                            data_df_style.comment.parent = None
+                        if hasattr(data_df_style, 'comment') and data_df_style.comment is not None:
                             current_cell.comment = data_df_style.comment
                 except AttributeError:  # if the element in the dataframe is not Container creating a default style
                     current_cell.style = Styler().to_openpyxl_style()
