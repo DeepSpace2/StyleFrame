@@ -1,8 +1,9 @@
 import datetime as dt
-from functools import partial
-
 import numpy as np
+import pathlib
 import pandas as pd
+
+from functools import partial
 
 from .deprecations import deprecated_kwargs
 from . import utils
@@ -357,7 +358,7 @@ class StyleFrame(object):
         export_df.index = [row_index.value for row_index in export_df.index]
         export_df.index.name = self.data_df.index.name
 
-        if isinstance(excel_writer, str):
+        if isinstance(excel_writer, (str, pathlib.Path)):
             excel_writer = self.ExcelWriter(excel_writer)
 
         export_df.to_excel(excel_writer, sheet_name=sheet_name, engine='openpyxl', header=header,
