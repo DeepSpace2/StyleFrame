@@ -132,6 +132,7 @@ It is possible to directly use a value that is not present in the utils module a
    .. py:attribute:: dash_dot = 'dashDot'
    .. py:attribute:: dash_dot_dot = 'dashDotDot'
    .. py:attribute:: dashed = 'dashed'
+   .. py:attribute:: default_grid = 'default_grid'
    .. py:attribute:: dotted = 'dotted'
    .. py:attribute:: double = 'double'
    .. py:attribute:: hair = 'hair'
