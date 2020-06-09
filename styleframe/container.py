@@ -1,18 +1,10 @@
-# coding:utf-8
-import sys
 import datetime as dt
 import pandas as pd
 
 from . import utils
 
-PY2 = sys.version_info[0] == 2
+from styleframe.styler import Styler
 
-# Python 2
-if PY2:
-    from styler import Styler
-# Python 3
-else:
-    from StyleFrame.styler import Styler
 try:
     pd_timestamp = pd.Timestamp
 except AttributeError:
@@ -42,8 +34,6 @@ class Container(object):
         return hash(self.value)
 
     def __str__(self):
-        if PY2:
-            return unicode(self.value)
         return str(self.value)
 
     def __eq__(self, other):

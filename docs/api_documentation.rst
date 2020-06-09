@@ -208,12 +208,12 @@ It is possible to directly use a value that is not present in the utils module a
     .. py:attribute:: percentile = 'percentile'
 
 ==========
-StyleFrame
+styleframe
 ==========
 
-.. py:module:: StyleFrame
+.. py:module:: styleframe
 
-The `StyleFrame` module contains a single class `StyleFrame` which servers as the main interaction point.
+The `styleframe` module contains a single class `StyleFrame` which servers as the main interaction point.
 
 .. py:class:: StyleFrame(obj, styler_obj=None)
 
@@ -292,8 +292,8 @@ The `StyleFrame` module contains a single class `StyleFrame` which servers as th
 
     .. py:method:: set_column_width(columns, width)
 
-        :param columns: Column name(s).
-        :type columns: str or list[str] or tuple[str]
+        :param columns: Column name(s) or index(es).
+        :type columns: str or list[str] or tuple[str] or int or list[int] or tuple[int]
         :param width: The new width for the specified columns.
         :type width: int or float
         :return: self
@@ -374,6 +374,19 @@ The `StyleFrame` module contains a single class `StyleFrame` which servers as th
 
         :param bool read_comments: If `True` (and `read_style` is also `True`) cells' comments will be loaded to the returned StyleFrame object. Note
                 that reading comments without reading styles is currently not supported.
+
+        :return: StyleFrame object
+        :rtype: StyleFrame
+
+    .. py:method:: read_excel_as_template(path, df, use_df_boundaries=False)
+
+        A classmethod used to create a StyleFrame object from excel template with the data from the given dataframe.
+
+        .. note:: ``read_excel_as_template`` also accepts all arguments that ``read_excel`` accepts as kwargs except for ``read_style`` which must be ``True``.
+
+        :param str path: The path to the Excel file to read.
+        :param pandas.DataFrame df: The data to apply to the given template.
+        :param bool use_df_boundarie: If True the template will be cut according to the boundaries of the given DataFrame.
 
         :return: StyleFrame object
         :rtype: StyleFrame

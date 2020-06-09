@@ -60,7 +60,7 @@ Once the style is ready, ```.to_openpyxl_style()``` method is called.
 
 * ***utils***:
 ```python
-from StyleFrame import utils
+from styleframe import utils
 ```
 Before you start to style your StyleFrame, take a look in the utils module.
 You may find there very useful things such as number formats, colors, borders and more!
@@ -92,7 +92,7 @@ StyleFrame (usually referred as sf) reveals a very easy api for styling.
 
 ```python
 import pandas as pd
-from StyleFrame import StyleFrame, Styler, utils   
+from styleframe import StyleFrame, Styler, utils   
    
 df = pd.DataFrame({
     'Time': [1.496728e+09, 1.496728e+09, 1.496728e+09, 1.496728e+09, 1.496728e+09],
@@ -114,24 +114,26 @@ df = pd.DataFrame({
 """
    
 # Create StyleFrame object that wrap our DataFrame and assign default style.
-defaults = {'font': utils.fonts.aharoni, 'font_size': 14}
-sf = StyleFrame(df, styler_obj=Styler(**defaults))
+default_style = Styler(font=utils.fonts.aharoni, font_size=14)
+sf = StyleFrame(df, styler_obj=default_style)
    
 # Style the headers of the table
 header_style = Styler(bold=True, font_size=18)
 sf.apply_headers_style(styler_obj=header_style)
    
 # Set the background color to green where the test marked as 'passed'
-passed_style = Styler(bg_color=utils.colors.green, font_color=utils.colors.white, **defaults)
+passed_style = Styler(bg_color=utils.colors.green, font_color=utils.colors.white)
 sf.apply_style_by_indexes(indexes_to_style=sf[sf['Pass/Fail'] == 'Passed'],
                           cols_to_style='Pass/Fail',
-                          styler_obj=passed_style)
+                          styler_obj=passed_style,
+                          overwrite_default_style=False)
    
 # Set the background color to red where the test marked as 'failed'
-failed_style = Styler(bg_color=utils.colors.red, font_color=utils.colors.white, **defaults)
+failed_style = Styler(bg_color=utils.colors.red, font_color=utils.colors.white)
 sf.apply_style_by_indexes(indexes_to_style=sf[sf['Pass/Fail'] == 'Failed'],
                           cols_to_style='Pass/Fail',
-                          styler_obj=failed_style)
+                          styler_obj=failed_style,
+                          overwrite_default_style=False)
    
 # Change the columns width and the rows height
 sf.set_column_width(columns=sf.columns, width=20)
@@ -182,7 +184,7 @@ df['Mean'] = only_values_df.mean(axis=1)
 
 Now, once we have the DataFrame ready, lets create a StyleFrame object
 ```python
-from StyleFrame import StyleFrame
+from styleframe import StyleFrame
 
 sf = StyleFrame(df)
 # it is also possible to directly initiate StyleFrame
@@ -216,7 +218,7 @@ sf.set_row_height_dict(row_height_dict={
 
 Applying number formats
 ```python
-from StyleFrame import Styler, utils
+from styleframe import Styler, utils
 
 
 sf.apply_column_style(cols_to_style='Date',

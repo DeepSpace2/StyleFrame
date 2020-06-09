@@ -1,6 +1,6 @@
 import unittest
 
-from StyleFrame import Styler, utils
+from styleframe import Styler, utils
 
 
 class StylerTests(unittest.TestCase):
@@ -34,3 +34,7 @@ class StylerTests(unittest.TestCase):
                             fill_pattern_type=utils.fill_pattern_types.gray0625, indent=1)
 
         self.assertEqual(styler_obj, Styler.from_openpyxl_style(styler_obj.to_openpyxl_style(), []))
+
+    def test_default_grid_and_bg_color(self):
+        with self.assertRaises(ValueError):
+            Styler(border_type=utils.borders.default_grid, bg_color=utils.colors.yellow)

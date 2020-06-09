@@ -1,3 +1,19 @@
+#### 3.0.0
+* **Removed Python 2.7 support**
+* **Added Python 3.8 support**
+* Renamed package name to `styleframe` (all lowercase) in accordance of PEP8
+* Added `.style` accessor. This allows for easy selection/indexing based on style, for example:
+  `sf.loc[sf['col_name'].style.bg_color == utils.colors.yellow]`
+  
+  or
+  
+  `sf.loc[~sf['col_name'].style.bold]`
+  
+* Added `default_grid` to `utils.borders` to allow usage of the default spreadsheet grid
+* Added `read_excel_as_template` method
+* Fixed a bug that prevented saving if `read_excel` was used with `use_openpxl_style=True`, see github issue #67
+* Allowing usage of pathlib.Path in `to_excel`, see github issue #69 
+
 #### 2.0.5
 * `style_alternate_rows` can accept all arguments that `apply_style_by_indexes` accepts as kwargs.
 * Added `cols_to_style` argument to `apply_headers_style`

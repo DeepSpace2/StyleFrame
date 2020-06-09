@@ -1,10 +1,10 @@
 import unittest
 
-from StyleFrame.command_line.tests.commandline_tests import CommandlineInterfaceTest
-from StyleFrame.tests.container_tests import ContainerTest
-from StyleFrame.tests.series_tests import SeriesTest
-from StyleFrame.tests.style_frame_tests import StyleFrameTest
-from StyleFrame.tests.styler_tests import StylerTests
+from styleframe.command_line.tests.commandline_tests import CommandlineInterfaceTest
+from styleframe.tests.container_tests import ContainerTest
+from styleframe.tests.series_tests import SeriesTest
+from styleframe.tests.style_frame_tests import StyleFrameTest
+from styleframe.tests.styler_tests import StylerTests
 
 
 def run():

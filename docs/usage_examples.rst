@@ -5,7 +5,7 @@ StyleFrame's ``init`` supports all the ways you are used to initiate pandas data
 An existing dataframe, a dictionary or a list of dictionaries:
 ::
 
-    from StyleFrame import StyleFrame, Styler, utils
+    from styleframe import StyleFrame, Styler, utils
 
     sf = StyleFrame({'col_a': range(100)})
 
@@ -31,3 +31,15 @@ It is also possible to style a whole column or columns, and decide whether to st
 
     sf.apply_column_style(cols_to_style=['a'], styler_obj=Styler(bg_color=utils.colors.green),
                           style_header=True)
+
+Accessors
+---------
+
+.style
+^^^^^^
+
+Combined with `.loc`, allows easy selection/indexing based on style. For example:
+::
+
+    only_rows_with_yellow_bg_color = sf.loc[sf['col_name'].style.bg_color == utils.colors.yellow]
+    only_rows_with_non_bold_text = sf.loc[~sf['col_name'].style.bold]

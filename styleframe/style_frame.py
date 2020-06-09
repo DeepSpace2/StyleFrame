@@ -1,43 +1,28 @@
-# coding:utf-8
-
 import datetime as dt
 import numpy as np
+import pathlib
 import pandas as pd
-import sys
+
+from functools import partial
 
 from .deprecations import deprecated_kwargs
 from . import utils
 from copy import deepcopy
-from collections import Iterable
+from collections import OrderedDict
+from collections.abc import Iterable
 from openpyxl import load_workbook
 from openpyxl.cell.cell import get_column_letter
 from openpyxl.xml.functions import fromstring, QName
 from openpyxl.utils import cell
 
-PY2 = sys.version_info[0] == 2
-
-# Python 2
-if PY2:
-    # noinspection PyUnresolvedReferences
-    from container import Container
-    # noinspection PyUnresolvedReferences
-    from series import Series
-    # noinspection PyUnresolvedReferences
-    from styler import Styler, ColorScaleConditionalFormatRule
-
-# Python 3
-else:
-    from StyleFrame.container import Container
-    from StyleFrame.styler import Styler, ColorScaleConditionalFormatRule
-    from StyleFrame.series import Series
+from styleframe.container import Container
+from styleframe.series import Series
+from styleframe.styler import Styler, ColorScaleConditionalFormatRule
 
 try:
     pd_timestamp = pd.Timestamp
 except AttributeError:
     pd_timestamp = pd.tslib.Timestamp
-
-str_type = basestring if PY2 else str
-unicode_type = unicode if PY2 else str
 
 
 class StyleFrame(object):
@@ -76,8 +61,8 @@ class StyleFrame(object):
         if from_pandas_dataframe:
             self.data_df.index.name = obj.index.name
 
-        self._columns_width = obj._columns_width if from_another_styleframe else {}
-        self._rows_height = obj._rows_height if from_another_styleframe else {}
+        self._columns_width = obj._columns_width if from_another_styleframe else OrderedDict()
+        self._rows_height = obj._rows_height if from_another_styleframe else OrderedDict()
         self._has_custom_headers_style = obj._has_custom_headers_style if from_another_styleframe else False
         self._cond_formatting = []
         self._default_style = styler_obj or Styler()
@@ -89,14 +74,10 @@ class StyleFrame(object):
                              'applymap': self.data_df.applymap,
                              'groupby': self.data_df.groupby,
                              'index': self.data_df.index,
-                             'columns': self.data_df.columns,
                              'fillna': self.data_df.fillna}
 
     def __str__(self):
         return str(self.data_df)
-
-    def __unicode__(self):
-        return unicode_type(self.data_df)
 
     def __len__(self):
         return len(self.data_df)
@@ -125,26 +106,34 @@ class StyleFrame(object):
         except KeyError:
             raise AttributeError("'{}' object has no attribute '{}'".format(type(self).__name__, attr))
 
+    @property
+    def columns(self):
+        return self.data_df.columns
+
+    @columns.setter
+    def columns(self, columns):
+        self.data_df.columns = [col if isinstance(col, Container) else Container(value=col)
+                                for col in columns]
+
     def _get_column_as_letter(self, sheet, column_to_convert, startcol=0):
-        if not isinstance(column_to_convert, (int, str_type, unicode_type, Container)):
+        col = column_to_convert.value if isinstance(column_to_convert, Container) else column_to_convert
+        if not isinstance(col, (int, str)):
             raise TypeError("column must be an index, column letter or column name")
         column_as_letter = None
-        if column_to_convert in self.data_df.columns:  # column name
-            column_index = self.data_df.columns.get_loc(
-                column_to_convert) + startcol + 1  # worksheet columns index start from 1
+        if col in self.data_df.columns:  # column name
+            column_index = self.data_df.columns.get_loc(col) + startcol + 1  # worksheet columns index start from 1
             column_as_letter = cell.get_column_letter(column_index)
 
         # column index
-        elif isinstance(column_to_convert, int) and column_to_convert >= 1:
-            column_as_letter = cell.get_column_letter(startcol + column_to_convert)
+        elif isinstance(col, int) and col >= 1:
+            column_as_letter = cell.get_column_letter(startcol + col)
 
         # assuming we got column letter
-        elif isinstance(column_to_convert, (str_type, unicode_type)) < get_column_letter(sheet.max_column):
-            column_as_letter = column_to_convert
+        elif isinstance(col, str) and col <= get_column_letter(sheet.max_column):
+            column_as_letter = col
 
         if column_as_letter is None or cell.column_index_from_string(column_as_letter) > sheet.max_column:
             raise IndexError("column: %s is out of columns range." % column_to_convert)
-
         return column_as_letter
 
     @classmethod
@@ -183,42 +172,100 @@ class StyleFrame(object):
                         colors.append(accent.attrib['val'])
             return colors
 
+        def _get_style_object(sheet, theme_colors, row, column):
+            cell = sheet.cell(row=row, column=column)
+            if use_openpyxl_styles:
+                return cell
+            else:
+                return Styler.from_openpyxl_style(cell, theme_colors,
+                                                  read_comments and cell.comment)
+
         def _read_style():
             wb = load_workbook(path)
-            if isinstance(sheet_name, (str_type, unicode_type)):
+            if isinstance(sheet_name, str):
                 sheet = wb[sheet_name]
             elif isinstance(sheet_name, int):
                 sheet = wb.worksheets[sheet_name]
             else:
                 raise TypeError("'sheet_name' must be a string or int, got {} instead".format(type(sheet_name)))
             theme_colors = _get_scheme_colors_from_excel(wb)
-            for col_index, col_name in enumerate(sf.columns, start=1):
-                column_cell = sheet.cell(row=1, column=col_index)
-                if use_openpyxl_styles:
-                    style_object = column_cell
-                else:
-                    style_object = Styler.from_openpyxl_style(column_cell, theme_colors,
-                                                              read_comments and column_cell.comment)
-                sf.columns[col_index - 1].style = style_object
+
+            get_style_object = partial(_get_style_object, sheet=sheet, theme_colors=theme_colors)
+            for col_index, col_name in enumerate(sf.columns):
+                col_index_in_excel = col_index + 1
+                if col_index_in_excel == excel_index_col:
+                    for row_index, sf_index in enumerate(sf.index, start=2):
+                        sf_index.style = get_style_object(row=row_index, column=col_index_in_excel)
+                    col_index_in_excel += 1  # Move next to excel indices column
+
+                sf.columns[col_index].style = get_style_object(row=1, column=col_index_in_excel)
                 for row_index, sf_index in enumerate(sf.index, start=2):
-                    current_cell = sheet.cell(row=row_index, column=col_index)
-                    if use_openpyxl_styles:
-                        style_object = current_cell
-                    else:
-                        style_object = Styler.from_openpyxl_style(current_cell, theme_colors,
-                                                                  read_comments and current_cell.comment)
-                    sf.at[sf_index, col_name].style = style_object
+                    sf.at[sf_index, col_name].style = get_style_object(row=row_index, column=col_index_in_excel)
                     sf._rows_height[row_index] = sheet.row_dimensions[row_index].height
 
                 sf._columns_width[col_name] = sheet.column_dimensions[sf._get_column_as_letter(sheet, col_name)].width
 
-        if 'sheetname' in kwargs:
-            sheet_name = kwargs.pop('sheetname')
+        sheet_name = kwargs.pop('sheetname', sheet_name)
+        index_col = kwargs.get('index_col')
+        excel_index_col = index_col + 1 if index_col is not None else None
+        if read_style and isinstance(excel_index_col, Iterable):
+            raise ValueError('Not supporting multiple index columns with read style.')
 
         sf = cls(pd.read_excel(path, sheet_name, **kwargs))
         if read_style:
             _read_style()
             sf._has_custom_headers_style = True
+
+        return sf
+
+    @classmethod
+    def read_excel_as_template(cls, path, df, use_df_boundaries=False, **kwargs):
+        """Create a StyleFrame object from an excel template with data of the given DataFrame.
+
+        :param str path: The path to the Excel file to read.
+        :param pandas.DataFrame df: The data to apply to the given template.
+        :param bool use_df_boundaries: If True the template will be cut according to the boundaries of the given
+            DataFrame.
+        :param kwargs: Any keyword argument `read_excel` supports except for read_style which must be True.
+        :rtype: StyleFrame
+        """
+        sf = cls.read_excel(path=path, read_style=True, **kwargs)
+
+        num_of_rows, num_of_cols = len(df.index), len(df.columns)
+        template_num_of_rows, template_num_of_cols = len(sf.index), len(sf.columns)
+
+        num_of_cols_to_copy_with_style = min(num_of_cols, template_num_of_cols)
+        num_of_rows_to_copy_with_style = min(num_of_rows, template_num_of_rows)
+        for col_index in range(num_of_cols_to_copy_with_style):
+            for row_index in range(num_of_rows_to_copy_with_style):
+                sf.iloc[row_index, col_index].value = df.iloc[row_index, col_index]
+
+        # Insert extra data in cases where the df is larger than the template.
+        for extra_col in df.columns[template_num_of_cols:]:
+            sf[extra_col] = df[extra_col][:template_num_of_rows]
+        for row_index in df.index[template_num_of_rows:]:
+            sf_index = Container(value=row_index)
+            sf.loc[sf_index] = list(map(Container, df.loc[row_index]))
+
+        sf.rename({sf.columns[col_index].value: df_col
+                   for col_index, df_col in enumerate(df.columns)},
+                  inplace=True)
+
+        if use_df_boundaries:
+            sf.data_df = sf.data_df.iloc[:num_of_rows, :num_of_cols]
+            rows_height = OrderedDict()
+            rows_height_range = range(num_of_rows)
+            for i, (k, v) in enumerate(sf._rows_height.items()):
+                if i in rows_height_range:
+                    rows_height[k] = v
+            sf._rows_height = rows_height
+
+            columns_width = OrderedDict()
+            columns_width_range = range(num_of_cols)
+            for i, (k, v) in enumerate(sf._columns_width.items()):
+                if i in columns_width_range:
+                    columns_width[k] = v
+            sf._columns_width = columns_width
         return sf
 
     # noinspection PyPep8Naming
@@ -311,7 +358,7 @@ class StyleFrame(object):
         export_df.index = [row_index.value for row_index in export_df.index]
         export_df.index.name = self.data_df.index.name
 
-        if isinstance(excel_writer, (str_type, unicode_type)):
+        if isinstance(excel_writer, (str, pathlib.Path)):
             excel_writer = self.ExcelWriter(excel_writer)
 
         export_df.to_excel(excel_writer, sheet_name=sheet_name, engine='openpyxl', header=header,
@@ -352,20 +399,20 @@ class StyleFrame(object):
             try:
                 style_to_apply = column.style.to_openpyxl_style()
             except AttributeError:
-                style_to_apply = column.style
+                style_to_apply = Styler.from_openpyxl_style(column.style, [],
+                                                            openpyxl_comment=column.style.comment).to_openpyxl_style()
             column_header_cell = sheet.cell(row=startrow + 1, column=col_index + startcol + 1)
             column_header_cell.style = style_to_apply
             if isinstance(column.style, Styler):
                 column_header_cell.comment = column.style.generate_comment()
             else:
-                if hasattr(column.style, 'comment'):
-                    column.style.comment.parent = None
+                if hasattr(column.style, 'comment') and column.style.comment is not None:
                     column_header_cell.comment = column.style.comment
             for row_index, index in enumerate(self.data_df.index):
                 current_cell = sheet.cell(row=row_index + startrow + 2, column=col_index + startcol + 1)
                 data_df_style = self.data_df.at[index, column].style
                 try:
-                    if '=HYPERLINK' in unicode_type(current_cell.value):
+                    if '=HYPERLINK' in str(current_cell.value):
                         data_df_style.font_color = utils.colors.blue
                         data_df_style.underline = utils.underline.single
                     else:
@@ -375,13 +422,13 @@ class StyleFrame(object):
                     try:
                         style_to_apply = data_df_style.to_openpyxl_style()
                     except AttributeError:
-                        style_to_apply = data_df_style
+                        style_to_apply = Styler.from_openpyxl_style(data_df_style, [],
+                                                                    openpyxl_comment=data_df_style.comment).to_openpyxl_style()
                     current_cell.style = style_to_apply
                     if isinstance(data_df_style, Styler):
                         current_cell.comment = data_df_style.generate_comment()
                     else:
-                        if hasattr(data_df_style, 'comment'):
-                            data_df_style.comment.parent = None
+                        if hasattr(data_df_style, 'comment') and data_df_style.comment is not None:
                             current_cell.comment = data_df_style.comment
                 except AttributeError:  # if the element in the dataframe is not Container creating a default style
                     current_cell.style = Styler().to_openpyxl_style()
@@ -412,7 +459,7 @@ class StyleFrame(object):
                 raise TypeError("row must be an index and not {}".format(type(row_to_add_filters)))
 
         if columns_and_rows_to_freeze is not None:
-            if not isinstance(columns_and_rows_to_freeze, (str_type, unicode_type)) or len(columns_and_rows_to_freeze) < 2:
+            if not isinstance(columns_and_rows_to_freeze, str) or len(columns_and_rows_to_freeze) < 2:
                 raise TypeError("columns_and_rows_to_freeze must be a str for example: 'C3'")
             if not within_sheet_boundaries(column=columns_and_rows_to_freeze[0]):
                 raise IndexError("column: %s is out of columns range." % columns_and_rows_to_freeze[0])
@@ -586,7 +633,7 @@ class StyleFrame(object):
     def set_column_width(self, columns, width):
         """Set the width of the given columns
 
-        :param set|list|tuple columns: a single or a list/tuple/set of column name, index or letter to change their width
+        :param int|str|set|list|tuple columns: a single or a list/tuple/set of column name, index or letter to change their width
         :param int|float width: numeric positive value of the new width
         :return: self
         :rtype: StyleFrame
@@ -603,7 +650,7 @@ class StyleFrame(object):
             raise ValueError('columns width must be positive')
 
         for column in columns:
-            if not isinstance(column, (int, str_type, unicode_type, Container)):
+            if not isinstance(column, (int, str, Container)):
                 raise TypeError("column must be an index, column letter or column name")
             self._columns_width[column] = width
 

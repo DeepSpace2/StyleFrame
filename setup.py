@@ -6,7 +6,7 @@ from setuptools import setup, find_packages
 
 DESCRIPTION = 'A library that wraps pandas and openpyxl and allows easy styling of dataframes in excel. Documentation can be found at http://styleframe.readthedocs.org'
 
-here = os.path.abspath(os.path.dirname(__file__))
+here = os.path.abspath(os.path.dirname(__file__)).lower()
 
 
 def read(*parts):
@@ -29,7 +29,7 @@ setup(
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version=find_version('StyleFrame', 'version.py'),
+    version=find_version('styleframe', 'version.py'),
 
     description=DESCRIPTION,
     long_description=DESCRIPTION,
@@ -64,11 +64,11 @@ setup(
 
         # Specify the Python versions you support here. In particular, ensure
         # that you indicate whether you support Python 2, Python 3 or both.
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7'
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8'
     ],
 
     # What does your project relate to?
