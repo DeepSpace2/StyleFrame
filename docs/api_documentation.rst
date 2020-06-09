@@ -397,7 +397,7 @@ The `styleframe` module contains a single class `StyleFrame` which servers as th
         .. note:: ``to_excel`` also accepts all arguments that ``pandas.DataFrame.to_excel`` accepts as kwargs.
 
         :param excel_writer: File path or existing ExcelWriter
-        :type excel_writer: str or pandas.ExcelWriter
+        :type excel_writer: str or pandas.ExcelWriter or pathlib.Path
         :param str sheet_name: Name of sheet the StyleFrame will be exported to
         :param bool allow_protection: Allow to protect the cells that specified as protected. If used ``protection=True``
             in a Styler object this must be set to `True`.
