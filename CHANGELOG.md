@@ -1,4 +1,4 @@
-#### 3.0.0
+#### 3.0.1
 * **Removed Python 2.7 support**
 * **Added Python 3.8 support**
 * Renamed package name to `styleframe` (all lowercase) in accordance of PEP8
@@ -13,6 +13,7 @@
 * Added `read_excel_as_template` method
 * Fixed a bug that prevented saving if `read_excel` was used with `use_openpxl_style=True`, see github issue #67
 * Allowing usage of pathlib.Path in `to_excel`, see github issue #69 
+* Added ability to execute the tests from the commandline: `styleframe --test`
 
 #### 2.0.5
 * `style_alternate_rows` can accept all arguments that `apply_style_by_indexes` accepts as kwargs.
