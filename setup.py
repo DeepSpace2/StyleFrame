@@ -24,7 +24,7 @@ def find_version(*file_paths):
 
 
 setup(
-    name='StyleFrame',
+    name='styleframe',
 
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
@@ -42,7 +42,7 @@ setup(
     author_email='deepspace2@gmail.com',
 
     entry_points={
-        'console_scripts': ['styleframe = StyleFrame.command_line.commandline:execute_from_command_line']
+        'console_scripts': ['styleframe = styleframe.command_line.commandline:execute_from_command_line']
     },
 
     # Choose your license

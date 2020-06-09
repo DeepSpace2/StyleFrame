@@ -10,14 +10,15 @@ that lets you create an xlsx file from a json file.
 Usage
 -----
 
-=================   =========================================================================
-Flag                Explanation
-=================   =========================================================================
-``-v``              Displays the installed versions of styleframe and its dependencies
-``--json_path``     Path to the json file
+====================================   =========================================================================
+Flag                                   Explanation
+====================================   =========================================================================
+``-v``                                 Displays the installed versions of styleframe and its dependencies
+``--json_path`` or ``--json-path``     Path to the json file
 ``--json``          json string
-``--output_path``   Path to the output xlsx file. If not provided defaults to ``output.xlsx``
-=================   =========================================================================
+``--output_path`` or ``output-path``   Path to the output xlsx file. If not provided defaults to ``output.xlsx``
+``--test``                             Execute the tests
+====================================   =========================================================================
 
 
 Usage Examples

@@ -7,7 +7,7 @@ import pandas as pd
 from collections import defaultdict
 from pprint import pprint
 
-from .. import StyleFrame, Container, Styler, version
+from .. import StyleFrame, Container, Styler, version, tests
 from .tests.json_schema import commandline_json_schema
 
 styler_kwargs = set(inspect.signature(Styler).parameters.keys())
@@ -91,17 +91,18 @@ def get_cli_args():
 
     group.add_argument('-v', '--version', action='store_true', default=False,
                        help='print versions of the Python interpreter, openpyxl, pandas and StyleFrame then quit')
-    group.add_argument('--json_path', help='path to json file which defines the Excel file')
+    group.add_argument('--json_path', '--json-path', help='path to json file which defines the Excel file')
     group.add_argument('--json', help='json string which defines the Excel file')
     group.add_argument('--show-schema', action='store_true', help='Print the JSON schema used for validation and exit',
                        default=False)
-    parser.add_argument('--output_path', help='path of output Excel file, defaults to output.xlsx',
+    group.add_argument('--test', help='execute tests', action='store_true')
+    parser.add_argument('--output_path', '--output-path', help='path of output Excel file, defaults to output.xlsx',
                         default='output.xlsx')
 
     cli_args = parser.parse_args()
 
-    if not any((cli_args.version, cli_args.show_schema)) and not any((cli_args.json_path, cli_args.json)):
-        parser.error('Either --json_path or --json are required when not using -v.')
+    if not any((cli_args.version, cli_args.show_schema, cli_args.test)) and not any((cli_args.json_path, cli_args.json)):
+        parser.error('Either --json_path or --json are required when not using -v or --show-schema')
 
     return cli_args
 
@@ -113,6 +114,9 @@ def execute_from_command_line():
         return
     if cli_args.show_schema:
         pprint(commandline_json_schema)
+        return
+    if cli_args.test:
+        tests.tests.run()
         return
     CommandLineInterface(input_path=cli_args.json_path, input_json=cli_args.json,
                          output_path=cli_args.output_path).parse_as_json()
