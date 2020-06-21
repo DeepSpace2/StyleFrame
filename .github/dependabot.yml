@@ -12,6 +12,7 @@ updates:
     assignees:
       - "DeepSpace2"
     commit-message:
+      prefix: "Dependency update"
       include: "scope"
     labels:
       - "dont mark as stale"
