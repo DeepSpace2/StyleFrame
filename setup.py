@@ -86,7 +86,7 @@ setup(
     install_requires=['openpyxl>=2.5', 'colour>=0.1.5', 'jsonschema', 'xlrd>=1.0.0'],
     extras_require={
         ':python_version <= "3.4"': [
-            'pandas >= 0.16.2, <= 0.22.*'
+            'pandas >= 0.16.2, < 1.1.0'
         ],
         ':python_version > "3.4"': [
             'pandas >= 0.23.2'
