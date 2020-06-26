@@ -83,13 +83,5 @@ setup(
     # your project is installed. For an analysis of "install_requires" vs pip's
     # requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
-    install_requires=['openpyxl>=2.5', 'colour>=0.1.5', 'jsonschema', 'xlrd>=1.0.0'],
-    extras_require={
-        ':python_version <= "3.4"': [
-            'pandas >= 0.16.2, <= 0.22.*'
-        ],
-        ':python_version > "3.4"': [
-            'pandas >= 0.23.2'
-        ]
-    }
+    install_requires=['openpyxl>=2.5,<3.0.3', 'colour>=0.1.5,<0.2', 'jsonschema', 'xlrd>=1.0.0,<1.3.0', 'pandas<1.1.0']
 )

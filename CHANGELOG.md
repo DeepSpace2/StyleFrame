@@ -1,3 +1,6 @@
+### 3.0.2
+Hotfix release - setting maximum versions for dependencies. Related to github issue #73
+
 #### 3.0.1
 * **Removed Python 2.7 support**
 * **Added Python 3.8 support**
