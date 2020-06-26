@@ -1,5 +1,4 @@
 import re
-from openpyxl.styles import colors as op_colors
 
 HEX_REGEX = re.compile(r'^([A-Fa-f0-9]{8}|[A-Fa-f0-9]{6})$')
 
@@ -40,16 +39,16 @@ class number_formats(BaseDefClass):
 
 
 class colors(BaseDefClass):
-    white = op_colors.WHITE
-    blue = op_colors.BLUE
-    dark_blue = op_colors.DARKBLUE
-    yellow = op_colors.YELLOW
-    dark_yellow = op_colors.DARKYELLOW
-    green = op_colors.GREEN
-    dark_green = op_colors.DARKGREEN
-    black = op_colors.BLACK
-    red = op_colors.RED
-    dark_red = op_colors.DARKRED
+    white = '00FFFFFF'
+    blue = '000000FF'
+    dark_blue = '00000080'
+    yellow = '00FFFF00'
+    dark_yellow = '00808000'
+    green = '0000FF00'
+    dark_green = '00008000'
+    black = '00000000'
+    red = '00FF0000'
+    dark_red = '00800000'
     purple = '800080'
     grey = 'D3D3D3'
 
