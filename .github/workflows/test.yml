@@ -36,16 +36,7 @@ jobs:
         run: |
           cd styleframe/tests/
           coverage run tests.py
-          pwd
-          cd ..
-          pwd
-          cd ..
-          pwd
-          find . -name "coverage.xml"
-#      - name: Uploading coverage Python ${{ matrix.python-version }}
-#        uses: codecov/codecov-action@v1
-#        with:
-#          file: coverage.xml
-#        run: codecov
-#         run: |
-#          find / -name "coverage.xml"
+      - name: Uploading coverage Python ${{ matrix.python-version }}
+        uses: codecov/codecov-action@v1
+        with:
+          file: /home/runner/work/StyleFrame/StyleFrame/styleframe/tests/coverage.xml
