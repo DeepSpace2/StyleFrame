@@ -31,7 +31,7 @@ jobs:
       - name: Installing dependencies Python ${{ matrix.python-version }}
         run: |
           pip install -r requirements.txt
-          pip install codecov
+          pip install codecov coverage
       - name: Running tests Python ${{ matrix.python-version }}
         run: |
           cd styleframe/tests/
