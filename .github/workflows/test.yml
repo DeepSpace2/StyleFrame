@@ -10,7 +10,7 @@ jobs:
     name: Python ${{ matrix.python-version }}
     strategy:
       matrix:
-        python-version: [3.4, 3.5, 3.6, 3.7, 3.8, 3.9-dev]
+        python-version: [3.5, 3.6, 3.7, 3.8, 3.9-dev]
 
     steps:
       - uses: actions/checkout@v2
@@ -29,4 +29,4 @@ jobs:
       - name: Uploading coverage Python ${{ matrix.python-version }}
         uses: codecov/codecov-action@v1
         with:
-          file: coverage.xml
+          file: styleframe/tests/coverage.xml
