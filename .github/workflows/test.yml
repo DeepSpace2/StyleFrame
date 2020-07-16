@@ -15,7 +15,11 @@ jobs:
         python-version: [3.5, 3.6, 3.7, 3.8]
         experimental: [false]
         include:
-          - python-version: [3.4, 3.9, "nightly"]
+          - python-version: 3.4
+            experimental: true
+          - python-version: 3.9
+            experimental: true
+          - python-version: "nightly"
             experimental: true
 
     steps:
