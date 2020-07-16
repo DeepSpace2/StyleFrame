@@ -36,7 +36,6 @@ jobs:
         run: |
           cd styleframe/tests/
           coverage run tests.py
-#          codecov
           pwd
           cd ..
           pwd
