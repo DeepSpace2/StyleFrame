@@ -41,4 +41,5 @@ jobs:
 #        with:
 #          file: coverage.xml
 #        run: codecov
-         run: "find / -name coverage.xml"
+         run: |
+          find / -name "coverage.xml"
