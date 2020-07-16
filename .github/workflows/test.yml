@@ -37,7 +37,9 @@ jobs:
           cd styleframe/tests/
           coverage run tests.py
           codecov
-          find / -name "coverage.xml"
+          cd ..
+          cd ..
+          find . -name "coverage.xml"
 #      - name: Uploading coverage Python ${{ matrix.python-version }}
 #        uses: codecov/codecov-action@v1
 #        with:
