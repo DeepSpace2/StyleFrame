@@ -1,0 +1,32 @@
+name: test
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Python ${{ matrix.python-version }}
+    strategy:
+      matrix:
+        python-version: [3.4, 3.5, 3.6, 3.7, 3.8, 3.9-dev, "nightly"]
+
+    steps:
+      - uses: actions/checkout@v2  # TODO how to checkout only relevant branch/pull request?
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Installing dependencies Python ${{ matrix.python-version }}
+        run: |
+          pip install -r requirements.txt
+          pip install codecov
+      - name: Running tests Python ${{ matrix.python-version }}
+        run: |
+          cd styleframe/tests/
+          coverage run tests.py
+      - name: Uploading coverage Python ${{ matrix.python-version }}
+        uses: codecov/codecov-action@v1
+        with:
+          file: coverage.xml
