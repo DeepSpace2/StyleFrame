@@ -31,11 +31,11 @@ jobs:
       - name: Installing dependencies Python ${{ matrix.python-version }}
         run: |
           pip install -r requirements.txt
-          pip install codecov coverage
       - name: Running tests Python ${{ matrix.python-version }}
         run: |
           cd styleframe/tests/
           coverage run tests.py
       - name: Uploading coverage Python ${{ matrix.python-version }}
+        run: pip install codecov coverage
         uses: codecov/codecov-action@v1
 
