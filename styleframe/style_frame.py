@@ -67,7 +67,7 @@ class StyleFrame(object):
         self._cond_formatting = []
         self._default_style = styler_obj or Styler()
         self._index_header_style = obj._index_header_style if from_another_styleframe else self._default_style
-
+        self._merged_cells = []
         self._known_attrs = {'at': self.data_df.at,
                              'loc': self.data_df.loc,
                              'iloc': self.data_df.iloc,
@@ -204,6 +204,7 @@ class StyleFrame(object):
                     sf._rows_height[row_index] = sheet.row_dimensions[row_index].height
 
                 sf._columns_width[col_name] = sheet.column_dimensions[sf._get_column_as_letter(sheet, col_name)].width
+            sf._merged_cells = sheet.merged_cells
 
         sheet_name = kwargs.pop('sheetname', sheet_name)
         index_col = kwargs.get('index_col')
@@ -484,6 +485,8 @@ class StyleFrame(object):
             sheet.conditional_formatting.add(get_range_of_cells(columns=cond_formatting.columns),
                                              cond_formatting.rule)
 
+        for merged_cells in self._merged_cells:
+            sheet.merge_cells(str(merged_cells))
         return excel_writer
 
     def apply_style_by_indexes(self, indexes_to_style, styler_obj, cols_to_style=None, height=None,
