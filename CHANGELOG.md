@@ -1,4 +1,7 @@
-### 3.0.2
+#### 3.0.3
+No longer relying on openpyxl's colors definition. Related to github issue #73
+
+#### 3.0.2
 Hotfix release - setting maximum versions for dependencies. Related to github issue #73
 
 #### 3.0.1
