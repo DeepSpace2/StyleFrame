@@ -199,13 +199,20 @@ class StyleFrame(object):
                     col_index_in_excel += 1  # Move next to excel indices column
 
                 sf.columns[col_index].style = get_style_object(row=1, column=col_index_in_excel)
-                for row_index, sf_index in enumerate(sf.index, start=2):
+                for row_index, sf_index in enumerate(sf.index, start=start_row_index):
                     sf.at[sf_index, col_name].style = get_style_object(row=row_index, column=col_index_in_excel)
                     sf._rows_height[row_index] = sheet.row_dimensions[row_index].height
 
                 sf._columns_width[col_name] = sheet.column_dimensions[sf._get_column_as_letter(sheet, col_name)].width
 
         sheet_name = kwargs.pop('sheetname', sheet_name)
+        header_arg = kwargs.get('header', 0)
+        if read_style and isinstance(header_arg, Iterable):
+            raise ValueError('Not supporting multiple index columns with read style.')
+        if header_arg is None:
+            start_row_index = 1
+        else:
+            start_row_index = header_arg + 2
         index_col = kwargs.get('index_col')
         excel_index_col = index_col + 1 if index_col is not None else None
         if read_style and isinstance(excel_index_col, Iterable):
