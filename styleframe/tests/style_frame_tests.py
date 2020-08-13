@@ -411,6 +411,22 @@ class StyleFrameTest(unittest.TestCase):
                             for row_in_excel, row_in_self in zip(rows_in_excel, rows_in_self)
                             for excel_cell, self_cell in zip(row_in_excel[1:], row_in_self[1:])))
 
+    def test_read_excel_with_style_header_arg_none(self):
+        self.sf = StyleFrame({0: ['A1', 'A2', 'A3', 'A4', 'A5']})
+        self.sf.apply_style_by_indexes(self.sf[self.sf.data_df[0].isin(('A2', 'A5'))], Styler(bold=True))
+        self.export_and_get_default_sheet(save=True)
+        sf_from_excel = StyleFrame.read_excel(TEST_FILENAME, read_style=True, header=None)
+        # making sure content is the same
+        self.assertTrue(all(list(self.sf[col]) == list(sf_from_excel[col])[1:] for col in self.sf.columns))
+
+        rows_in_excel = list(sf_from_excel.data_df.itertuples())
+        rows_in_self = self.sf.data_df.itertuples()
+
+        # making sure styles are the same
+        self.assertTrue(all(excel_cell.style == self_cell.style
+                            for row_in_excel, row_in_self in zip(rows_in_excel[1:], rows_in_self)
+                            for excel_cell, self_cell in zip(row_in_excel[1:], row_in_self[1:])))
+
     def test_read_excel_template_equal_boundaries(self):
         template_sf = StyleFrame(
                         obj={
