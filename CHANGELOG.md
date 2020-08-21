@@ -1,3 +1,6 @@
+#### 3.0.5
+* Fixes github issue #81 - read excel as template headers height
+
 #### 3.0.4
 * Fixed style "shifts" when using `read_style=True` and `header=None` with `StyleFrame.read_excel`. Fixes github issue #80 
 
