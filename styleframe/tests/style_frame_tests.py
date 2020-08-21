@@ -37,7 +37,7 @@ class StyleFrameTest(unittest.TestCase):
         except OSError as ex:
             print(ex)
 
-    def export_and_get_default_sheet(self, save=False):
+    def export_and_get_default_sheet(self, save=False, **kwargs):
         self.sf.to_excel(excel_writer=self.ew, right_to_left=True, columns_to_hide=self.sf.columns[0],
                          row_to_add_filters=0, columns_and_rows_to_freeze='A2', allow_protection=True)
         if save:
@@ -337,6 +337,31 @@ class StyleFrameTest(unittest.TestCase):
         self.assertTrue(all(self_cell.style == Styler.from_openpyxl_style(excel_cell.style, [])
                             for row_in_excel, row_in_self in zip(rows_in_excel, rows_in_self)
                             for excel_cell, self_cell in zip(row_in_excel[1:], row_in_self[1:])))
+
+    def test_read_excel_rows_height(self):
+        self.sf.set_row_height(rows=1, height=25)
+        self.sf.set_row_height(rows=2, height=15)
+        self.export_and_get_default_sheet(save=True)
+        sf_from_excel = StyleFrame.read_excel(TEST_FILENAME, read_style=True)
+
+        # Assert the number of rows with height is the length of our data plus 1 for headers row
+        self.assertEqual(len(sf_from_excel._rows_height), len(self.sf) + 1)
+        self.assertEqual(sf_from_excel._rows_height[1], 25)
+        self.assertEqual(sf_from_excel._rows_height[2], 15)
+        self.assertEqual(sf_from_excel._rows_height[3], None)
+        self.assertEqual(sf_from_excel._rows_height[4], None)
+
+    def test_read_excel_columns_width(self):
+        self.sf.set_column_width(columns='a', width=25)
+        self.sf.set_column_width(columns='b', width=15)
+        self.export_and_get_default_sheet(save=True)
+        sf_from_excel = StyleFrame.read_excel(TEST_FILENAME, read_style=True)
+
+        # Assert the number of rows with height is the length of our data plus 1 for headers row
+        self.assertEqual(len(sf_from_excel._columns_width), len(self.sf.columns))
+        print(sf_from_excel._columns_width)
+        self.assertEqual(sf_from_excel._columns_width['a'], 25)
+        self.assertEqual(sf_from_excel._columns_width['b'], 15)
 
     def test_read_excel_with_style_openpyxl_objects(self):
         self.export_and_get_default_sheet(save=True)
