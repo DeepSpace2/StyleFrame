@@ -37,7 +37,7 @@ class StyleFrameTest(unittest.TestCase):
         except OSError as ex:
             print(ex)
 
-    def export_and_get_default_sheet(self, save=False, **kwargs):
+    def export_and_get_default_sheet(self, save=False):
         self.sf.to_excel(excel_writer=self.ew, right_to_left=True, columns_to_hide=self.sf.columns[0],
                          row_to_add_filters=0, columns_and_rows_to_freeze='A2', allow_protection=True)
         if save:
