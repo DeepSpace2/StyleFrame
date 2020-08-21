@@ -448,7 +448,6 @@ class StyleFrameTest(unittest.TestCase):
 
         # Assert the number of rows with height is the length of our data plus 1 for headers row
         self.assertEqual(len(sf_from_excel._columns_width), len(self.sf.columns))
-        print(sf_from_excel._columns_width)
         self.assertEqual(sf_from_excel._columns_width['a'], 25)
         self.assertEqual(sf_from_excel._columns_width['b'], 15)
 
