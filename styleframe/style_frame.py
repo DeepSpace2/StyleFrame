@@ -190,6 +190,11 @@ class StyleFrame(object):
                 raise TypeError("'sheet_name' must be a string or int, got {} instead".format(type(sheet_name)))
             theme_colors = _get_scheme_colors_from_excel(wb)
 
+            # Set the headers row height
+            if header_arg is not None:
+                headers_row_idx = header_arg + 1
+                sf._rows_height[headers_row_idx] = sheet.row_dimensions[headers_row_idx].height
+
             get_style_object = partial(_get_style_object, sheet=sheet, theme_colors=theme_colors)
             for col_index, col_name in enumerate(sf.columns):
                 col_index_in_excel = col_index + 1
