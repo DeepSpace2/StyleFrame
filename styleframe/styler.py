@@ -8,7 +8,35 @@ from pprint import pformat
 
 class Styler(object):
     """
-    Creates openpyxl Style to be applied
+    Used to represent a style
+
+    :param bg_color: The background color
+    :type bg_color: str: one of :ref:`utils.colors <utils.colors_>`, hex string or color name ie `'yellow'` Excel supports
+    :param bool bold: If `True`, a bold typeface is used
+    :param font: The font to use
+    :type font: str: one of :ref:`utils.fonts <utils.fonts_>` or other font name Excel supports
+    :param int font_size: The font size
+    :param font_color: The font color
+    :type font_color: str: one of :ref:`utils.colors <utils.colors_>`, hex string or color name ie `'yellow'` Excel supports
+    :param number_format: The format of the cell's value
+    :type number_format: str: one of :ref:`utils.number_formats <utils.number_formats_>` or any other format Excel supports
+    :param bool protection: If `True`, the cell/column will be write-protected
+    :param underline: The underline type
+    :type underline: str: one of :ref:`utils.underline <utils.underline_>` or any other underline Excel supports
+    :param border_type: The border type
+    :type border_type: str: one of :ref:`utils.borders <utils.borders_>` or any other border type Excel supports
+    :param horizontal_alignment: Text's horizontal alignment
+    :type horizontal_alignment: str: one of :ref:`utils.horizontal_alignments <utils.horizontal_alignments_>` or any other horizontal alignment Excel supports
+    :param vertical_alignment: Text's vertical alignment
+    :type vertical_alignment: str: one of :ref:`utils.vertical_alignments <utils.vertical_alignments_>` or any other vertical alignment Excel supports
+    :param bool wrap_text:
+    :param bool shrink_to_fit:
+    :param fill_pattern_type: Cells's fill pattern type
+    :type fill_pattern_type: str: one of :ref:`utils.fill_pattern_types <utils.fill_pattern_types_>` or any other fill pattern type Excel supports
+    :param int indent:
+    :param str comment_author:
+    :param str comment_text:
+    :param int text_rotation: Integer in the range 0 - 180
     """
 
     cache = {}
@@ -80,6 +108,7 @@ class Styler(object):
     def default_header_style(cls):
         return cls(bold=True)
 
+    # TODO add docstring, maybe also to other methods?
     def to_openpyxl_style(self):
         try:
             openpyxl_style = self.cache[self]
@@ -170,6 +199,26 @@ class Styler(object):
 
     @classmethod
     def combine(cls, *styles):
+        """
+        Used to combine :ref:`Styler <styler-class>` objects. The right-most object has precedence.
+        For example:
+
+        ::
+
+            Styler.combine(Styler(bg_color='yellow', font_size=24), Styler(bg_color='blue'))
+
+        will return
+
+        ::
+
+            Styler(bg_color='blue', font_size=24)
+
+        :param styles: Iterable of Styler objects
+        :type styles: list or tuple or set
+        :return: self
+        :rtype: :ref:`Styler <styler-class>`
+        """
+
         return sum(styles, cls())
 
     create_style = to_openpyxl_style
