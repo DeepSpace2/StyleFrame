@@ -1,6 +1,10 @@
 API Documentation
 =================
 
+======
+styler
+======
+
 .. _styler-class:
 
 .. autoclass:: styleframe.styler.Styler
