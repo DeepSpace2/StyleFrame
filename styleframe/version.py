@@ -17,7 +17,7 @@ def get_all_versions():
     return _versions_
 
 
-_version_ = '2.0.5'
+_version_ = '3.0.5'
 _python_version_ = get_python_version()
 _pandas_version_ = get_pandas_version()
 _openpyxl_version_ = get_openpyxl_version()

@@ -1,3 +1,32 @@
+#### 3.0.5
+* Fixes github issue #81 - read excel as template headers height
+
+#### 3.0.4
+* Fixed style "shifts" when using `read_style=True` and `header=None` with `StyleFrame.read_excel`. Fixes github issue #80 
+
+#### 3.0.3
+No longer relying on openpyxl's colors definition. Related to github issue #73
+
+#### 3.0.2
+Hotfix release - setting maximum versions for dependencies. Related to github issue #73
+
+#### 3.0.1
+* **Removed Python 2.7 support**
+* **Added Python 3.8 support**
+* Renamed package name to `styleframe` (all lowercase) in accordance of PEP8
+* Added `.style` accessor. This allows for easy selection/indexing based on style, for example:
+  `sf.loc[sf['col_name'].style.bg_color == utils.colors.yellow]`
+  
+  or
+  
+  `sf.loc[~sf['col_name'].style.bold]`
+  
+* Added `default_grid` to `utils.borders` to allow usage of the default spreadsheet grid
+* Added `read_excel_as_template` method
+* Fixed a bug that prevented saving if `read_excel` was used with `use_openpxl_style=True`, see github issue #67
+* Allowing usage of pathlib.Path in `to_excel`, see github issue #69 
+* Added ability to execute the tests from the commandline: `styleframe --test`
+
 #### 2.0.5
 * `style_alternate_rows` can accept all arguments that `apply_style_by_indexes` accepts as kwargs.
 * Added `cols_to_style` argument to `apply_headers_style`
@@ -45,7 +74,7 @@
   where specific themes are used (See github issue #37).
 
 #### 1.5
-* Added `complement_style` and `complement_height` arguments to `StyleFrame.apply_indexes_by_style`
+* Added `complement_style` and `complement_height` arguments to `StyleFrame.apply_style_by_indexes`
 * Added support for comments
 * Renamed `Styler.create_style` method to `to_openpyxl_style` (`create_style` is still available for backward compatibility)
 * Fixed a bug not allowing to access StyleFrame columns by dot notation in case a column name is a number

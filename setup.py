@@ -24,7 +24,7 @@ def find_version(*file_paths):
 
 
 setup(
-    name='StyleFrame',
+    name='styleframe',
 
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
@@ -42,7 +42,7 @@ setup(
     author_email='deepspace2@gmail.com',
 
     entry_points={
-        'console_scripts': ['styleframe = StyleFrame.command_line.commandline:execute_from_command_line']
+        'console_scripts': ['styleframe = styleframe.command_line.commandline:execute_from_command_line']
     },
 
     # Choose your license
@@ -83,13 +83,5 @@ setup(
     # your project is installed. For an analysis of "install_requires" vs pip's
     # requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
-    install_requires=['openpyxl>=2.5', 'colour>=0.1.5', 'jsonschema', 'xlrd>=1.0.0'],
-    extras_require={
-        ':python_version <= "3.4"': [
-            'pandas >= 0.16.2, <= 0.22.*'
-        ],
-        ':python_version > "3.4"': [
-            'pandas >= 0.23.2'
-        ]
-    }
+    install_requires=['openpyxl>=2.5,<3.0.6', 'colour>=0.1.5,<0.2', 'jsonschema', 'xlrd>=1.0.0,<1.3.0', 'pandas<1.2.0']
 )
