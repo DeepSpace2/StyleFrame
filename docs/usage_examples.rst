@@ -19,7 +19,7 @@ blue background and a bold, sized 10 font:
                               cols_to_style=['col_a'],
                               styler_obj=Styler(bg_color=utils.colors.blue, bold=True, font_size=10))
 
-Creating ExcelWriter used to save the excel:
+Creating ExcelWriter object:
 ::
 
     ew = StyleFrame.ExcelWriter(r'C:\my_excel.xlsx')
