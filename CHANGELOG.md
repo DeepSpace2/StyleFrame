@@ -74,7 +74,7 @@ Hotfix release - setting maximum versions for dependencies. Related to github is
   where specific themes are used (See github issue #37).
 
 #### 1.5
-* Added `complement_style` and `complement_height` arguments to `StyleFrame.apply_indexes_by_style`
+* Added `complement_style` and `complement_height` arguments to `StyleFrame.apply_style_by_indexes`
 * Added support for comments
 * Renamed `Styler.create_style` method to `to_openpyxl_style` (`create_style` is still available for backward compatibility)
 * Fixed a bug not allowing to access StyleFrame columns by dot notation in case a column name is a number
