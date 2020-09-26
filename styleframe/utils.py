@@ -51,6 +51,8 @@ class number_formats(BaseDefClass):
     @staticmethod
     def decimal_with_num_of_digits(num_of_digits):
         """
+        .. versionadded:: 1.6
+
         :param int num_of_digits: Number of digits after the decimal point
         :return: A format string that represents a floating point number with the provided number of digits after the
             decimal point.
@@ -93,6 +95,8 @@ class colors(BaseDefClass):
 
 class fonts(BaseDefClass):
     """
+    .. versionadded:: 1.1
+
     :cvar str aegean: 'Aegean'
     :cvar str aegyptus: 'Aegyptus'
     :cvar str aharoni: 'Aharoni CLM'
@@ -203,6 +207,8 @@ class underline(BaseDefClass):
 
 class fill_pattern_types(BaseDefClass):
     """
+    .. versionadded:: 1.2
+
     :cvar str solid: 'solid'
     :cvar str dark_down: 'darkDown'
     :cvar str dark_gray: 'darkGray'

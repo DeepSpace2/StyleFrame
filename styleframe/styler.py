@@ -25,10 +25,16 @@ class Styler(object):
     :type underline: str: one of :ref:`utils.underline <utils.underline_>` or any other underline Excel supports
     :param border_type: The border type
     :type border_type: str: one of :ref:`utils.borders <utils.borders_>` or any other border type Excel supports
+
+    .. versionadded:: 1.2
+
     :param horizontal_alignment: Text's horizontal alignment
     :type horizontal_alignment: str: one of :ref:`utils.horizontal_alignments <utils.horizontal_alignments_>` or any other horizontal alignment Excel supports
     :param vertical_alignment: Text's vertical alignment
     :type vertical_alignment: str: one of :ref:`utils.vertical_alignments <utils.vertical_alignments_>` or any other vertical alignment Excel supports
+
+    .. versionadded:: 1.3
+
     :param bool wrap_text:
     :param bool shrink_to_fit:
     :param fill_pattern_type: Cells's fill pattern type
@@ -200,6 +206,9 @@ class Styler(object):
     @classmethod
     def combine(cls, *styles):
         """
+        .. _Styler.combine_:
+        .. versionadded:: 1.6
+
         Used to combine :ref:`Styler <styler-class>` objects. The right-most object has precedence.
         For example:
 

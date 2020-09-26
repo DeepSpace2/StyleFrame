@@ -145,7 +145,10 @@ class StyleFrame(object):
     @deprecated_kwargs(('sheetname',))
     def read_excel(cls, path, sheet_name=0, read_style=False, use_openpyxl_styles=False,
                    read_comments=False, **kwargs):
-        """Creates a StyleFrame object from an existing Excel.
+        """
+        .. _StyleFrame.read_excel_:
+
+        Creates a StyleFrame object from an existing Excel.
 
         .. note:: ``read_excel`` also accepts all arguments that ``pandas.read_excel`` accepts as kwargs.
 
@@ -250,9 +253,12 @@ class StyleFrame(object):
 
     @classmethod
     def read_excel_as_template(cls, path, df, use_df_boundaries=False, **kwargs):
-        """Create a StyleFrame object from an excel template with data of the given DataFrame.
+        """
+        .. versionadded:: 3.0.1
 
-        .. note:: ``read_excel_as_template`` also accepts all arguments that ``read_excel`` accepts as kwargs except for ``read_style`` which must be ``True``.
+        Create a StyleFrame object from an excel template with data of the given DataFrame.
+
+        .. note:: ``read_excel_as_template`` also accepts all arguments that :ref:`read_excel <StyleFrame.read_excel_>` accepts as kwargs except for ``read_style`` which must be ``True``.
 
         :param str path: The path to the Excel file to read.
         :param pandas.DataFrame df: The data to apply to the given template.
@@ -339,6 +345,9 @@ class StyleFrame(object):
         :param columns_and_rows_to_freeze: Column and row string to freeze.
             For example "C3" will freeze columns: A, B and rows: 1, 2.
         :type columns_and_rows_to_freeze: None or str
+
+        .. versionadded:: 1.4
+
         :param best_fit: single column, list, set or tuple of columns names to attempt to best fit the width for.
 
             .. note:: ``best_fit`` will attempt to calculate the correct column-width based on the longest value in each provided
@@ -541,9 +550,10 @@ class StyleFrame(object):
 
     def apply_style_by_indexes(self, indexes_to_style, styler_obj, cols_to_style=None, height=None,
                                complement_style=None, complement_height=None, overwrite_default_style=True):
-        """Applies a certain style to the provided indexes in the dataframe in the provided columns
+        """
+        .. _StyleFrame.apply_style_by_indexes_:
 
-        .. _apply_style_by_indexes_:
+        Applies a certain style to the provided indexes in the dataframe in the provided columns
 
         :param indexes_to_style: Indexes to which the provided style will be applied.
             Usually passed as pandas selecting syntax. For example, ``sf[sf['some_col'] = 20]``
@@ -554,14 +564,21 @@ class StyleFrame(object):
         :type cols_to_style: None or str or list[str] or tuple[str] or set[str]
         :param height: If provided, set height for rows whose indexes are in `indexes_to_style`.
         :type height: None or int or float
+
+        .. versionadded:: 1.5
+
         :param complement_style: `Styler` object that contains the style which will be applied to indexes not in `indexes_to_style`
         :type complement_style: None or :ref:`Styler <styler-class>`
         :param complement_height: Height for rows whose indexes are not in `indexes_to_style`. If not provided then
                 `height` will be used (if provided).
         :type complement_height: None or int or float
+
+        .. versionadded:: 1.6
+
         :param bool overwrite_default_style: If ``True``, the default style (the style used when initializing StyleFrame)
                 will be overwritten. If ``False`` then the default style and the provided style wil be combined using
-                Styler.combine method.
+                :ref:`Styler.combine <Styler.combine_>` method.
+
         :return: self
         :rtype: StyleFrame
         """
@@ -630,7 +647,7 @@ class StyleFrame(object):
         :type width: None or int or float
         :param bool overwrite_default_style: (bool) If ``True``, the default style (the style used when initializing StyleFrame)
                 will be overwritten. If ``False`` then the default style and the provided style wil be combined using
-                Styler.combine method.
+                :ref:`Styler.combine <Styler.combine_>` method.
         :return: self
         :rtype: StyleFrame
         """
@@ -673,9 +690,16 @@ class StyleFrame(object):
 
         :param styler_obj: A `Styler` object.
         :type styler_obj: :ref:`Styler <styler-class>`
+
+        .. versionadded:: 1.6.1
+
         :param bool style_index_header: If True then the style will also be applied to the header of the index column
+
+        .. versionadded:: 2.0.5
+
         :param cols_to_style: the columns to apply the style to, if not provided all the columns will be styled
         :type cols_to_style: None or str or list[str] or tuple[str] or set[str]
+
         :return: self
         :rtype: StyleFrame
         """
@@ -810,9 +834,12 @@ class StyleFrame(object):
         return sf
 
     def style_alternate_rows(self, styles, **kwargs):
-        """Applies the provided styles to rows in an alternating manner.
+        """
+        .. versionadded:: 1.2
 
-        .. note:: ``style_alternate_rows`` also accepts all arguments that :ref:`apply_style_by_indexes <apply_style_by_indexes_>` accepts as kwargs.
+        Applies the provided styles to rows in an alternating manner.
+
+        .. note:: ``style_alternate_rows`` also accepts all arguments that :ref:`apply_style_by_indexes <StyleFrame.apply_style_by_indexes_>` accepts as kwargs.
 
         :param styles: List, tuple or set of :ref:`Styler <styler-class>` objects to be applied to rows in an alternating manner
         :type styles: list[:ref:`Styler <styler-class>`] or tuple[:ref:`Styler <styler-class>`] or set[:ref:`Styler <styler-class>`]
