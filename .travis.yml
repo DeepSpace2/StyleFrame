@@ -15,6 +15,7 @@ cache: pip
 #   - PANDAS=latest
 jobs:
   allow_failures:
+    - python: 3.4
     - python: 3.9-dev
     - python: "nightly"
 install:
