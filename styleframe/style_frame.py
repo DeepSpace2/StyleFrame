@@ -27,13 +27,13 @@ except AttributeError:
 
 class StyleFrame(object):
     """
-    A wrapper class that wraps pandas.DataFrame and represent a stylized dataframe.
-    Stores container objects that have values and Styles that will be applied to excel
+    A wrapper class that wraps a :class:`pandas.DataFrame` object and represent a stylized dataframe.
+    Stores container objects that have values and styles that will be applied to excel
 
     :param obj: Any object that pandas' dataframe can be initialized with: an existing dataframe, a dictionary,
           a list of dictionaries or another StyleFrame.
-    :param styler_obj: A Styler object. Will be used as the default style of all cells.
-    :type styler_obj:
+    :param styler_obj: Will be used as the default style of all cells.
+    :type styler_obj: :class:`.Styler`
     """
     P_FACTOR = 1.3
     A_FACTOR = 13
@@ -146,11 +146,9 @@ class StyleFrame(object):
     def read_excel(cls, path, sheet_name=0, read_style=False, use_openpyxl_styles=False,
                    read_comments=False, **kwargs):
         """
-        .. _StyleFrame.read_excel_:
-
         Creates a StyleFrame object from an existing Excel.
 
-        .. note:: ``read_excel`` also accepts all arguments that ``pandas.read_excel`` accepts as kwargs.
+        .. note:: :meth:`read_excel` also accepts all arguments that :func:`pandas.read_excel` accepts as kwargs.
 
         :param str path: The path to the Excel file to read.
         :param sheetname:
@@ -159,9 +157,9 @@ class StyleFrame(object):
         :param sheet_name: The sheet name to read. If an integer is provided then it be used as a zero-based
                 sheet index. Default is 0.
         :type sheet_name: str or int
-        :param bool read_style: If `True` the sheet's style will be loaded to the returned StyleFrame object.
-        :param bool use_openpyxl_styles: If `True` (and `read_style` is also `True`) then the styles in the returned
-            StyleFrame object will be Openpyxl's style objects. If `False`, the styles will be :ref:`Styler <styler-class>` objects.
+        :param bool read_style: If ``True`` the sheet's style will be loaded to the returned StyleFrame object.
+        :param bool use_openpyxl_styles: If ``True`` (and `read_style` is also ``True``) then the styles in the returned
+            StyleFrame object will be Openpyxl's style objects. If ``False``, the styles will be :class:`.Styler` objects.
 
             .. note:: Using ``use_openpyxl_styles=False`` is useful if you are going to filter columns or rows by style, for example:
 
@@ -169,11 +167,11 @@ class StyleFrame(object):
 
                         sf = sf[[col for col in sf.columns if col.style.font == utils.fonts.arial]]
 
-        :param bool read_comments: If `True` (and `read_style` is also `True`) cells' comments will be loaded to the returned StyleFrame object. Note
+        :param bool read_comments: If ``True`` (and `read_style` is also ``True``) cells' comments will be loaded to the returned StyleFrame object. Note
                 that reading comments without reading styles is currently not supported.
 
         :return: StyleFrame object
-        :rtype: StyleFrame
+        :rtype: :class:`StyleFrame`
         """
 
         def _get_scheme_colors_from_excel(wb):
@@ -258,14 +256,15 @@ class StyleFrame(object):
 
         Create a StyleFrame object from an excel template with data of the given DataFrame.
 
-        .. note:: ``read_excel_as_template`` also accepts all arguments that :ref:`read_excel <StyleFrame.read_excel_>` accepts as kwargs except for ``read_style`` which must be ``True``.
+        .. note:: :meth:`read_excel_as_template` also accepts all arguments that :meth:`read_excel` accepts as kwargs except for ``read_style`` which must be ``True``.
 
         :param str path: The path to the Excel file to read.
-        :param pandas.DataFrame df: The data to apply to the given template.
+        :param df: The data to apply to the given template.
+        :type df: :class:`pandas.DataFrame`
         :param bool use_df_boundaries: If ``True`` the template will be cut according to the boundaries of the given DataFrame.
 
         :return: StyleFrame object
-        :rtype: StyleFrame
+        :rtype: :class:`StyleFrame`
         """
 
         sf = cls.read_excel(path=path, read_style=True, **kwargs)
@@ -321,6 +320,8 @@ class StyleFrame(object):
         Excel indexes format starts from index 1.
 
         :rtype: tuple
+
+        :meta private:
         """
 
         return tuple(range(1, len(self) + 2))
@@ -328,15 +329,15 @@ class StyleFrame(object):
     def to_excel(self, excel_writer='output.xlsx', sheet_name='Sheet1',
                  allow_protection=False, right_to_left=False, columns_to_hide=None, row_to_add_filters=None,
                  columns_and_rows_to_freeze=None, best_fit=None, **kwargs):
-        """Saves the dataframe to excel and applies the styles. See Pandas.DataFrame.to_excel documentation about other arguments
+        """Saves the dataframe to excel and applies the styles.
 
-        .. note:: ``to_excel`` also accepts all arguments that ``pandas.DataFrame.to_excel`` accepts as kwargs.
+        .. note:: :meth:`to_excel` also accepts all arguments that :meth:`pandas.DataFrame.to_excel` accepts as kwargs.
 
         :param excel_writer: File path or existing ExcelWriter
-        :type excel_writer: str or pandas.ExcelWriter or pathlib.Path
+        :type excel_writer: str or :class:`pandas.ExcelWriter` or :class:`pathlib.Path`
         :param str sheet_name: Name of sheet the StyleFrame will be exported to
         :param bool allow_protection: Allow to protect the cells that specified as protected. If used ``protection=True``
-            in a Styler object this must be set to `True`.
+            in a Styler object this must be set to ``True``.
         :param bool right_to_left: Makes the sheet right-to-left.
         :param columns_to_hide: Columns names to hide.
         :type columns_to_hide: None or str or list or tuple or set
@@ -363,7 +364,7 @@ class StyleFrame(object):
 
         :type best_fit: None or str or list or tuple or set
         :return: self
-        :rtype: StyleFrame
+        :rtype: :class:`StyleFrame`
 
         """
 
@@ -551,15 +552,18 @@ class StyleFrame(object):
     def apply_style_by_indexes(self, indexes_to_style, styler_obj, cols_to_style=None, height=None,
                                complement_style=None, complement_height=None, overwrite_default_style=True):
         """
-        .. _StyleFrame.apply_style_by_indexes_:
-
         Applies a certain style to the provided indexes in the dataframe in the provided columns
 
         :param indexes_to_style: Indexes to which the provided style will be applied.
-            Usually passed as pandas selecting syntax. For example, ``sf[sf['some_col'] = 20]``
+            Usually passed as pandas selecting syntax. For example,
+
+            ::
+
+                sf[sf['some_col'] = 20]
+
         :type indexes_to_style: list or tuple or int or Container
         :param styler_obj: `Styler` object that contains the style that will be applied to indexes in `indexes_to_style`
-        :type styler_obj: :ref:`Styler <styler-class>`
+        :type styler_obj: :class:`.Styler`
         :param cols_to_style: The column names to apply the provided style to. If ``None`` all columns will be styled.
         :type cols_to_style: None or str or list[str] or tuple[str] or set[str]
         :param height: If provided, set height for rows whose indexes are in `indexes_to_style`.
@@ -568,7 +572,7 @@ class StyleFrame(object):
         .. versionadded:: 1.5
 
         :param complement_style: `Styler` object that contains the style which will be applied to indexes not in `indexes_to_style`
-        :type complement_style: None or :ref:`Styler <styler-class>`
+        :type complement_style: None or :class:`.Styler`
         :param complement_height: Height for rows whose indexes are not in `indexes_to_style`. If not provided then
                 `height` will be used (if provided).
         :type complement_height: None or int or float
@@ -577,10 +581,10 @@ class StyleFrame(object):
 
         :param bool overwrite_default_style: If ``True``, the default style (the style used when initializing StyleFrame)
                 will be overwritten. If ``False`` then the default style and the provided style wil be combined using
-                :ref:`Styler.combine <Styler.combine_>` method.
+                :meth:`.Styler.combine` method.
 
         :return: self
-        :rtype: StyleFrame
+        :rtype: :class:`StyleFrame`
         """
 
         if not isinstance(styler_obj, Styler):
@@ -640,16 +644,16 @@ class StyleFrame(object):
         :param cols_to_style: The column names to style.
         :type cols_to_style: str or list or tuple or set
         :param styler_obj: A `Styler` object.
-        :type styler_obj: :ref:`Styler <styler-class>`
+        :type styler_obj: :class:`.Styler`
         :param bool style_header: If ``True``, the column(s) header will also be styled.
         :param bool use_default_formats: If ``True``, the default formats for date and times will be used.
         :param width: If provided, the new width for the specified columns.
         :type width: None or int or float
         :param bool overwrite_default_style: (bool) If ``True``, the default style (the style used when initializing StyleFrame)
                 will be overwritten. If ``False`` then the default style and the provided style wil be combined using
-                :ref:`Styler.combine <Styler.combine_>` method.
+                :meth:`.Styler.combine` method.
         :return: self
-        :rtype: StyleFrame
+        :rtype: :class:`StyleFrame`
         """
 
         if not isinstance(styler_obj, Styler):
@@ -688,8 +692,8 @@ class StyleFrame(object):
     def apply_headers_style(self, styler_obj, style_index_header=True, cols_to_style=None):
         """Apply style to the headers only
 
-        :param styler_obj: A `Styler` object.
-        :type styler_obj: :ref:`Styler <styler-class>`
+        :param styler_obj: The style to apply
+        :type styler_obj: :class:`.Styler`
 
         .. versionadded:: 1.6.1
 
@@ -701,7 +705,7 @@ class StyleFrame(object):
         :type cols_to_style: None or str or list[str] or tuple[str] or set[str]
 
         :return: self
-        :rtype: StyleFrame
+        :rtype: :class:`StyleFrame`
         """
 
         if not isinstance(styler_obj, Styler):
@@ -730,7 +734,7 @@ class StyleFrame(object):
         :param width: The new width for the specified columns.
         :type width: int or float
         :return: self
-        :rtype: StyleFrame
+        :rtype: :class:`StyleFrame`
         """
 
         if not isinstance(columns, (set, list, tuple, pd.Index)):
@@ -755,7 +759,7 @@ class StyleFrame(object):
         :param col_width_dict: A dictionary from column names to width.
         :type col_width_dict: dict[str, int or float]
         :return: self
-        :rtype: StyleFrame
+        :rtype: :class:`StyleFrame`
         """
 
         if not isinstance(col_width_dict, dict):
@@ -773,7 +777,7 @@ class StyleFrame(object):
         :param height: The new height for the specified indexes.
         :type height: int or float
         :return: self
-        :rtype: StyleFrame
+        :rtype: :class:`StyleFrame`
         """
 
         if not isinstance(rows, (set, list, tuple, pd.Index)):
@@ -800,7 +804,7 @@ class StyleFrame(object):
         :param row_height_dict: A dictionary from row indexes to height.
         :type row_height_dict: dict[int, int or float]
         :return: self
-        :rtype: StyleFrame
+        :rtype: :class:`StyleFrame`
         """
 
         if not isinstance(row_height_dict, dict):
@@ -815,7 +819,7 @@ class StyleFrame(object):
         :param dict columns: A dictionary from old columns names to new columns names.
         :param bool inplace: If ``False``, a new StyleFrame object will be returned. If ``True``, renames the columns inplace.
         :return: self if inplace is ``True``, new StyleFrame object is ``False``
-        :rtype: StyleFrame
+        :rtype: :class:`StyleFrame`
         """
 
         if not isinstance(columns, dict):
@@ -839,12 +843,12 @@ class StyleFrame(object):
 
         Applies the provided styles to rows in an alternating manner.
 
-        .. note:: ``style_alternate_rows`` also accepts all arguments that :ref:`apply_style_by_indexes <StyleFrame.apply_style_by_indexes_>` accepts as kwargs.
+        .. note:: :meth:`style_alternate_rows` also accepts all arguments that :meth:`apply_style_by_indexes` accepts as kwargs.
 
-        :param styles: List, tuple or set of :ref:`Styler <styler-class>` objects to be applied to rows in an alternating manner
-        :type styles: list[:ref:`Styler <styler-class>`] or tuple[:ref:`Styler <styler-class>`] or set[:ref:`Styler <styler-class>`]
+        :param styles: List, tuple or set of :class:`.Styler` objects to be applied to rows in an alternating manner
+        :type styles: list[:class:`.Styler`] or tuple[:class:`.Styler`] or set[:class:`.Styler`]
         :return: self
-        :rtype: StyleFrame
+        :rtype: :class:`StyleFrame`
 
         """
 
@@ -858,20 +862,20 @@ class StyleFrame(object):
                                                mid_type=None, mid_value=None, mid_color=None, columns_range=None):
         """
         :param start_type: The type for the minimum bound
-        :type start_type: str: one of :ref:`utils.conditional_formatting_types <utils.conditional_formatting_types_>` or any other type Excel supports
+        :type start_type: str: one of :class:`.utils.conditional_formatting_types` or any other type Excel supports
         :param start_value: The threshold for the minimum bound
         :param start_color: The color for the minimum bound
-        :type start_color: str: one of :ref:`utils.colors <utils.colors_>`, hex string or color name ie `'yellow'` Excel supports
+        :type start_color: str: one of :class:`.utils.colors`, hex string or color name ie `'yellow'` Excel supports
         :param end_type: The type for the maximum bound
-        :type end_type: str: one of :ref:`utils.conditional_formatting_types <utils.conditional_formatting_types_>` or any other type Excel supports
+        :type end_type: str: one of :class:`.utils.conditional_formatting_types` or any other type Excel supports
         :param end_value: The threshold for the maximum bound
         :param end_color: The color for the maximum bound
-        :type end_color: str: one of :ref:`utils.colors <utils.colors_>`, hex string or color name ie `'yellow'` Excel supports
+        :type end_color: str: one of :class:`.utils.colors`, hex string or color name ie `'yellow'` Excel supports
         :param mid_type: The type for the middle bound
-        :type mid_type: None or str: one of :ref:`utils.conditional_formatting_types <utils.conditional_formatting_types_>` or any other type Excel supports
+        :type mid_type: None or str: one of :class:`.utils.conditional_formatting_types` or any other type Excel supports
         :param mid_value: The threshold for the middle bound
         :param mid_color: The color for the middle bound
-        :type mid_color: None or str: one of :ref:`utils.colors <utils.colors_>`, hex string or color name ie `'yellow'` Excel supports
+        :type mid_color: None or str: one of :class:`.utils.colors`, hex string or color name ie `'yellow'` Excel supports
         :param columns_range: A two-elements list or tuple of columns to which the conditional formatting will be added
                 to.
                 If not provided at all the conditional formatting will be added to all columns.
@@ -880,7 +884,7 @@ class StyleFrame(object):
                 The provided columns can be a column name, letter or index.
         :type columns_range: None or list[str or int] or tuple[str or int])
         :return: self
-        :rtype: StyleFrame
+        :rtype: :class:`StyleFrame`
         """
 
         if columns_range is None:

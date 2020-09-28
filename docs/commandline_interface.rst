@@ -10,15 +10,14 @@ that lets you create an xlsx file from a json file.
 Usage
 -----
 
-====================================   =========================================================================
-Flag                                   Explanation
-====================================   =========================================================================
-``-v``                                 Displays the installed versions of styleframe and its dependencies
-``--json_path`` or ``--json-path``     Path to the json file
-``--json``                             The json string which defines the Excel file, see example below
-``--output_path`` or ``output-path``   Path to the output xlsx file. If not provided defaults to ``output.xlsx``
-``--test``                             Execute the tests
-====================================   =========================================================================
+.. csv-table::
+   :header: "Flag", "Explanation"
+
+    "``-v``", "Displays the installed versions of styleframe and its dependencies"
+    "``--json_path``/``--json-path``", "Path to the json file"
+    "``--json``", "The json string which defines the Excel file, see example below"
+    "``--output_path``/``--output-path``", "Path to the output xlsx file. If not provided defaults to ``output.xlsx``"
+    "``--test``", "Execute the tests"
 
 
 Usage Examples
@@ -254,7 +253,7 @@ An example JSON:
 style
 ^^^^^
 
-Corresponds to :ref:`Styler <styler-class>` class.
+Corresponds to :class:`.Styler` class.
 
 This entity uses the arguments of ``Styler.__init__()`` as keys.
 Any missing keys in the JSON will be given the same default values.
