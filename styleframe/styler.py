@@ -114,7 +114,6 @@ class Styler(object):
     def default_header_style(cls):
         return cls(bold=True)
 
-    # TODO add docstring, maybe also to other methods?
     def to_openpyxl_style(self):
         try:
             openpyxl_style = self.cache[self]

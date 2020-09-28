@@ -320,6 +320,8 @@ class StyleFrame(object):
         Excel indexes format starts from index 1.
 
         :rtype: tuple
+
+        :meta private:
         """
 
         return tuple(range(1, len(self) + 2))
