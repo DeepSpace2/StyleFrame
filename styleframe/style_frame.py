@@ -308,8 +308,14 @@ class StyleFrame(object):
 
     # noinspection PyPep8Naming
     @classmethod
-    def ExcelWriter(cls, path):
-        return pd.ExcelWriter(path, engine='openpyxl')
+    def ExcelWriter(cls, path, **kwargs):
+        """
+        A shortcut for :class:`pandas.ExcelWriter`, and accepts any argument it accepts except for ``engine``
+        """
+
+        if 'engine' in kwargs:
+            raise ValueError('`engine` argument for StyleFrame.ExcelWriter can not be set')
+        return pd.ExcelWriter(path, engine='openpyxl', **kwargs)
 
     @property
     def row_indexes(self):
