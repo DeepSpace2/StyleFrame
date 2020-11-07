@@ -23,6 +23,7 @@ A library that wraps pandas and openpyxl and allows easy styling of dataframes i
 &nbsp;&nbsp;&nbsp;&nbsp;- [Simple Example](#simple-example)    
 &nbsp;&nbsp;&nbsp;&nbsp;- [Advance Example](#advance-example)   
 5. [Commandline Interface](#commandline-interface)
+6. [Buy me a Pizza](#buy-me-a-pizza)
 
 
 ## Rationale
@@ -400,3 +401,9 @@ You can also use other arguments that Pandas' `"to_excel"` accepts.
 
 Refer to the <a href="http://styleframe.readthedocs.org/en/latest/" target="_blank">documentation</a>
 for more information.
+
+## Buy me a Pizza
+
+You made it all the way down here, cool! If you love StyleFrame and want to show your appreciation, consider buying me a slice of Pizza (or even just drop a comment). Anything will be greatly appreciated 🙂
+
+<a href="https://www.buymeacoffee.com/deepspace"><img src="https://img.buymeacoffee.com/button-api/?text=Buy me a Pizza&emoji=🍕&slug=deepspace&button_colour=5F7FFF&font_colour=ffffff&font_family=Comic&outline_colour=000000&coffee_colour=FFDD00"></a>
