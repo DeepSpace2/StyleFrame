@@ -445,6 +445,12 @@ class StyleFrame(object):
                 index_name_cell.style = self._index_header_style.to_openpyxl_style()
             for row_index, index in enumerate(self.data_df.index):
                 try:
+                    date_time_types_to_formats = {pd_timestamp: index.style.date_time_format,
+                                                  dt.datetime: index.style.date_time_format,
+                                                  dt.date: index.style.date_format,
+                                                  dt.time: index.style.time_format}
+                    index.style.number_format = date_time_types_to_formats.get(type(index.value),
+                                                                               index.style.number_format)
                     style_to_apply = index.style.to_openpyxl_style()
                 except AttributeError:
                     style_to_apply = index.style
@@ -466,6 +472,13 @@ class StyleFrame(object):
         # openpyxl's rows and cols start from 1,1 while the dataframe is 0,0
         for col_index, column in enumerate(self.data_df.columns):
             try:
+                date_time_types_to_formats = {pd_timestamp: column.style.date_time_format,
+                                              dt.datetime: column.style.date_time_format,
+                                              dt.date: column.style.date_format,
+                                              dt.time: column.style.time_format}
+
+                column.style.number_format = date_time_types_to_formats.get(type(column.value),
+                                                                            column.style.number_format)
                 style_to_apply = column.style.to_openpyxl_style()
             except AttributeError:
                 style_to_apply = Styler.from_openpyxl_style(column.style, [],
@@ -489,6 +502,13 @@ class StyleFrame(object):
                             data_df_style.wrap_text = False
                             data_df_style.shrink_to_fit = False
                     try:
+                        date_time_types_to_formats = {pd_timestamp: data_df_style.date_time_format,
+                                                      dt.datetime: data_df_style.date_time_format,
+                                                      dt.date: data_df_style.date_format,
+                                                      dt.time: data_df_style.time_format}
+
+                        data_df_style.number_format = date_time_types_to_formats.get(type(self.data_df.at[index,column].value),
+                                                                                     data_df_style.number_format)
                         style_to_apply = data_df_style.to_openpyxl_style()
                     except AttributeError:
                         style_to_apply = Styler.from_openpyxl_style(data_df_style, [],
@@ -602,12 +622,6 @@ class StyleFrame(object):
         elif isinstance(indexes_to_style, Container):
             indexes_to_style = pd.Index([indexes_to_style])
 
-        default_number_formats = {pd_timestamp: utils.number_formats.default_date_time_format,
-                                  dt.date: utils.number_formats.default_date_format,
-                                  dt.time: utils.number_formats.default_time_format}
-
-        orig_number_format = styler_obj.number_format
-
         if cols_to_style is not None and not isinstance(cols_to_style, (list, tuple, set)):
             cols_to_style = [cols_to_style]
         elif cols_to_style is None:
@@ -619,18 +633,9 @@ class StyleFrame(object):
             style_to_apply = Styler.combine(self._default_style, styler_obj)
 
         for index in indexes_to_style:
-            if orig_number_format == utils.number_formats.general:
-                style_to_apply.number_format = default_number_formats.get(type(index.value),
-                                                                          utils.number_formats.general)
             index.style = style_to_apply
-
             for col in cols_to_style:
-                cell = self.iloc[self.index.get_loc(index), self.columns.get_loc(col)]
-                if orig_number_format == utils.number_formats.general:
-                    style_to_apply.number_format = default_number_formats.get(type(cell.value),
-                                                                              utils.number_formats.general)
-
-                cell.style = style_to_apply
+                self.iloc[self.index.get_loc(index), self.columns.get_loc(col)].style = style_to_apply
 
         if height:
             # Add offset 2 since rows do not include the headers and they starts from 1 (not 0).
