@@ -491,7 +491,7 @@ class StyleFrame(object):
                 if hasattr(column.style, 'comment') and column.style.comment is not None:
                     column_header_cell.comment = column.style.comment
             for row_index, index in enumerate(self.data_df.index):
-                current_cell = sheet.cell(row=row_index + startrow + 2, column=col_index + startcol + 1)
+                current_cell = sheet.cell(row=row_index + startrow + (2 if header else 1), column=col_index + startcol + 1)
                 data_df_style = self.data_df.at[index, column].style
                 try:
                     if '=HYPERLINK' in str(current_cell.value):
