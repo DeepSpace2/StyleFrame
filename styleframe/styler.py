@@ -74,20 +74,27 @@ class Styler(object):
                 color_str = utils.colors.get(color_str, default_color)
             return color_str
 
+        if border_type == utils.borders.default_grid:
+            if bg_color is not None or fill_pattern_type != utils.fill_pattern_types.solid:
+                raise ValueError('`bg_color`or `fill_pattern_type` conflict with border_type={}'.format(utils.borders.default_grid))
+            self.border_type = None
+            self.fill_pattern_type = None
+        else:
+            self.border_type = border_type
+            self.fill_pattern_type = fill_pattern_type
+
         self.bold = bold
         self.font = font
         self.font_size = font_size
         self.number_format = number_format
         self.protection = protection
         self.underline = underline
-        self.border_type = border_type
         self.horizontal_alignment = horizontal_alignment
         self.vertical_alignment = vertical_alignment
         self.bg_color = get_color_from_string(bg_color, default_color=utils.colors.white)
         self.font_color = get_color_from_string(font_color, default_color=utils.colors.black)
         self.shrink_to_fit = shrink_to_fit
         self.wrap_text = wrap_text
-        self.fill_pattern_type = fill_pattern_type
         self.indent = indent
         self.comment_author = comment_author
         self.comment_text = comment_text
@@ -95,12 +102,6 @@ class Styler(object):
         self.date_format = date_format
         self.time_format = time_format
         self.date_time_format = date_time_format
-
-        if self.border_type == utils.borders.default_grid:
-            if self.bg_color is not None:
-                raise ValueError('bg_color and border_type={} can not be used together'.format(utils.borders.default_grid))
-            self.border_type = None
-            self.fill_pattern_type = None
 
     def __eq__(self, other):
         if not isinstance(other, self.__class__):
