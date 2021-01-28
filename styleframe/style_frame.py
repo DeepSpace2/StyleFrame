@@ -308,8 +308,8 @@ class StyleFrame(object):
 
     # noinspection PyPep8Naming
     @classmethod
-    def ExcelWriter(cls, path):
-        return pd.ExcelWriter(path, engine='openpyxl')
+    def ExcelWriter(cls, path, mode="w"):
+        return pd.ExcelWriter(path, engine='openpyxl', mode=mode)
 
     @property
     def row_indexes(self):
