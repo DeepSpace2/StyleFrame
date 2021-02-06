@@ -40,8 +40,7 @@ jobs:
           pip install codecov coverage
       - name: Running tests Python ${{ matrix.python-version }}
         run: |
-          cd styleframe/tests/
-          coverage run tests.py
+          coverage run -m unittest discover
           coverage xml
       - name: Uploading coverage Python ${{ matrix.python-version }}
         uses: codecov/codecov-action@v1
