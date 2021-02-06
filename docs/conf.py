@@ -8,7 +8,7 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.intersphinx',
 ]
-html_theme = 'furo'
+html_theme = 'sphinx_rtd_theme'
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3', None),
     'pandas': ('https://pandas.pydata.org/docs/', None)
