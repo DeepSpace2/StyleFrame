@@ -1,8 +1,8 @@
 import argparse
 import unittest
-import sys
 import os
 
+from contextlib import suppress
 from unittest.mock import patch
 
 from styleframe import CommandLineInterface, Styler, utils
@@ -21,10 +21,8 @@ class CommandlineInterfaceTest(unittest.TestCase):
         cls.sheet_1_col_b_cell_4_style = Styler(bold=True, font=utils.fonts.arial, font_size=16).to_openpyxl_style()
 
     def tearDown(self):
-        try:
+        with suppress(OSError):
             os.remove(TEST_FILENAME)
-        except OSError as ex:
-            print(ex)
 
     # noinspection PyUnresolvedReferences
     def test_parse_as_json(self):
