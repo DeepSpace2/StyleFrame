@@ -35,7 +35,7 @@ class CommandlineInterfaceTest(unittest.TestCase):
         self.assertEqual(cli.Sheet1_sf.iloc[1, loc_col_b].style.to_openpyxl_style(), self.sheet_1_col_b_cell_4_style)
 
     def test_load_from_json_invalid_args(self):
-        with self.assertRaises(TypeError):
+        with self.assertRaises((TypeError, ValueError)):
             CommandLineInterface()._load_from_json()
 
     # noinspection PyUnresolvedReferences
