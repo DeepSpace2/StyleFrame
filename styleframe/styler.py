@@ -104,9 +104,7 @@ class Styler(object):
         self.date_time_format = date_time_format
 
     def __eq__(self, other):
-        if not isinstance(other, self.__class__):
-            return False
-        return self.__dict__ == other.__dict__
+        return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
 
     def __hash__(self):
         return hash(tuple((k, v) for k, v in sorted(self.__dict__.items())))
