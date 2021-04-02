@@ -5,7 +5,7 @@ import pandas as pd
 
 from functools import partial
 
-from .deprecations import deprecated_kwargs
+from .deprecations import deprecated_kwargs, deprecated_prop
 from . import utils
 from copy import deepcopy
 from collections import OrderedDict
@@ -38,6 +38,11 @@ class StyleFrame(object):
     P_FACTOR = 1.3
     A_FACTOR = 13
 
+    @property
+    @deprecated_prop
+    def data_df(self):
+        return self._data_df 
+
     def __init__(self, obj, styler_obj=None):
         from_another_styleframe = False
         from_pandas_dataframe = False
@@ -46,25 +51,25 @@ class StyleFrame(object):
         if isinstance(obj, pd.DataFrame):
             from_pandas_dataframe = True
             if obj.empty:
-                self.data_df = deepcopy(obj)
+                self._data_df = deepcopy(obj)
             else:
-                self.data_df = obj.applymap(lambda x: Container(x, deepcopy(styler_obj)) if not isinstance(x, Container) else x)
+                self._data_df = obj.applymap(lambda x: Container(x, deepcopy(styler_obj)) if not isinstance(x, Container) else x)
         elif isinstance(obj, pd.Series):
-            self.data_df = obj.apply(lambda x: Container(x, deepcopy(styler_obj)) if not isinstance(x, Container) else x)
+            self._data_df = obj.apply(lambda x: Container(x, deepcopy(styler_obj)) if not isinstance(x, Container) else x)
         elif isinstance(obj, (dict, list)):
-            self.data_df = pd.DataFrame(obj).applymap(lambda x: Container(x, deepcopy(styler_obj)) if not isinstance(x, Container) else x)
+            self._data_df = pd.DataFrame(obj).applymap(lambda x: Container(x, deepcopy(styler_obj)) if not isinstance(x, Container) else x)
         elif isinstance(obj, StyleFrame):
-            self.data_df = deepcopy(obj.data_df)
+            self._data_df = deepcopy(obj._data_df)
             from_another_styleframe = True
         else:
             raise TypeError("{} __init__ doesn't support {}".format(type(self).__name__, type(obj).__name__))
-        self.data_df.columns = [Container(col, deepcopy(styler_obj)) if not isinstance(col, Container) else deepcopy(col)
-                                for col in self.data_df.columns]
-        self.data_df.index = [Container(index, deepcopy(styler_obj)) if not isinstance(index, Container) else deepcopy(index)
-                              for index in self.data_df.index]
+        self._data_df.columns = [Container(col, deepcopy(styler_obj)) if not isinstance(col, Container) else deepcopy(col)
+                                for col in self._data_df.columns]
+        self._data_df.index = [Container(index, deepcopy(styler_obj)) if not isinstance(index, Container) else deepcopy(index)
+                              for index in self._data_df.index]
 
         if from_pandas_dataframe:
-            self.data_df.index.name = obj.index.name
+            self._data_df.index.name = obj.index.name
 
         self._columns_width = obj._columns_width if from_another_styleframe else OrderedDict()
         self._rows_height = obj._rows_height if from_another_styleframe else OrderedDict()
@@ -73,39 +78,39 @@ class StyleFrame(object):
         self._default_style = styler_obj or Styler()
         self._index_header_style = obj._index_header_style if from_another_styleframe else self._default_style
 
-        self._known_attrs = {'at': self.data_df.at,
-                             'loc': self.data_df.loc,
-                             'iloc': self.data_df.iloc,
-                             'applymap': self.data_df.applymap,
-                             'groupby': self.data_df.groupby,
-                             'index': self.data_df.index,
-                             'fillna': self.data_df.fillna}
+        self._known_attrs = {'at': self._data_df.at,
+                             'loc': self._data_df.loc,
+                             'iloc': self._data_df.iloc,
+                             'applymap': self._data_df.applymap,
+                             'groupby': self._data_df.groupby,
+                             'index': self._data_df.index,
+                             'fillna': self._data_df.fillna}
 
     def __str__(self):
-        return str(self.data_df)
+        return str(self._data_df)
 
     def __len__(self):
-        return len(self.data_df)
+        return len(self._data_df)
 
     def __getitem__(self, item):
         if isinstance(item, pd.Series):
-            return self.data_df.__getitem__(item).index
+            return self._data_df.__getitem__(item).index
         if isinstance(item, list):
-            return StyleFrame(self.data_df.__getitem__(item))
-        return Series(self.data_df.__getitem__(item))
+            return StyleFrame(self._data_df.__getitem__(item))
+        return Series(self._data_df.__getitem__(item))
 
     def __setitem__(self, key, value):
         if isinstance(value, (Iterable, pd.Series)):
-            self.data_df.__setitem__(Container(key), list(map(Container, value)))
+            self._data_df.__setitem__(Container(key), list(map(Container, value)))
         else:
-            self.data_df.__setitem__(Container(key), Container(value))
+            self._data_df.__setitem__(Container(key), Container(value))
 
     def __delitem__(self, item):
-        return self.data_df.__delitem__(item)
+        return self._data_df.__delitem__(item)
 
     def __getattr__(self, attr):
-        if attr in self.data_df.columns:
-            return self.data_df[attr]
+        if attr in self._data_df.columns:
+            return self._data_df[attr]
         try:
             return self._known_attrs[attr]
         except KeyError:
@@ -113,11 +118,11 @@ class StyleFrame(object):
 
     @property
     def columns(self):
-        return self.data_df.columns
+        return self._data_df.columns
 
     @columns.setter
     def columns(self, columns):
-        self.data_df.columns = [col if isinstance(col, Container) else Container(value=col)
+        self._data_df.columns = [col if isinstance(col, Container) else Container(value=col)
                                 for col in columns]
 
     def _get_column_as_letter(self, sheet, column_to_convert, startcol=0):
@@ -125,8 +130,8 @@ class StyleFrame(object):
         if not isinstance(col, (int, str)):
             raise TypeError("column must be an index, column letter or column name")
         column_as_letter = None
-        if col in self.data_df.columns:  # column name
-            column_index = self.data_df.columns.get_loc(col) + startcol + 1  # worksheet columns index start from 1
+        if col in self._data_df.columns:  # column name
+            column_index = self._data_df.columns.get_loc(col) + startcol + 1  # worksheet columns index start from 1
             column_as_letter = cell.get_column_letter(column_index)
 
         # column index
@@ -290,7 +295,7 @@ class StyleFrame(object):
                   inplace=True)
 
         if use_df_boundaries:
-            sf.data_df = sf.data_df.iloc[:num_of_rows, :num_of_cols]
+            sf._data_df = sf._data_df.iloc[:num_of_rows, :num_of_cols]
             rows_height = OrderedDict()
             rows_height_range = range(num_of_rows)
             for i, (k, v) in enumerate(sf._rows_height.items()):
@@ -400,8 +405,8 @@ class StyleFrame(object):
 
         def get_range_of_cells(row_index=None, columns=None):
             if columns is None:
-                start_letter = self._get_column_as_letter(sheet, self.data_df.columns[0], startcol)
-                end_letter = self._get_column_as_letter(sheet, self.data_df.columns[-1], startcol)
+                start_letter = self._get_column_as_letter(sheet, self._data_df.columns[0], startcol)
+                end_letter = self._get_column_as_letter(sheet, self._data_df.columns[-1], startcol)
             else:
                 start_letter = self._get_column_as_letter(sheet, columns[0], startcol)
                 end_letter = self._get_column_as_letter(sheet, columns[-1], startcol)
@@ -416,16 +421,16 @@ class StyleFrame(object):
                                                                                 end_letter=end_letter,
                                                                                 end_index=end_index)
 
-        if len(self.data_df) > 0:
-            export_df = self.data_df.applymap(get_values)
+        if len(self._data_df) > 0:
+            export_df = self._data_df.applymap(get_values)
 
         else:
-            export_df = deepcopy(self.data_df)
+            export_df = deepcopy(self._data_df)
 
         export_df.columns = [col.value for col in export_df.columns]
         # noinspection PyTypeChecker
         export_df.index = [row_index.value for row_index in export_df.index]
-        export_df.index.name = self.data_df.index.name
+        export_df.index.name = self._data_df.index.name
 
         if isinstance(excel_writer, (str, pathlib.Path)):
             excel_writer = self.ExcelWriter(excel_writer)
@@ -437,13 +442,13 @@ class StyleFrame(object):
 
         sheet.sheet_view.rightToLeft = right_to_left
 
-        self.data_df.fillna(Container('NaN'), inplace=True)
+        self._data_df.fillna(Container('NaN'), inplace=True)
 
         if index:
-            if self.data_df.index.name:
+            if self._data_df.index.name:
                 index_name_cell = sheet.cell(row=startrow + 1, column=startcol + 1)
                 index_name_cell.style = self._index_header_style.to_openpyxl_style()
-            for row_index, index in enumerate(self.data_df.index):
+            for row_index, index in enumerate(self._data_df.index):
                 try:
                     date_time_types_to_formats = {pd_timestamp: index.style.date_time_format,
                                                   dt.datetime: index.style.date_time_format,
@@ -470,7 +475,7 @@ class StyleFrame(object):
 
         # Iterating over the dataframe's elements and applying their styles
         # openpyxl's rows and cols start from 1,1 while the dataframe is 0,0
-        for col_index, column in enumerate(self.data_df.columns):
+        for col_index, column in enumerate(self._data_df.columns):
             try:
                 date_time_types_to_formats = {pd_timestamp: column.style.date_time_format,
                                               dt.datetime: column.style.date_time_format,
@@ -490,9 +495,9 @@ class StyleFrame(object):
             else:
                 if hasattr(column.style, 'comment') and column.style.comment is not None:
                     column_header_cell.comment = column.style.comment
-            for row_index, index in enumerate(self.data_df.index):
+            for row_index, index in enumerate(self._data_df.index):
                 current_cell = sheet.cell(row=row_index + startrow + (2 if header else 1), column=col_index + startcol + 1)
-                data_df_style = self.data_df.at[index, column].style
+                data_df_style = self._data_df.at[index, column].style
                 try:
                     if '=HYPERLINK' in str(current_cell.value):
                         data_df_style.font_color = utils.colors.blue
@@ -507,7 +512,7 @@ class StyleFrame(object):
                                                       dt.date: data_df_style.date_format,
                                                       dt.time: data_df_style.time_format}
 
-                        data_df_style.number_format = date_time_types_to_formats.get(type(self.data_df.at[index,column].value),
+                        data_df_style.number_format = date_time_types_to_formats.get(type(self._data_df.at[index,column].value),
                                                                                      data_df_style.number_format)
                         style_to_apply = data_df_style.to_openpyxl_style()
                     except AttributeError:
@@ -525,7 +530,7 @@ class StyleFrame(object):
         if best_fit:
             if not isinstance(best_fit, (list, set, tuple)):
                 best_fit = [best_fit]
-            self.set_column_width_dict({column: (max(self.data_df[column].astype(str).str.len()) + self.A_FACTOR) * self.P_FACTOR
+            self.set_column_width_dict({column: (max(self._data_df[column].astype(str).str.len()) + self.A_FACTOR) * self.P_FACTOR
                                         for column in best_fit})
 
         for column in self._columns_width:
@@ -625,7 +630,7 @@ class StyleFrame(object):
         if cols_to_style is not None and not isinstance(cols_to_style, (list, tuple, set)):
             cols_to_style = [cols_to_style]
         elif cols_to_style is None:
-            cols_to_style = list(self.data_df.columns)
+            cols_to_style = list(self._data_df.columns)
 
         if overwrite_default_style:
             style_to_apply = deepcopy(styler_obj)
@@ -723,7 +728,7 @@ class StyleFrame(object):
             raise TypeError('styler_obj must be {}, got {} instead.'.format(Styler.__name__, type(styler_obj).__name__))
 
         if cols_to_style is None:
-            cols_to_style = self.data_df.columns
+            cols_to_style = self._data_df.columns
         if not isinstance(cols_to_style, (list, tuple, set, pd.Index)):
             cols_to_style = [cols_to_style]
         if not all(col in self.columns for col in cols_to_style):
@@ -839,9 +844,9 @@ class StyleFrame(object):
         sf = self if inplace else StyleFrame(self)
 
         new_columns = [col if col not in columns else Container(columns[col], col.style)
-                       for col in sf.data_df.columns]
+                       for col in sf._data_df.columns]
 
-        sf._known_attrs['columns'] = sf.data_df.columns = new_columns
+        sf._known_attrs['columns'] = sf._data_df.columns = new_columns
 
         sf._columns_width.update({new_col_name: sf._columns_width.pop(old_col_name)
                                   for old_col_name, new_col_name in columns.items()
@@ -899,7 +904,7 @@ class StyleFrame(object):
         """
 
         if columns_range is None:
-            columns_range = (self.data_df.columns[0], self.data_df.columns[-1])
+            columns_range = (self._data_df.columns[0], self._data_df.columns[-1])
 
         if not isinstance(columns_range, (list, tuple)) or len(columns_range) not in (1, 2):
             raise TypeError("'columns_range' should be a list or a tuple with 1 or 2 elements")

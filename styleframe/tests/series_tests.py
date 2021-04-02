@@ -27,28 +27,28 @@ class SeriesTest(unittest.TestCase):
 
         control_sf = StyleFrame({'a': list(range(0, 10, 2))})
         test_sf = StyleFrame(sf.loc[sf['a'].style.font == utils.fonts.arial].reset_index(drop=True))
-        assert_frame_equal(control_sf.data_df, test_sf.data_df)
+        assert_frame_equal(control_sf._data_df, test_sf._data_df)
 
         control_sf = StyleFrame({'a': list(range(0, 10, 2))})
         test_sf = StyleFrame(sf.loc[sf['a'].style.bg_color == utils.colors.yellow].reset_index(drop=True))
-        assert_frame_equal(control_sf.data_df, test_sf.data_df)
+        assert_frame_equal(control_sf._data_df, test_sf._data_df)
 
         control_sf = StyleFrame({'a': list(range(0, 10, 2))})
         test_sf = StyleFrame(sf.loc[(sf['a'].style.bg_color == utils.colors.yellow)
                                     &
                                     sf['a'].style.font].reset_index(drop=True))
-        assert_frame_equal(control_sf.data_df, test_sf.data_df)
+        assert_frame_equal(control_sf._data_df, test_sf._data_df)
 
         control_sf = StyleFrame({'a': list(range(1, 10, 2))})
         test_sf = StyleFrame(sf.loc[sf['a'].style.font == utils.fonts.calibri].reset_index(drop=True))
-        assert_frame_equal(control_sf.data_df, test_sf.data_df)
+        assert_frame_equal(control_sf._data_df, test_sf._data_df)
 
         control_sf = StyleFrame({'a': list(range(1, 10, 2))})
         test_sf = StyleFrame(sf.loc[~sf['a'].style.bold].reset_index(drop=True))
-        assert_frame_equal(control_sf.data_df, test_sf.data_df)
+        assert_frame_equal(control_sf._data_df, test_sf._data_df)
 
         control_sf = StyleFrame({'a': list(range(1, 10, 2))})
         test_sf = StyleFrame(sf.loc[~sf['a'].style.bold
                                     &
                                     (sf['a'].style.font == utils.fonts.calibri)].reset_index(drop=True))
-        assert_frame_equal(control_sf.data_df, test_sf.data_df)
+        assert_frame_equal(control_sf._data_df, test_sf._data_df)

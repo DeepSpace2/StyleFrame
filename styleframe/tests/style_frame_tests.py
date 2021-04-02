@@ -77,15 +77,15 @@ class StyleFrameTest(unittest.TestCase):
             StyleFrame({}, styler_obj=1)
 
     def test_len(self):
-        self.assertEqual(len(self.sf), len(self.sf.data_df))
+        self.assertEqual(len(self.sf), len(self.sf._data_df))
         self.assertEqual(len(self.sf), 3)
 
     def test_str(self):
-        self.assertEqual(str(self.sf), str(self.sf.data_df))
+        self.assertEqual(str(self.sf), str(self.sf._data_df))
 
     def test__getitem__(self):
-        self.assertEqual(self.sf['a'].tolist(), self.sf.data_df['a'].tolist())
-        self.assertTrue(self.sf.data_df[['a', 'b']].equals(self.sf[['a', 'b']].data_df))
+        self.assertEqual(self.sf['a'].tolist(), self.sf._data_df['a'].tolist())
+        self.assertTrue(self.sf._data_df[['a', 'b']].equals(self.sf[['a', 'b']]._data_df))
 
     def test__setitem__(self):
         self.sf['a'] = range(3)
@@ -97,7 +97,7 @@ class StyleFrameTest(unittest.TestCase):
         self.assertTrue(all(self.sf.applymap(lambda x: isinstance(x, Container)).all()))
 
     def test__getattr__(self):
-        self.assertEqual(self.sf.fillna, self.sf.data_df.fillna)
+        self.assertEqual(self.sf.fillna, self.sf._data_df.fillna)
         self.assertTrue(self.sf['a'].equals(self.sf.a))
 
         with self.assertRaises(AttributeError):
@@ -330,8 +330,8 @@ class StyleFrameTest(unittest.TestCase):
         # making sure content is the same
         self.assertTrue(all(list(self.sf[col]) == list(sf_from_excel[col]) for col in self.sf.columns))
 
-        rows_in_excel = sf_from_excel.data_df.itertuples()
-        rows_in_self = self.sf.data_df.itertuples()
+        rows_in_excel = sf_from_excel._data_df.itertuples()
+        rows_in_self = self.sf._data_df.itertuples()
 
         # making sure styles are the same
         self.assertTrue(all(self_cell.style == Styler.from_openpyxl_style(excel_cell.style, [])
@@ -344,8 +344,8 @@ class StyleFrameTest(unittest.TestCase):
         # making sure content is the same
         self.assertTrue(all(list(self.sf[col]) == list(sf_from_excel[col]) for col in self.sf.columns))
 
-        rows_in_excel = sf_from_excel.data_df.itertuples()
-        rows_in_self = self.sf.data_df.itertuples()
+        rows_in_excel = sf_from_excel._data_df.itertuples()
+        rows_in_self = self.sf._data_df.itertuples()
 
         # making sure styles are the same
         self.assertTrue(all(self_cell.style == Styler.from_openpyxl_style(excel_cell.style, [])
@@ -358,8 +358,8 @@ class StyleFrameTest(unittest.TestCase):
         # making sure content is the same
         self.assertTrue(all(list(self.sf[col]) == list(sf_from_excel[col]) for col in self.sf.columns))
 
-        rows_in_excel = sf_from_excel.data_df.itertuples()
-        rows_in_self = self.sf.data_df.itertuples()
+        rows_in_excel = sf_from_excel._data_df.itertuples()
+        rows_in_self = self.sf._data_df.itertuples()
 
         # making sure styles are the same
         self.assertTrue(all(self_cell.style == Styler.from_openpyxl_style(excel_cell.style, [])
@@ -374,8 +374,8 @@ class StyleFrameTest(unittest.TestCase):
         # making sure content is the same
         self.assertTrue(all(list(self.sf[col]) == list(sf_from_excel[col]) for col in self.sf.columns))
 
-        rows_in_excel = sf_from_excel.data_df.itertuples()
-        rows_in_self = self.sf.data_df.itertuples()
+        rows_in_excel = sf_from_excel._data_df.itertuples()
+        rows_in_self = self.sf._data_df.itertuples()
 
         # making sure styles are the same
         self.assertTrue(all(excel_cell.style == self_cell.style
@@ -389,8 +389,8 @@ class StyleFrameTest(unittest.TestCase):
         # making sure content is the same
         self.assertTrue(all(list(self.sf[col]) == list(sf_from_excel[col]) for col in self.sf.columns))
 
-        rows_in_excel = sf_from_excel.data_df.itertuples()
-        rows_in_self = self.sf.data_df.itertuples()
+        rows_in_excel = sf_from_excel._data_df.itertuples()
+        rows_in_self = self.sf._data_df.itertuples()
 
         # making sure styles are the same
         self.assertTrue(all(self_cell.style == Styler.from_openpyxl_style(excel_cell.style, [])
@@ -403,8 +403,8 @@ class StyleFrameTest(unittest.TestCase):
         # making sure content is the same
         self.assertTrue(all(list(self.sf[col]) == list(sf_from_excel[col]) for col in self.sf.columns))
 
-        rows_in_excel = sf_from_excel.data_df.itertuples()
-        rows_in_self = self.sf.data_df.itertuples()
+        rows_in_excel = sf_from_excel._data_df.itertuples()
+        rows_in_self = self.sf._data_df.itertuples()
 
         # making sure styles are the same
         self.assertTrue(all(excel_cell.style == self_cell.style
@@ -413,14 +413,14 @@ class StyleFrameTest(unittest.TestCase):
 
     def test_read_excel_with_style_header_arg_none(self):
         self.sf = StyleFrame({0: ['A1', 'A2', 'A3', 'A4', 'A5']})
-        self.sf.apply_style_by_indexes(self.sf[self.sf.data_df[0].isin(('A2', 'A5'))], Styler(bold=True))
+        self.sf.apply_style_by_indexes(self.sf[self.sf._data_df[0].isin(('A2', 'A5'))], Styler(bold=True))
         self.export_and_get_default_sheet(save=True)
         sf_from_excel = StyleFrame.read_excel(TEST_FILENAME, read_style=True, header=None)
         # making sure content is the same
         self.assertTrue(all(list(self.sf[col]) == list(sf_from_excel[col])[1:] for col in self.sf.columns))
 
-        rows_in_excel = list(sf_from_excel.data_df.itertuples())
-        rows_in_self = self.sf.data_df.itertuples()
+        rows_in_excel = list(sf_from_excel._data_df.itertuples())
+        rows_in_self = self.sf._data_df.itertuples()
 
         # making sure styles are the same
         self.assertTrue(all(excel_cell.style == self_cell.style
@@ -471,7 +471,7 @@ class StyleFrameTest(unittest.TestCase):
                 )
         sf_from_template = StyleFrame.read_excel_as_template(path=TEST_FILENAME, df=df, use_df_boundaries=False,
                                                              index_col=0, read_comments=True)
-        for template_rows, sf_rows in zip(template_sf.data_df.itertuples(), sf_from_template.data_df.itertuples()):
+        for template_rows, sf_rows in zip(template_sf._data_df.itertuples(), sf_from_template._data_df.itertuples()):
             for template_cell, actual_cell in zip(template_rows, sf_rows):
                 self.assertEqual(template_cell.style, actual_cell.style,
                                  'Different styles in template cell {template_cell} with style {template_style}'
@@ -481,7 +481,7 @@ class StyleFrameTest(unittest.TestCase):
                                  ))
 
         # Assert values are equals to df and not to the original values from template
-        assert_frame_equal(sf_from_template.data_df, df,
+        assert_frame_equal(sf_from_template._data_df, df,
                            check_index_type=False,
                            check_dtype=False,
                            check_column_type=False)
@@ -543,7 +543,7 @@ class StyleFrameTest(unittest.TestCase):
                 )
         sf_from_template = StyleFrame.read_excel_as_template(path=TEST_FILENAME, df=df, use_df_boundaries=False,
                                                              index_col=0, read_comments=True)
-        for template_rows, sf_rows in zip(template_sf.data_df.itertuples(), sf_from_template.data_df.itertuples()):
+        for template_rows, sf_rows in zip(template_sf._data_df.itertuples(), sf_from_template._data_df.itertuples()):
             for template_cell, actual_cell in zip(template_rows, sf_rows):
                 self.assertEqual(template_cell.style, actual_cell.style,
                                  'Different styles in template cell {template_cell} with style {template_style}'
@@ -553,7 +553,7 @@ class StyleFrameTest(unittest.TestCase):
                                  ))
 
         # Assert values are equals to df and not to the original values from template
-        assert_frame_equal(sf_from_template.data_df, df,
+        assert_frame_equal(sf_from_template._data_df, df,
                            check_index_type=False,
                            check_dtype=False,
                            check_column_type=False)

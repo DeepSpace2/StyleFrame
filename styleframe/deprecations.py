@@ -2,8 +2,17 @@ import warnings
 
 from functools import wraps
 
-funcs_to_deprecated_kwargs = {'read_excel': {'sheetname': 'sheet_name'}}
+funcs_to_deprecated_kwargs = {
+    'data_df': {
+        'self': ''
+    }
+}
 
+properties_to_deprecated_warnings = {
+    'data_df': 'data_df is deprecated to emphasize that all data-mangling operations\n'
+               'should be performed on a DataFrame object before creating a StyleFrame.\n'
+               'If you know what you are doing change your code to use _data_df directly.'
+}
 
 # noinspection PyUnusedLocal
 def formatwarning(message, category, filename, lineno, file=None, line=None):
@@ -24,6 +33,15 @@ def deprecated_kwargs(deprecated_kwargs):
             return func(*args, **kwargs)
         return inner
     return wrapper
+
+
+def deprecated_prop(prop):
+    @wraps(prop)
+    def inner(*args, **kwargs):
+        warnings.warn('{} is deprecated. {}'.format(prop.__name__, properties_to_deprecated_warnings[prop.__name__]),
+                      DeprecationWarning, stacklevel=2)
+        return prop(*args, **kwargs)
+    return inner
 
 
 warnings.formatwarning = formatwarning
