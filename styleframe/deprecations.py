@@ -3,9 +3,7 @@ import warnings
 from functools import wraps
 
 funcs_to_deprecated_kwargs = {
-    'data_df': {
-        'self': ''
-    }
+
 }
 
 properties_to_deprecated_warnings = {
