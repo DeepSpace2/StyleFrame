@@ -142,7 +142,6 @@ class StyleFrame(object):
         return column_as_letter
 
     @classmethod
-    @deprecated_kwargs(('sheetname',))
     def read_excel(cls, path, sheet_name=0, read_style=False, use_openpyxl_styles=False,
                    read_comments=False, **kwargs):
         """
@@ -154,6 +153,8 @@ class StyleFrame(object):
         :param sheetname:
               .. deprecated:: 1.6
                  Use ``sheet_name`` instead.
+              .. versionchanged:: 4.0
+                 Removed
         :param sheet_name: The sheet name to read. If an integer is provided then it be used as a zero-based
                 sheet index. Default is 0.
         :type sheet_name: str or int
@@ -229,7 +230,6 @@ class StyleFrame(object):
 
                 sf._columns_width[col_name] = sheet.column_dimensions[sf._get_column_as_letter(sheet, col_name)].width
 
-        sheet_name = kwargs.pop('sheetname', sheet_name)
         header_arg = kwargs.get('header', 0)
         if read_style and isinstance(header_arg, Iterable):
             raise ValueError('Not supporting multiple index columns with read style.')
