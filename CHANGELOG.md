@@ -1,3 +1,12 @@
+#### 4.0
+* **Removed Python 3.4 support**
+* **Removed Python 3.5 support**
+* **Added Python 3.9 support**
+* Allowing `StyleFrame.ExcelWriter` to accept any argument (except for `engine`) that `pandas.ExcelWriter` accepts
+* Allowing customizing formats of `date`, `time` and `datetime` objects when creating `Styler` instances
+* Fixed rows mis-alignment issue when calling `to_excel` with `header=False` ([GitHub issue #88](https://github.com/DeepSpace2/StyleFrame/issues/88))
+* `read_excel` does not accept `sheetname` argument anymore (was deprecated since version 1.6). Use `sheet_name` instead.
+
 #### 3.0.6
 * Fixes [GitHub issue #94](https://github.com/DeepSpace2/StyleFrame/issues/94) - Passing `border_type=utils.borders.default_grid` to `Styler`
 

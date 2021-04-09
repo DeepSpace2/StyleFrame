@@ -6,7 +6,7 @@ from openpyxl.comments import Comment
 from pprint import pformat
 
 
-class Styler(object):
+class Styler:
     """
     Used to represent a style
 
@@ -43,6 +43,18 @@ class Styler(object):
     :param str comment_author:
     :param str comment_text:
     :param int text_rotation: Integer in the range 0 - 180
+
+    .. versionadded:: 4.0
+
+    :param date_format:
+    :type date_format: str: one of :class:`.utils.number_formats` or any other format Excel supports
+    :param time_format:
+    :type time_format: str: one of :class:`.utils.number_formats` or any other format Excel supports
+    :param date_time_format:
+    :type date_time_format: str: one of :class:`.utils.number_formats` or any other format Excel supports
+
+    .. note:: For any of ``date_format``, ``time_format`` and ``date_time_format`` to take effect, the value being
+              styled must be an actual ``date``/``time``/``datetime`` object.
     """
 
     cache = {}
@@ -52,7 +64,8 @@ class Styler(object):
                  border_type=utils.borders.thin, horizontal_alignment=utils.horizontal_alignments.center,
                  vertical_alignment=utils.vertical_alignments.center, wrap_text=True, shrink_to_fit=True,
                  fill_pattern_type=utils.fill_pattern_types.solid, indent=0.0, comment_author=None, comment_text=None,
-                 text_rotation=0):
+                 text_rotation=0, date_format=utils.number_formats.date,
+                 time_format=utils.number_formats.time_24_hours, date_time_format=utils.number_formats.date_time):
 
         def get_color_from_string(color_str, default_color=None):
             if color_str and color_str.startswith('#'):
@@ -86,11 +99,12 @@ class Styler(object):
         self.comment_author = comment_author
         self.comment_text = comment_text
         self.text_rotation = text_rotation
+        self.date_format = date_format
+        self.time_format = time_format
+        self.date_time_format = date_time_format
 
     def __eq__(self, other):
-        if not isinstance(other, self.__class__):
-            return False
-        return self.__dict__ == other.__dict__
+        return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
 
     def __hash__(self):
         return hash(tuple((k, v) for k, v in sorted(self.__dict__.items())))
@@ -232,7 +246,7 @@ class Styler(object):
     create_style = to_openpyxl_style
 
 
-class ColorScaleConditionalFormatRule(object):
+class ColorScaleConditionalFormatRule:
     """Creates a color scale conditional format rule. Wraps openpyxl's ColorScaleRule.
     Mostly should not be used directly, but through StyleFrame.add_color_scale_conditional_formatting
     """

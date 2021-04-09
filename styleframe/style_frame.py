@@ -25,7 +25,7 @@ except AttributeError:
     pd_timestamp = pd.tslib.Timestamp
 
 
-class StyleFrame(object):
+class StyleFrame:
     """
     A wrapper class that wraps a :class:`pandas.DataFrame` object and represent a stylized dataframe.
     Stores container objects that have values and styles that will be applied to excel
@@ -142,7 +142,6 @@ class StyleFrame(object):
         return column_as_letter
 
     @classmethod
-    @deprecated_kwargs(('sheetname',))
     def read_excel(cls, path, sheet_name=0, read_style=False, use_openpyxl_styles=False,
                    read_comments=False, **kwargs):
         """
@@ -154,6 +153,8 @@ class StyleFrame(object):
         :param sheetname:
               .. deprecated:: 1.6
                  Use ``sheet_name`` instead.
+              .. versionchanged:: 4.0
+                 Removed
         :param sheet_name: The sheet name to read. If an integer is provided then it be used as a zero-based
                 sheet index. Default is 0.
         :type sheet_name: str or int
@@ -229,7 +230,6 @@ class StyleFrame(object):
 
                 sf._columns_width[col_name] = sheet.column_dimensions[sf._get_column_as_letter(sheet, col_name)].width
 
-        sheet_name = kwargs.pop('sheetname', sheet_name)
         header_arg = kwargs.get('header', 0)
         if read_style and isinstance(header_arg, Iterable):
             raise ValueError('Not supporting multiple index columns with read style.')
@@ -308,8 +308,14 @@ class StyleFrame(object):
 
     # noinspection PyPep8Naming
     @classmethod
-    def ExcelWriter(cls, path):
-        return pd.ExcelWriter(path, engine='openpyxl')
+    def ExcelWriter(cls, path, **kwargs):
+        """
+        A shortcut for :class:`pandas.ExcelWriter`, and accepts any argument it accepts except for ``engine``
+        """
+
+        if 'engine' in kwargs:
+            raise ValueError('`engine` argument for StyleFrame.ExcelWriter can not be set')
+        return pd.ExcelWriter(path, engine='openpyxl', **kwargs)
 
     @property
     def row_indexes(self):
@@ -439,6 +445,12 @@ class StyleFrame(object):
                 index_name_cell.style = self._index_header_style.to_openpyxl_style()
             for row_index, index in enumerate(self.data_df.index):
                 try:
+                    date_time_types_to_formats = {pd_timestamp: index.style.date_time_format,
+                                                  dt.datetime: index.style.date_time_format,
+                                                  dt.date: index.style.date_format,
+                                                  dt.time: index.style.time_format}
+                    index.style.number_format = date_time_types_to_formats.get(type(index.value),
+                                                                               index.style.number_format)
                     style_to_apply = index.style.to_openpyxl_style()
                 except AttributeError:
                     style_to_apply = index.style
@@ -460,6 +472,13 @@ class StyleFrame(object):
         # openpyxl's rows and cols start from 1,1 while the dataframe is 0,0
         for col_index, column in enumerate(self.data_df.columns):
             try:
+                date_time_types_to_formats = {pd_timestamp: column.style.date_time_format,
+                                              dt.datetime: column.style.date_time_format,
+                                              dt.date: column.style.date_format,
+                                              dt.time: column.style.time_format}
+
+                column.style.number_format = date_time_types_to_formats.get(type(column.value),
+                                                                            column.style.number_format)
                 style_to_apply = column.style.to_openpyxl_style()
             except AttributeError:
                 style_to_apply = Styler.from_openpyxl_style(column.style, [],
@@ -472,7 +491,7 @@ class StyleFrame(object):
                 if hasattr(column.style, 'comment') and column.style.comment is not None:
                     column_header_cell.comment = column.style.comment
             for row_index, index in enumerate(self.data_df.index):
-                current_cell = sheet.cell(row=row_index + startrow + 2, column=col_index + startcol + 1)
+                current_cell = sheet.cell(row=row_index + startrow + (2 if header else 1), column=col_index + startcol + 1)
                 data_df_style = self.data_df.at[index, column].style
                 try:
                     if '=HYPERLINK' in str(current_cell.value):
@@ -483,6 +502,13 @@ class StyleFrame(object):
                             data_df_style.wrap_text = False
                             data_df_style.shrink_to_fit = False
                     try:
+                        date_time_types_to_formats = {pd_timestamp: data_df_style.date_time_format,
+                                                      dt.datetime: data_df_style.date_time_format,
+                                                      dt.date: data_df_style.date_format,
+                                                      dt.time: data_df_style.time_format}
+
+                        data_df_style.number_format = date_time_types_to_formats.get(type(self.data_df.at[index,column].value),
+                                                                                     data_df_style.number_format)
                         style_to_apply = data_df_style.to_openpyxl_style()
                     except AttributeError:
                         style_to_apply = Styler.from_openpyxl_style(data_df_style, [],
@@ -596,12 +622,6 @@ class StyleFrame(object):
         elif isinstance(indexes_to_style, Container):
             indexes_to_style = pd.Index([indexes_to_style])
 
-        default_number_formats = {pd_timestamp: utils.number_formats.default_date_time_format,
-                                  dt.date: utils.number_formats.default_date_format,
-                                  dt.time: utils.number_formats.default_time_format}
-
-        orig_number_format = styler_obj.number_format
-
         if cols_to_style is not None and not isinstance(cols_to_style, (list, tuple, set)):
             cols_to_style = [cols_to_style]
         elif cols_to_style is None:
@@ -613,18 +633,9 @@ class StyleFrame(object):
             style_to_apply = Styler.combine(self._default_style, styler_obj)
 
         for index in indexes_to_style:
-            if orig_number_format == utils.number_formats.general:
-                style_to_apply.number_format = default_number_formats.get(type(index.value),
-                                                                          utils.number_formats.general)
             index.style = style_to_apply
-
             for col in cols_to_style:
-                cell = self.iloc[self.index.get_loc(index), self.columns.get_loc(col)]
-                if orig_number_format == utils.number_formats.general:
-                    style_to_apply.number_format = default_number_formats.get(type(cell.value),
-                                                                              utils.number_formats.general)
-
-                cell.style = style_to_apply
+                self.iloc[self.index.get_loc(index), self.columns.get_loc(col)].style = style_to_apply
 
         if height:
             # Add offset 2 since rows do not include the headers and they starts from 1 (not 0).
