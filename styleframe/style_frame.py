@@ -25,7 +25,7 @@ except AttributeError:
     pd_timestamp = pd.tslib.Timestamp
 
 
-class StyleFrame(object):
+class StyleFrame:
     """
     A wrapper class that wraps a :class:`pandas.DataFrame` object and represent a stylized dataframe.
     Stores container objects that have values and styles that will be applied to excel

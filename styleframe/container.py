@@ -11,7 +11,7 @@ except AttributeError:
     pd_timestamp = pd.tslib.Timestamp
 
 
-class Container(object):
+class Container:
     """
     A container class used to store value and style pairs.
     Value can be any datatype, and style is a Styler object

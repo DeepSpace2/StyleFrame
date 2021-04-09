@@ -6,7 +6,7 @@ from openpyxl.comments import Comment
 from pprint import pformat
 
 
-class Styler(object):
+class Styler:
     """
     Used to represent a style
 
@@ -246,7 +246,7 @@ class Styler(object):
     create_style = to_openpyxl_style
 
 
-class ColorScaleConditionalFormatRule(object):
+class ColorScaleConditionalFormatRule:
     """Creates a color scale conditional format rule. Wraps openpyxl's ColorScaleRule.
     Mostly should not be used directly, but through StyleFrame.add_color_scale_conditional_formatting
     """
