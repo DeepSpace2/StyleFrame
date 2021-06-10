@@ -55,6 +55,11 @@ class Styler:
 
     .. note:: For any of ``date_format``, ``time_format`` and ``date_time_format`` to take effect, the value being
               styled must be an actual ``date``/``time``/``datetime`` object.
+
+    .. versionadded:: 4.1
+
+    :param bool strikethrough:
+    :param bool italic:
     """
 
     cache = {}
@@ -65,7 +70,8 @@ class Styler:
                  vertical_alignment=utils.vertical_alignments.center, wrap_text=True, shrink_to_fit=True,
                  fill_pattern_type=utils.fill_pattern_types.solid, indent=0.0, comment_author=None, comment_text=None,
                  text_rotation=0, date_format=utils.number_formats.date,
-                 time_format=utils.number_formats.time_24_hours, date_time_format=utils.number_formats.date_time):
+                 time_format=utils.number_formats.time_24_hours, date_time_format=utils.number_formats.date_time,
+                 strikethrough=False, italic=False):
 
         def get_color_from_string(color_str, default_color=None):
             if color_str and color_str.startswith('#'):
@@ -102,6 +108,8 @@ class Styler:
         self.date_format = date_format
         self.time_format = time_format
         self.date_time_format = date_time_format
+        self.strikethrough = strikethrough
+        self.italic = italic
 
     def __eq__(self, other):
         return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
@@ -138,7 +146,8 @@ class Styler:
             openpyxl_style = self.cache[self] = NamedStyle(
                 name=str(hash(self)),
                 font=Font(name=self.font, size=self.font_size, color=OpenPyColor(self.font_color),
-                          bold=self.bold, underline=self.underline),
+                          bold=self.bold, underline=self.underline, strikethrough=self.strikethrough,
+                          italic=self.italic),
                 fill=PatternFill(patternType=self.fill_pattern_type, fgColor=self.bg_color),
                 alignment=Alignment(horizontal=self.horizontal_alignment, vertical=self.vertical_alignment,
                                     wrap_text=self.wrap_text, shrink_to_fit=self.shrink_to_fit,
@@ -176,6 +185,8 @@ class Styler:
             bg_color = _calc_new_hex_from_theme_hex_and_tint(bg_color, tint)
 
         bold = openpyxl_style.font.bold
+        strikethrough = openpyxl_style.font.strikethrough
+        italic = openpyxl_style.font.italic
         font = openpyxl_style.font.name
         font_size = openpyxl_style.font.size
         try:
@@ -215,7 +226,8 @@ class Styler:
                    number_format, protection, underline,
                    border_type, horizontal_alignment,
                    vertical_alignment, wrap_text, shrink_to_fit,
-                   fill_pattern_type, indent, comment_author, comment_text, text_rotation)
+                   fill_pattern_type, indent, comment_author, comment_text, text_rotation,
+                   strikethrough=strikethrough, italic=italic)
 
     @classmethod
     def combine(cls, *styles):
