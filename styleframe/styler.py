@@ -1,9 +1,13 @@
+from openpyxl.cell import Cell
+
 from . import utils
 from colour import Color
 from openpyxl.formatting.rule import ColorScaleRule
 from openpyxl.styles import PatternFill, NamedStyle, Color as OpenPyColor, Border, Side, Font, Alignment, Protection
 from openpyxl.comments import Comment
 from pprint import pformat
+
+from typing import Dict, List, Optional
 
 
 class Styler:
@@ -62,7 +66,7 @@ class Styler:
     :param bool italic:
     """
 
-    cache = {}
+    cache: Dict[type, type] = {}
 
     def __init__(self, bg_color=None, bold=False, font=utils.fonts.arial, font_size=12.0, font_color=None,
                  number_format=utils.number_formats.general, protection=False, underline=None,
@@ -159,7 +163,8 @@ class Styler:
         return openpyxl_style
 
     @classmethod
-    def from_openpyxl_style(cls, openpyxl_style, theme_colors, openpyxl_comment=None):
+    def from_openpyxl_style(cls, openpyxl_style: Cell, theme_colors: List[str],
+                            openpyxl_comment: Optional[Comment] = None):
         def _calc_new_hex_from_theme_hex_and_tint(theme_hex, color_tint):
             if not theme_hex.startswith('#'):
                 theme_hex = '#' + theme_hex
@@ -230,7 +235,7 @@ class Styler:
                    strikethrough=strikethrough, italic=italic)
 
     @classmethod
-    def combine(cls, *styles):
+    def combine(cls, *styles: 'Styler'):
         """
         .. versionadded:: 1.6
 

@@ -1,23 +1,25 @@
 import datetime as dt
-import numpy as np
 import pathlib
-import pandas as pd
 
-from functools import partial
-
-from .deprecations import deprecated_kwargs
-from . import utils
-from copy import deepcopy
 from collections import OrderedDict
 from collections.abc import Iterable
-from openpyxl import load_workbook
-from openpyxl.cell.cell import get_column_letter
-from openpyxl.xml.functions import fromstring, QName
+from copy import deepcopy
+from functools import partial
+from typing import Union, Optional, List, Dict, Tuple, Set
+
+import numpy as np
+import pandas as pd
+
+from openpyxl import load_workbook, Workbook
+from openpyxl.cell.cell import get_column_letter, Cell
 from openpyxl.utils import cell
+from openpyxl.worksheet.worksheet import Worksheet
+from openpyxl.xml.functions import fromstring, QName
 
 from styleframe.container import Container
 from styleframe.series import Series
 from styleframe.styler import Styler, ColorScaleConditionalFormatRule
+from . import utils
 
 try:
     pd_timestamp = pd.Timestamp
@@ -35,10 +37,10 @@ class StyleFrame:
     :param styler_obj: Will be used as the default style of all cells.
     :type styler_obj: :class:`.Styler`
     """
-    P_FACTOR = 1.3
-    A_FACTOR = 13
+    P_FACTOR: Union[int, float] = 1.3
+    A_FACTOR: Union[int, float] = 13
 
-    def __init__(self, obj, styler_obj=None):
+    def __init__(self, obj, styler_obj: Optional[Styler] = None):
         from_another_styleframe = False
         from_pandas_dataframe = False
         if styler_obj and not isinstance(styler_obj, Styler):
@@ -69,7 +71,7 @@ class StyleFrame:
         self._columns_width = obj._columns_width if from_another_styleframe else OrderedDict()
         self._rows_height = obj._rows_height if from_another_styleframe else OrderedDict()
         self._has_custom_headers_style = obj._has_custom_headers_style if from_another_styleframe else False
-        self._cond_formatting = []
+        self._cond_formatting: List[ColorScaleConditionalFormatRule] = []
         self._default_style = styler_obj or Styler()
         self._index_header_style = obj._index_header_style if from_another_styleframe else self._default_style
 
@@ -112,15 +114,15 @@ class StyleFrame:
             raise AttributeError("'{}' object has no attribute '{}'".format(type(self).__name__, attr))
 
     @property
-    def columns(self):
+    def columns(self) -> List[Container]:
         return self.data_df.columns
 
     @columns.setter
-    def columns(self, columns):
+    def columns(self, columns: Iterable) -> None:
         self.data_df.columns = [col if isinstance(col, Container) else Container(value=col)
                                 for col in columns]
 
-    def _get_column_as_letter(self, sheet, column_to_convert, startcol=0):
+    def _get_column_as_letter(self, sheet: Worksheet, column_to_convert, startcol: int = 0) -> str:
         col = column_to_convert.value if isinstance(column_to_convert, Container) else column_to_convert
         if not isinstance(col, (int, str)):
             raise TypeError("column must be an index, column letter or column name")
@@ -142,8 +144,8 @@ class StyleFrame:
         return column_as_letter
 
     @classmethod
-    def read_excel(cls, path, sheet_name=0, read_style=False, use_openpyxl_styles=False,
-                   read_comments=False, **kwargs):
+    def read_excel(cls, path: str, sheet_name: Union[str, int] = 0, read_style: bool = False,
+                   use_openpyxl_styles: bool = False, read_comments: bool = False, **kwargs) -> 'StyleFrame':
         """
         Creates a StyleFrame object from an existing Excel.
 
@@ -175,7 +177,7 @@ class StyleFrame:
         :rtype: :class:`StyleFrame`
         """
 
-        def _get_scheme_colors_from_excel(wb):
+        def _get_scheme_colors_from_excel(wb: Workbook) -> List[str]:
             xlmns = 'http://schemas.openxmlformats.org/drawingml/2006/main'
             if wb.loaded_theme is None:
                 return []
@@ -192,7 +194,7 @@ class StyleFrame:
                         colors.append(accent.attrib['val'])
             return colors
 
-        def _get_style_object(sheet, theme_colors, row, column):
+        def _get_style_object(sheet: Worksheet, theme_colors: List[str], row: int, column: int) -> Union[Cell, Styler]:
             cell = sheet.cell(row=row, column=column)
             if use_openpyxl_styles:
                 return cell
@@ -250,7 +252,7 @@ class StyleFrame:
         return sf
 
     @classmethod
-    def read_excel_as_template(cls, path, df, use_df_boundaries=False, **kwargs):
+    def read_excel_as_template(cls, path: str, df: pd.DataFrame, use_df_boundaries: bool = False, **kwargs) -> 'StyleFrame':
         """
         .. versionadded:: 3.0.1
 
@@ -332,9 +334,11 @@ class StyleFrame:
 
         return tuple(range(1, len(self) + 2))
 
-    def to_excel(self, excel_writer='output.xlsx', sheet_name='Sheet1',
-                 allow_protection=False, right_to_left=False, columns_to_hide=None, row_to_add_filters=None,
-                 columns_and_rows_to_freeze=None, best_fit=None, **kwargs):
+    def to_excel(self, excel_writer: Union[str, pd.ExcelWriter, pathlib.Path] = 'output.xlsx',
+                 sheet_name: str = 'Sheet1', allow_protection: bool = False, right_to_left: bool = False,
+                 columns_to_hide: Union[None, str, list, tuple, set] = None, row_to_add_filters: Optional[int] = None,
+                 columns_and_rows_to_freeze: Optional[str] = None, best_fit: Union[None, str, list, tuple, set] = None,
+                 **kwargs) -> pd.ExcelWriter:
         """Saves the dataframe to excel and applies the styles.
 
         .. note:: :meth:`to_excel` also accepts all arguments that :meth:`pandas.DataFrame.to_excel` accepts as kwargs.
@@ -369,8 +373,7 @@ class StyleFrame:
                       calling ``StyleFrame.to_excel`` by directly modifying ``StyleFrame.A_FACTOR`` and ``StyleFrame.P_FACTOR``
 
         :type best_fit: None or str or list or tuple or set
-        :return: self
-        :rtype: :class:`StyleFrame`
+        :rtype: :class:`pandas.ExcelWriter`
 
         """
 
@@ -393,7 +396,7 @@ class StyleFrame:
                 except TypeError:
                     return x
 
-        def within_sheet_boundaries(row=1, column='A'):
+        def within_sheet_boundaries(row: Union[int, str] = 1, column: str = 'A'):
             return (1 <= int(row) <= sheet.max_row
                         and
                     1 <= cell.column_index_from_string(column) <= sheet.max_column)
@@ -575,8 +578,14 @@ class StyleFrame:
 
         return excel_writer
 
-    def apply_style_by_indexes(self, indexes_to_style, styler_obj, cols_to_style=None, height=None,
-                               complement_style=None, complement_height=None, overwrite_default_style=True):
+    def apply_style_by_indexes(self,
+                               indexes_to_style: Union[list, tuple, int, Container],
+                               styler_obj: Styler,
+                               cols_to_style: Optional[Union[str, Union[List[str], Tuple[str], Set[str]]]] = None,
+                               height: Optional[Union[int, float]] = None,
+                               complement_style: Optional[Styler] = None,
+                               complement_height: Optional[Union[int, float]] = None,
+                               overwrite_default_style: bool = True):
         """
         Applies a certain style to the provided indexes in the dataframe in the provided columns
 
@@ -648,8 +657,13 @@ class StyleFrame:
 
         return self
 
-    def apply_column_style(self, cols_to_style, styler_obj, style_header=False, use_default_formats=True, width=None,
-                           overwrite_default_style=True):
+    def apply_column_style(self,
+                           cols_to_style: Union[str, List[str], Tuple[str], Set[str]],
+                           styler_obj: Styler,
+                           style_header: bool = False,
+                           use_default_formats: bool = True,
+                           width: Optional[Union[int, float]] = None,
+                           overwrite_default_style: bool = True):
         """Apply style to a whole column
 
         :param cols_to_style: The column names to style.
@@ -700,7 +714,10 @@ class StyleFrame:
 
         return self
 
-    def apply_headers_style(self, styler_obj, style_index_header=True, cols_to_style=None):
+    def apply_headers_style(self,
+                            styler_obj: Styler,
+                            style_index_header: bool = True,
+                            cols_to_style: Optional[Union[str, List[str], Tuple[str], Set[str]]] = None):
         """Apply style to the headers only
 
         :param styler_obj: The style to apply
@@ -737,7 +754,8 @@ class StyleFrame:
         self._has_custom_headers_style = True
         return self
 
-    def set_column_width(self, columns, width):
+    def set_column_width(self, columns: Union[str, Union[str, List[str], Tuple[str], List[int], Tuple[int]]],
+                         width: Union[int, float]) -> 'StyleFrame':
         """Set the width of the given columns
 
         :param columns: Column name(s) or index(es).
@@ -765,7 +783,7 @@ class StyleFrame:
 
         return self
 
-    def set_column_width_dict(self, col_width_dict):
+    def set_column_width_dict(self, col_width_dict: Dict[str, Union[int, float]]) -> 'StyleFrame':
         """
         :param col_width_dict: A dictionary from column names to width.
         :type col_width_dict: dict[str, int or float]
@@ -780,7 +798,7 @@ class StyleFrame:
 
         return self
 
-    def set_row_height(self, rows, height):
+    def set_row_height(self, rows: Union[int, List[int], Tuple[int], Set[int]], height: Union[int, float]) -> 'StyleFrame':
         """ Set the height of the given rows
 
         :param rows: Row(s) index.
@@ -810,7 +828,7 @@ class StyleFrame:
 
         return self
 
-    def set_row_height_dict(self, row_height_dict):
+    def set_row_height_dict(self, row_height_dict: Dict[int, Union[int, float]]) -> 'StyleFrame':
         """
         :param row_height_dict: A dictionary from row indexes to height.
         :type row_height_dict: dict[int, int or float]
@@ -848,7 +866,7 @@ class StyleFrame:
                                   if old_col_name in sf._columns_width})
         return sf
 
-    def style_alternate_rows(self, styles, **kwargs):
+    def style_alternate_rows(self, styles: Union[List[Styler], Tuple[Styler]], **kwargs) -> 'StyleFrame':
         """
         .. versionadded:: 1.2
 
@@ -856,8 +874,8 @@ class StyleFrame:
 
         .. note:: :meth:`style_alternate_rows` also accepts all arguments that :meth:`apply_style_by_indexes` accepts as kwargs.
 
-        :param styles: List, tuple or set of :class:`.Styler` objects to be applied to rows in an alternating manner
-        :type styles: list[:class:`.Styler`] or tuple[:class:`.Styler`] or set[:class:`.Styler`]
+        :param styles: List or tuple of :class:`.Styler` objects to be applied to rows in an alternating manner
+        :type styles: list[:class:`.Styler`] or tuple[:class:`.Styler`]
         :return: self
         :rtype: :class:`StyleFrame`
 
@@ -869,8 +887,17 @@ class StyleFrame:
             self.apply_style_by_indexes(indexes, styles[i], **kwargs)
         return self
 
-    def add_color_scale_conditional_formatting(self, start_type, start_value, start_color, end_type, end_value, end_color,
-                                               mid_type=None, mid_value=None, mid_color=None, columns_range=None):
+    def add_color_scale_conditional_formatting(self,
+                                               start_type: str,
+                                               start_value: Union[int, float],
+                                               start_color: str,
+                                               end_type: str,
+                                               end_value: Union[int, float],
+                                               end_color: str,
+                                               mid_type: Optional[str] = None,
+                                               mid_value: Optional[Union[int, float]] = None,
+                                               mid_color: Optional[str] = None,
+                                               columns_range=None):
         """
         :param start_type: The type for the minimum bound
         :type start_type: str: one of :class:`.utils.conditional_formatting_types` or any other type Excel supports
