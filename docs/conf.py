@@ -11,7 +11,8 @@ extensions = [
 html_theme = "sphinx_rtd_theme"
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3', None),
-    'pandas': ('https://pandas.pydata.org/docs/', None)
+    'pandas': ('https://pandas.pydata.org/docs/', None),
+    'numpy': ('https://numpy.org/doc/stable/', None)
 }
 master_doc = 'index'
 project = 'styleframe'

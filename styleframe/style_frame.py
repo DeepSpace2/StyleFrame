@@ -36,17 +36,23 @@ class StyleFrame:
           a list of dictionaries or another StyleFrame.
     :param styler_obj: Will be used as the default style of all cells.
     :type styler_obj: :class:`.Styler`
+    :param columns: Names of columns to use. Only applicable if ``obj`` is :class:`numpy.ndarray`
+    :type columns: None or list[str]
     """
     P_FACTOR: Union[int, float] = 1.3
     A_FACTOR: Union[int, float] = 13
 
-    def __init__(self, obj, styler_obj: Optional[Styler] = None):
+    def __init__(self, obj, styler_obj: Optional[Styler] = None, columns: Optional[List[str]] = None):
         from_another_styleframe = False
         from_pandas_dataframe = False
         if styler_obj and not isinstance(styler_obj, Styler):
             raise TypeError('styler_obj must be {}, got {} instead.'.format(Styler.__name__, type(styler_obj).__name__))
-        if isinstance(obj, pd.DataFrame):
+        if isinstance(obj, (pd.DataFrame, np.ndarray)):
             from_pandas_dataframe = True
+            if isinstance(obj, np.ndarray):
+                obj = pd.DataFrame(obj)
+                if columns:
+                    obj = obj.rename(columns=dict(zip(obj.columns, columns)))
             if obj.empty:
                 self.data_df = deepcopy(obj)
             else:
