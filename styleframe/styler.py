@@ -7,7 +7,7 @@ from openpyxl.styles import PatternFill, NamedStyle, Color as OpenPyColor, Borde
 from openpyxl.comments import Comment
 from pprint import pformat
 
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Union
 
 
 class Styler:
@@ -66,18 +66,34 @@ class Styler:
     :param bool italic:
     """
 
-    cache: Dict[type, type] = {}
+    cache: Dict['Styler', NamedStyle] = {}
 
-    def __init__(self, bg_color=None, bold=False, font=utils.fonts.arial, font_size=12.0, font_color=None,
-                 number_format=utils.number_formats.general, protection=False, underline=None,
-                 border_type=utils.borders.thin, horizontal_alignment=utils.horizontal_alignments.center,
-                 vertical_alignment=utils.vertical_alignments.center, wrap_text=True, shrink_to_fit=True,
-                 fill_pattern_type=utils.fill_pattern_types.solid, indent=0.0, comment_author=None, comment_text=None,
-                 text_rotation=0, date_format=utils.number_formats.date,
-                 time_format=utils.number_formats.time_24_hours, date_time_format=utils.number_formats.date_time,
-                 strikethrough=False, italic=False):
+    def __init__(self,
+                 bg_color: Optional[str] = None,
+                 bold: bool = False,
+                 font: str = utils.fonts.arial,
+                 font_size: Union[int, float] = 12.0,
+                 font_color: Optional[str] = None,
+                 number_format: str = utils.number_formats.general,
+                 protection: bool = False,
+                 underline: Optional[str] = None,
+                 border_type: str = utils.borders.thin,
+                 horizontal_alignment: str = utils.horizontal_alignments.center,
+                 vertical_alignment: str = utils.vertical_alignments.center,
+                 wrap_text: bool = True,
+                 shrink_to_fit: bool = True,
+                 fill_pattern_type: str = utils.fill_pattern_types.solid,
+                 indent: Union[int, float] = 0.0,
+                 comment_author: Optional[str] = None,
+                 comment_text: Optional[str] = None,
+                 text_rotation: int = 0,
+                 date_format: str = utils.number_formats.date,
+                 time_format: str = utils.number_formats.time_24_hours,
+                 date_time_format: str = utils.number_formats.date_time,
+                 strikethrough: bool = False,
+                 italic: bool = False):
 
-        def get_color_from_string(color_str, default_color=None):
+        def get_color_from_string(color_str: str, default_color: Optional[str] = None) -> str:
             if color_str and color_str.startswith('#'):
                 color_str = color_str[1:]
             if not utils.is_hex_color_string(hex_string=color_str):
