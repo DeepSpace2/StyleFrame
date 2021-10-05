@@ -383,6 +383,10 @@ class StyleFrame:
 
         """
 
+        if isinstance(excel_writer, pd.ExcelWriter):
+            if excel_writer.engine != 'openpyxl':
+                raise TypeError('styleframe supports only openpyxl, attempted to use {}'.format(excel_writer.engine))
+
         # dealing with needed pandas.to_excel defaults
         header = kwargs.pop('header', True)
         index = kwargs.pop('index', False)
