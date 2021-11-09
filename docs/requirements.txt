@@ -1,3 +1,6 @@
-sphinx==4
-pandas
+colour
+jsonschema
 openpyxl
+pandas
+sphinx==4
+xlrd
