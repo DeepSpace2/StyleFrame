@@ -1,2 +1,3 @@
 sphinx==4
 pandas
+openpyxl
