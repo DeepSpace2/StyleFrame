@@ -1,0 +1,6 @@
+colour
+jsonschema
+openpyxl
+pandas
+sphinx==4
+xlrd

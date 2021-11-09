@@ -559,7 +559,7 @@ class StyleFrame(object):
 
             ::
 
-                sf[sf['some_col'] = 20]
+                sf[sf['some_col'] == 20]
 
         :type indexes_to_style: list or tuple or int or Container
         :param styler_obj: `Styler` object that contains the style that will be applied to indexes in `indexes_to_style`
