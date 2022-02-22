@@ -35,6 +35,12 @@ class StylerTests(unittest.TestCase):
 
         self.assertEqual(styler_obj, Styler.from_openpyxl_style(styler_obj.to_openpyxl_style(), []))
 
-    def test_default_grid_and_bg_color(self):
+    def test_default_grid_invalid_args(self):
         with self.assertRaises(ValueError):
             Styler(border_type=utils.borders.default_grid, bg_color=utils.colors.yellow)
+        with self.assertRaises(ValueError):
+            Styler(border_type=utils.borders.default_grid, fill_pattern_type=utils.fill_pattern_types.light_grid)
+        with self.assertRaises(ValueError):
+            Styler(border_type=utils.borders.default_grid, bg_color=utils.colors.yellow,
+                   fill_pattern_type=utils.fill_pattern_types.light_grid)
+

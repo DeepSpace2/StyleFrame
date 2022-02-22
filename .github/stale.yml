@@ -1,0 +1,7 @@
+daysUntilStale: 60
+exemptLabels:
+  - fixed
+  - dont mark as stale
+staleLabel: stale
+markComment: This issue has been automatically marked as stale because it has not had activity in the last 60 days.
+closeComment: false

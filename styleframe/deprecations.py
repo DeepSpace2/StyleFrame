@@ -1,5 +1,6 @@
 import warnings
 
+from functools import wraps
 
 funcs_to_deprecated_kwargs = {'read_excel': {'sheetname': 'sheet_name'}}
 
@@ -11,6 +12,7 @@ def formatwarning(message, category, filename, lineno, file=None, line=None):
 
 def deprecated_kwargs(deprecated_kwargs):
     def wrapper(func):
+        @wraps(func)
         def inner(*args, **kwargs):
             for deprecated_kwarg in deprecated_kwargs:
                 if deprecated_kwarg in kwargs:

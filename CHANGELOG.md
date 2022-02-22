@@ -1,5 +1,26 @@
-### 3.0.2
-Hotfix release - setting maximum versions for dependencies. Related to github issue #73
+#### 4.0
+* **Removed Python 3.4 support**
+* **Removed Python 3.5 support**
+* **Added Python 3.9 support**
+* Allowing `StyleFrame.ExcelWriter` to accept any argument (except for `engine`) that `pandas.ExcelWriter` accepts
+* Allowing customizing formats of `date`, `time` and `datetime` objects when creating `Styler` instances
+* Fixed rows mis-alignment issue when calling `to_excel` with `header=False` ([GitHub issue #88](https://github.com/DeepSpace2/StyleFrame/issues/88))
+* `read_excel` does not accept `sheetname` argument anymore (was deprecated since version 1.6). Use `sheet_name` instead.
+
+#### 3.0.6
+* Fixes [GitHub issue #94](https://github.com/DeepSpace2/StyleFrame/issues/94) - Passing `border_type=utils.borders.default_grid` to `Styler`
+
+#### 3.0.5
+* Fixes [GitHub issue #81](https://github.com/DeepSpace2/StyleFrame/issues/81) - read excel as template headers height
+
+#### 3.0.4
+* Fixed style "shifts" when using `read_style=True` and `header=None` with `StyleFrame.read_excel`. Fixes [GitHub issue #80](https://github.com/DeepSpace2/StyleFrame/issues/80) 
+
+#### 3.0.3
+No longer relying on openpyxl's colors definition. Related to [GitHub issue #73](https://github.com/DeepSpace2/StyleFrame/issues/73)
+
+#### 3.0.2
+Hotfix release - setting maximum versions for dependencies. Related to [GitHub issue #73](https://github.com/DeepSpace2/StyleFrame/issues/73)
 
 #### 3.0.1
 * **Removed Python 2.7 support**
@@ -14,8 +35,8 @@ Hotfix release - setting maximum versions for dependencies. Related to github is
   
 * Added `default_grid` to `utils.borders` to allow usage of the default spreadsheet grid
 * Added `read_excel_as_template` method
-* Fixed a bug that prevented saving if `read_excel` was used with `use_openpxl_style=True`, see github issue #67
-* Allowing usage of pathlib.Path in `to_excel`, see github issue #69 
+* Fixed a bug that prevented saving if `read_excel` was used with `use_openpxl_style=True`, see [GitHub issue #67](https://github.com/DeepSpace2/StyleFrame/issues/67)
+* Allowing usage of pathlib.Path in `to_excel`, see [GitHub issue #69](https://github.com/DeepSpace2/StyleFrame/issues/69) 
 * Added ability to execute the tests from the commandline: `styleframe --test`
 
 #### 2.0.5
@@ -62,10 +83,10 @@ Hotfix release - setting maximum versions for dependencies. Related to github is
 
 #### 1.5.1
 * Fixed a bug where `read_excel` will fail when using `read_style=True` in cases
-  where specific themes are used (See github issue #37).
+  where specific themes are used (See [GitHub issue #37](https://github.com/DeepSpace2/StyleFrame/issues/37)).
 
 #### 1.5
-* Added `complement_style` and `complement_height` arguments to `StyleFrame.apply_indexes_by_style`
+* Added `complement_style` and `complement_height` arguments to `StyleFrame.apply_style_by_indexes`
 * Added support for comments
 * Renamed `Styler.create_style` method to `to_openpyxl_style` (`create_style` is still available for backward compatibility)
 * Fixed a bug not allowing to access StyleFrame columns by dot notation in case a column name is a number
@@ -84,7 +105,7 @@ Hotfix release - setting maximum versions for dependencies. Related to github is
 
 #### 1.3.1
 * Improved error message if invalid style arguments are used in JSON through the commandline interface
-* Fixed an error importing utils in case there is already a utils module in Python's path (see github issue #31)
+* Fixed an error importing utils in case there is already a utils module in Python's path (see [GitHub issue #31](https://github.com/DeepSpace2/StyleFrame/issues/31))
 
 #### 1.3
 * Added `utils.fill_pattern_types`

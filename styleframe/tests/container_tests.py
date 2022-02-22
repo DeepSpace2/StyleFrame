@@ -48,13 +48,19 @@ class ContainerTest(unittest.TestCase):
     def test__rsub__(self):
         self.assertEqual(1 - self.cont_1, self.cont_0)
 
-    def test__div__(self):
+    def test__truediv__(self):
         self.assertEqual(self.cont_2 / self.cont_2, self.cont_1)
-        self.assertEqual(self.cont_2 / self.cont_1, self.cont_2)
-        self.assertEqual(self.cont_2 / 3, Container(2/3))
+        self.assertEqual(self.cont_2 / 1, self.cont_2)
 
-    def test__rdiv__(self):
+    def test__rtruediv__(self):
         self.assertEqual(1 / self.cont_1, self.cont_1)
+
+    def test__floordiv__(self):
+        self.assertEqual(self.cont_2 // 3, Container(2//3))
+        self.assertEqual(self.cont_2 // Container(3), Container(2//3))
+
+    def test__rfloordiv__(self):
+        self.assertEqual(2 // self.cont_1, Container(2//1))
 
     def test__mul__(self):
         self.assertEqual(self.cont_1 * self.cont_1, self.cont_1)

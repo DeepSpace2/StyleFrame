@@ -13,7 +13,7 @@ from .tests.json_schema import commandline_json_schema
 styler_kwargs = set(inspect.signature(Styler).parameters.keys())
 
 
-class CommandLineInterface(object):
+class CommandLineInterface:
     def __init__(self, input_path=None, output_path=None, input_json=None):
         self.input_path = input_path
         self.input_json = input_json

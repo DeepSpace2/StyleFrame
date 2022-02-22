@@ -6,9 +6,55 @@ from openpyxl.comments import Comment
 from pprint import pformat
 
 
-class Styler(object):
+class Styler:
     """
-    Creates openpyxl Style to be applied
+    Used to represent a style
+
+    :param bg_color: The background color
+    :type bg_color: str: one of :class:`.utils.colors`, hex string or color name ie `'yellow'` Excel supports
+    :param bool bold: If ``True``, a bold typeface is used
+    :param font: The font to use
+    :type font: str: one of :class:`.utils.fonts` or other font name Excel supports
+    :param int font_size: The font size
+    :param font_color: The font color
+    :type font_color: str: one of :class:`.utils.colors`, hex string or color name ie `'yellow'` Excel supports
+    :param number_format: The format of the cell's value
+    :type number_format: str: one of :class:`.utils.number_formats` or any other format Excel supports
+    :param bool protection: If ``True``, the cell/column will be write-protected
+    :param underline: The underline type
+    :type underline: str: one of :class:`.utils.underline` or any other underline Excel supports
+    :param border_type: The border type
+    :type border_type: str: one of :class:`.utils.borders` or any other border type Excel supports
+
+    .. versionadded:: 1.2
+
+    :param horizontal_alignment: Text's horizontal alignment
+    :type horizontal_alignment: str: one of :class:`.utils.horizontal_alignments` or any other horizontal alignment Excel supports
+    :param vertical_alignment: Text's vertical alignment
+    :type vertical_alignment: str: one of :class:`.utils.vertical_alignments` or any other vertical alignment Excel supports
+
+    .. versionadded:: 1.3
+
+    :param bool wrap_text:
+    :param bool shrink_to_fit:
+    :param fill_pattern_type: Cells's fill pattern type
+    :type fill_pattern_type: str: one of :class:`.utils.fill_pattern_types` or any other fill pattern type Excel supports
+    :param int indent:
+    :param str comment_author:
+    :param str comment_text:
+    :param int text_rotation: Integer in the range 0 - 180
+
+    .. versionadded:: 4.0
+
+    :param date_format:
+    :type date_format: str: one of :class:`.utils.number_formats` or any other format Excel supports
+    :param time_format:
+    :type time_format: str: one of :class:`.utils.number_formats` or any other format Excel supports
+    :param date_time_format:
+    :type date_time_format: str: one of :class:`.utils.number_formats` or any other format Excel supports
+
+    .. note:: For any of ``date_format``, ``time_format`` and ``date_time_format`` to take effect, the value being
+              styled must be an actual ``date``/``time``/``datetime`` object.
     """
 
     cache = {}
@@ -18,7 +64,8 @@ class Styler(object):
                  border_type=utils.borders.thin, horizontal_alignment=utils.horizontal_alignments.center,
                  vertical_alignment=utils.vertical_alignments.center, wrap_text=True, shrink_to_fit=True,
                  fill_pattern_type=utils.fill_pattern_types.solid, indent=0.0, comment_author=None, comment_text=None,
-                 text_rotation=0):
+                 text_rotation=0, date_format=utils.number_formats.date,
+                 time_format=utils.number_formats.time_24_hours, date_time_format=utils.number_formats.date_time):
 
         def get_color_from_string(color_str, default_color=None):
             if color_str and color_str.startswith('#'):
@@ -27,35 +74,37 @@ class Styler(object):
                 color_str = utils.colors.get(color_str, default_color)
             return color_str
 
+        if border_type == utils.borders.default_grid:
+            if bg_color is not None or fill_pattern_type != utils.fill_pattern_types.solid:
+                raise ValueError('`bg_color`or `fill_pattern_type` conflict with border_type={}'.format(utils.borders.default_grid))
+            self.border_type = None
+            self.fill_pattern_type = None
+        else:
+            self.border_type = border_type
+            self.fill_pattern_type = fill_pattern_type
+
         self.bold = bold
         self.font = font
         self.font_size = font_size
         self.number_format = number_format
         self.protection = protection
         self.underline = underline
-        self.border_type = border_type
         self.horizontal_alignment = horizontal_alignment
         self.vertical_alignment = vertical_alignment
         self.bg_color = get_color_from_string(bg_color, default_color=utils.colors.white)
         self.font_color = get_color_from_string(font_color, default_color=utils.colors.black)
         self.shrink_to_fit = shrink_to_fit
         self.wrap_text = wrap_text
-        self.fill_pattern_type = fill_pattern_type
         self.indent = indent
         self.comment_author = comment_author
         self.comment_text = comment_text
         self.text_rotation = text_rotation
-
-        if self.border_type == utils.borders.default_grid:
-            if self.bg_color is not None:
-                raise ValueError('bg_color and border_type={} can not be used together'.format(utils.borders.default_grid))
-            self.border_type = None
-            self.fill_pattern_type = None
+        self.date_format = date_format
+        self.time_format = time_format
+        self.date_time_format = date_time_format
 
     def __eq__(self, other):
-        if not isinstance(other, self.__class__):
-            return False
-        return self.__dict__ == other.__dict__
+        return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
 
     def __hash__(self):
         return hash(tuple((k, v) for k, v in sorted(self.__dict__.items())))
@@ -170,12 +219,34 @@ class Styler(object):
 
     @classmethod
     def combine(cls, *styles):
+        """
+        .. versionadded:: 1.6
+
+        Used to combine :class:`Styler` objects. The right-most object has precedence.
+        For example:
+
+        ::
+
+            Styler.combine(Styler(bg_color='yellow', font_size=24), Styler(bg_color='blue'))
+
+        will return
+
+        ::
+
+            Styler(bg_color='blue', font_size=24)
+
+        :param styles: Iterable of Styler objects
+        :type styles: list or tuple or set
+        :return: self
+        :rtype: :class:`Styler`
+        """
+
         return sum(styles, cls())
 
     create_style = to_openpyxl_style
 
 
-class ColorScaleConditionalFormatRule(object):
+class ColorScaleConditionalFormatRule:
     """Creates a color scale conditional format rule. Wraps openpyxl's ColorScaleRule.
     Mostly should not be used directly, but through StyleFrame.add_color_scale_conditional_formatting
     """

@@ -1,7 +1,7 @@
 styleframe
 ==========
 
-A library that wraps pandas and openpyxl and allows easy styling of dataframes in excel.
+A library that wraps pandas and openpyxl and allows easy styling of dataframes.
 
 Contents:
 
