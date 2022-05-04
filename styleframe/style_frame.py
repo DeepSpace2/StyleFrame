@@ -42,7 +42,9 @@ class StyleFrame:
     P_FACTOR: Union[int, float] = 1.3
     A_FACTOR: Union[int, float] = 13
 
-    def __init__(self, obj, styler_obj: Optional[Styler] = None, columns: Optional[List[str]] = None):
+    def __init__(self, obj: Union[pd.DataFrame, np.ndarray, pd.Series, dict, list, 'StyleFrame'],
+                 styler_obj: Optional[Styler] = None,
+                 columns: Optional[List[str]] = None):
         from_another_styleframe = False
         from_pandas_dataframe = False
         if styler_obj and not isinstance(styler_obj, Styler):
@@ -80,6 +82,8 @@ class StyleFrame:
         self._cond_formatting: List[ColorScaleConditionalFormatRule] = []
         self._default_style = styler_obj or Styler()
         self._index_header_style = obj._index_header_style if from_another_styleframe else self._default_style
+        self._title = obj._title if from_another_styleframe else None
+        self._title_style = obj._title_style if from_another_styleframe else None
 
         self._known_attrs = {'at': self.data_df.at,
                              'loc': self.data_df.loc,
@@ -344,7 +348,7 @@ class StyleFrame:
                  sheet_name: str = 'Sheet1', allow_protection: bool = False, right_to_left: bool = False,
                  columns_to_hide: Union[None, str, list, tuple, set] = None, row_to_add_filters: Optional[int] = None,
                  columns_and_rows_to_freeze: Optional[str] = None, best_fit: Union[None, str, list, tuple, set] = None,
-                 **kwargs) -> pd.ExcelWriter:
+                 export_title=True, **kwargs) -> pd.ExcelWriter:
         """Saves the dataframe to excel and applies the styles.
 
         .. note:: :meth:`to_excel` also accepts all arguments that :meth:`pandas.DataFrame.to_excel` accepts as kwargs.
@@ -379,6 +383,11 @@ class StyleFrame:
                       calling ``StyleFrame.to_excel`` by directly modifying ``StyleFrame.A_FACTOR`` and ``StyleFrame.P_FACTOR``
 
         :type best_fit: None or str or list or tuple or set
+
+        .. versionadded:: 4.1
+
+        :param bool export_title: If True, export the title if it was set. Default is True.
+
         :rtype: :class:`pandas.ExcelWriter`
 
         """
@@ -443,10 +452,22 @@ class StyleFrame:
         if isinstance(excel_writer, (str, pathlib.Path)):
             excel_writer = self.ExcelWriter(excel_writer)
 
+        if export_title and self._title:
+            StyleFrame({self._title: []}).apply_headers_style(self._title_style).to_excel(excel_writer,
+                                                                                          sheet_name=sheet_name,
+                                                                                          startrow=startrow,
+                                                                                          startcol=startcol,
+                                                                                          **kwargs)
+            startrow += 1
+
         export_df.to_excel(excel_writer, sheet_name=sheet_name, engine='openpyxl', header=header,
                            index=index, startcol=startcol, startrow=startrow, na_rep=na_rep, **kwargs)
 
         sheet = excel_writer.sheets[sheet_name]
+
+        if export_title and self._title:
+            sheet.merge_cells(start_row=startrow, end_row=startrow, start_column=startcol + 1,
+                              end_column=startcol+len(self.columns))
 
         sheet.sheet_view.rightToLeft = right_to_left
 
@@ -499,7 +520,8 @@ class StyleFrame:
             column_header_cell = sheet.cell(row=startrow + 1, column=col_index + startcol + 1)
             column_header_cell.style = style_to_apply
             if isinstance(column.style, Styler):
-                column_header_cell.comment = column.style.generate_comment()
+                if not self._title:
+                    column_header_cell.comment = column.style.generate_comment()
             else:
                 if hasattr(column.style, 'comment') and column.style.comment is not None:
                     column_header_cell.comment = column.style.comment
@@ -949,4 +971,21 @@ class StyleFrame:
                                                                      end_color=end_color,
                                                                      columns_range=columns_range))
 
+        return self
+
+    def set_title(self, title: str, style: Optional[Styler] = None) -> 'StyleFrame':
+        """
+        .. versionadded:: 4.1
+
+        Sets a title
+
+        :param str title:
+        :param style:
+        :type styler_obj: None or :class:`.Styler`
+        :return: self
+        :rtype: :class:`StyleFrame`
+        """
+
+        self._title = title
+        self._title_style = style or Styler()
         return self
