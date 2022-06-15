@@ -86,7 +86,6 @@ setup(
         'openpyxl>=2.5,<4',
         'colour>=0.1.5,<0.2',
         'jsonschema',
-        'pandas<2',
-        "xlrd>=1.0.0,<1.3.0 ; python_version<='3.6'"
+        'pandas<2'
     ]
 )
