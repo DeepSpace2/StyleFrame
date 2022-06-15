@@ -2,5 +2,5 @@ colour
 jsonschema
 openpyxl
 pandas
-sphinx==4.5.0
+sphinx==5.0.1
 xlrd
