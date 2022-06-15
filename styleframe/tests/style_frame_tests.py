@@ -1,9 +1,13 @@
-import unittest
-import pandas as pd
-from pandas.testing import assert_frame_equal
 import os
+import unittest
 
 from functools import partial
+
+import numpy as np
+import pandas as pd
+
+from pandas.testing import assert_frame_equal
+
 from styleframe import Container, StyleFrame, Styler, utils
 from styleframe.tests import TEST_FILENAME
 
@@ -75,6 +79,26 @@ class StyleFrameTest(unittest.TestCase):
 
         with self.assertRaises(TypeError):
             StyleFrame({}, styler_obj=1)
+
+    def test_init_np_array(self):
+        for (np_array, expected_columns), sf in zip(
+            [
+                (np.array([1, 2]), [0]),
+                (np.array([1, 2]), ['a']),
+                (np.array([[1, 2], [3, 4]]), [0, 1]),
+                (np.array([[1, 2], [3, 4]]), ['a', 1]),
+                (np.array([[1, 2], [3, 4]]), ['a', 'b'])
+            ],
+            [
+                StyleFrame(np.array([1, 2])),
+                StyleFrame(np.array([1, 2]), columns=['a']),
+                StyleFrame(np.array([[1, 2], [3, 4]])),
+                StyleFrame(np.array([[1, 2], [3, 4]]), columns=['a']),
+                StyleFrame(np.array([[1, 2], [3, 4]]), columns=['a', 'b'])
+            ]
+        ):
+            self.assertIsInstance(sf, StyleFrame)
+            assert np.all(expected_columns == sf.columns)
 
     def test_len(self):
         self.assertEqual(len(self.sf), len(self.sf.data_df))
