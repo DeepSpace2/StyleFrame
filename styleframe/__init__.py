@@ -11,3 +11,6 @@ from . import deprecations
 
 if 'utrunner' not in sys.argv[0]:
     from styleframe.tests import tests
+
+ExcelWriter = StyleFrame.ExcelWriter
+read_excel = StyleFrame.read_excel

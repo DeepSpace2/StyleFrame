@@ -54,6 +54,7 @@ coverage.xml
 # Sphinx documentation
 docs/*
 !docs/*.rst
+!docs/requirements.txt
 
 # PyBuilder
 target/
