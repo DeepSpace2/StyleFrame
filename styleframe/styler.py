@@ -188,11 +188,19 @@ class Styler:
             color_obj.luminance = _calc_lum_from_tint(color_tint, color_obj.luminance)
             return color_obj.hex_l[1:]
 
-        def _calc_lum_from_tint(color_tint, current_lum):
-            # based on http://ciintelligence.blogspot.co.il/2012/02/converting-excel-theme-color-and-tint.html
-            if not color_tint:
+        def _calc_lum_from_tint(color_tint: Optional[float], current_lum: float) -> float:
+            """"
+            Based on https://ciintelligence.blogspot.co.il/2012/02/converting-excel-theme-color-and-tint.html
+            """
+            if color_tint is None:
                 return current_lum
-            return current_lum * (1.0 + color_tint)
+
+            current_lum *= 255
+
+            if color_tint < 0:
+                return current_lum * (1.0 + color_tint) / 255
+
+            return (current_lum * (1.0 - color_tint) + (255 - 255 * (1.0 - color_tint))) / 255
 
         bg_color = openpyxl_style.fill.fgColor.rgb
 
