@@ -1,3 +1,10 @@
+#### 4.1
+* Added `strikethrough` and `italic` to `Styler`
+* Raising `TypeError` in `to_excel` if trying to use a non-openpyxl engine
+* Exposing `Exposing StyleFrame.ExcelWriter` and `StyleFrame.read_excel` to the module-level (`styleframe.ExcelWriter`
+  and `styleframe.read_excel`) to more closely mimic pandas' API
+* Fixes [GitHub issue #124](https://github.com/DeepSpace2/StyleFrame/issues/124) - Improved calculation of color luminosity from tint
+
 #### 4.0
 * **Removed Python 3.4 support**
 * **Removed Python 3.5 support**
