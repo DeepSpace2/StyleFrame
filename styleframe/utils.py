@@ -1,9 +1,11 @@
 import re
 
+from typing import Union, Match, Optional, Any
+
 HEX_REGEX = re.compile(r'^([A-Fa-f0-9]{8}|[A-Fa-f0-9]{6})$')
 
 
-def is_hex_color_string(hex_string):
+def is_hex_color_string(hex_string: Optional[str]) -> Union[Match[Any], bool]:
     return HEX_REGEX.match(hex_string) if hex_string else False
 
 
@@ -49,7 +51,7 @@ class number_formats(BaseDefClass):
     default_date_time_format = date_time
 
     @staticmethod
-    def decimal_with_num_of_digits(num_of_digits):
+    def decimal_with_num_of_digits(num_of_digits: int) -> str:
         """
         .. versionadded:: 1.6
 

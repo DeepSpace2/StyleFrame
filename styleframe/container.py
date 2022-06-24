@@ -11,7 +11,7 @@ except AttributeError:
     pd_timestamp = pd.tslib.Timestamp
 
 
-class Container(object):
+class Container:
     """
     A container class used to store value and style pairs.
     Value can be any datatype, and style is a Styler object
@@ -84,16 +84,6 @@ class Container(object):
             return Container(other.value - self.value)
         return Container(other - self.value)
 
-    def __div__(self, other):
-        if isinstance(other, self.__class__):
-            return Container(self.value / other.value)
-        return Container(self.value / other)
-
-    def __rdiv__(self, other):
-        if isinstance(other, self.__class__):
-            return Container(other.value / self.value)
-        return Container(other / self.value)
-
     def __truediv__(self, other):
         if isinstance(other, self.__class__):
             return Container(self.value / other.value)
@@ -146,6 +136,3 @@ class Container(object):
 
     def __len__(self):
         return len(self.value)
-
-    # for Python 2
-    __nonzero__ = __bool__

@@ -6,7 +6,7 @@ from setuptools import setup, find_packages
 
 DESCRIPTION = 'A library that wraps pandas and openpyxl and allows easy styling of dataframes in excel. Documentation can be found at http://styleframe.readthedocs.org'
 
-here = os.path.abspath(os.path.dirname(__file__)).lower()
+here = os.path.abspath(os.path.dirname(__file__))
 
 
 def read(*parts):
@@ -64,11 +64,10 @@ setup(
 
         # Specify the Python versions you support here. In particular, ensure
         # that you indicate whether you support Python 2, Python 3 or both.
-        'Programming Language :: Python :: 3.4',
-        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
-        'Programming Language :: Python :: 3.8'
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9'
     ],
 
     # What does your project relate to?
@@ -83,5 +82,11 @@ setup(
     # your project is installed. For an analysis of "install_requires" vs pip's
     # requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
-    install_requires=['openpyxl>=2.5,<3.0.6', 'colour>=0.1.5,<0.2', 'jsonschema', 'xlrd>=1.0.0,<1.3.0', 'pandas<1.2.0']
+    install_requires=[
+        'openpyxl>=2.5,<4',
+        'colour>=0.1.5,<0.2',
+        'jsonschema',
+        'pandas<2',
+        "xlrd>=1.0.0,<1.3.0 ; python_version<='3.6'"
+    ]
 )
