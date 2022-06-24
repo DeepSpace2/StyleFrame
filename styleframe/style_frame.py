@@ -162,11 +162,6 @@ class StyleFrame:
         .. note:: :meth:`read_excel` also accepts all arguments that :func:`pandas.read_excel` accepts as kwargs.
 
         :param str path: The path to the Excel file to read.
-        :param sheetname:
-              .. deprecated:: 1.6
-                 Use ``sheet_name`` instead.
-              .. versionchanged:: 4.0
-                 Removed
         :param sheet_name: The sheet name to read. If an integer is provided then it be used as a zero-based
                 sheet index. Default is 0.
         :type sheet_name: str or int
