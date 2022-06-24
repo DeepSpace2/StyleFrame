@@ -7,7 +7,7 @@ from openpyxl.styles import PatternFill, NamedStyle, Color as OpenPyColor, Borde
 from openpyxl.comments import Comment
 from pprint import pformat
 
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, Union, Set
 
 
 class Styler:
@@ -77,7 +77,7 @@ class Styler:
                  number_format: str = utils.number_formats.general,
                  protection: bool = False,
                  underline: Optional[str] = None,
-                 border_type: str = utils.borders.thin,
+                 border_type: Union[str, Set[str], Dict[str, str]] = utils.borders.thin,
                  horizontal_alignment: str = utils.horizontal_alignments.center,
                  vertical_alignment: str = utils.vertical_alignments.center,
                  wrap_text: bool = True,
@@ -121,6 +121,7 @@ class Styler:
         self.date_time_format = date_time_format
         self.strikethrough = strikethrough
         self.italic = italic
+        self.fill_pattern_type = fill_pattern_type
 
         if isinstance(border_type, set):
             self._borders = {border_location: utils.borders.thin for border_location in border_type}
@@ -137,15 +138,12 @@ class Styler:
                 raise ValueError(f'`bg_color`or `fill_pattern_type` conflict with border_type={utils.borders.default_grid}')
             self.border_type = None
             self.fill_pattern_type = None
-        else:
-            self.border_type = border_type
-            self.fill_pattern_type = fill_pattern_type
 
     def __eq__(self, other):
         return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
 
     def __hash__(self):
-        return hash(tuple((k, v) if not isinstance(v, dict) else hash(tuple(v.items()))
+        return hash(tuple((k, v) if not isinstance(v, (dict, set)) else hash(tuple(v.items()))
                           for k, v in sorted(self.__dict__.items())))
 
     def __add__(self, other):
