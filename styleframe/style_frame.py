@@ -379,7 +379,7 @@ class StyleFrame:
 
         :type best_fit: None or str or list or tuple or set
 
-        .. versionadded:: 4.1
+        .. versionadded:: 4.2
 
         :param bool export_title: If True, export the title if it was set. Default is True.
 
@@ -968,19 +968,19 @@ class StyleFrame:
 
         return self
 
-    def set_title(self, title: str, style: Optional[Styler] = None) -> 'StyleFrame':
+    def set_title(self, title: str, styler_obj: Optional[Styler] = None) -> 'StyleFrame':
         """
-        .. versionadded:: 4.1
+        .. versionadded:: 4.2
 
         Sets a title
 
         :param str title:
-        :param style:
+        :param styler_obj:
         :type styler_obj: None or :class:`.Styler`
         :return: self
         :rtype: :class:`StyleFrame`
         """
 
         self._title = title
-        self._title_style = style or Styler()
+        self._title_style = styler_obj or Styler()
         return self
