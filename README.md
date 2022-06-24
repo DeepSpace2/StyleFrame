@@ -1,8 +1,8 @@
-[![Codecov branch](https://img.shields.io/codecov/c/github/DeepSpace2/StyleFrame/master.svg?style=plastic)]()
-[![Travis branch](https://img.shields.io/travis/DeepSpace2/StyleFrame/master.svg?style=plastic)]()
-[![PyPI](https://img.shields.io/pypi/v/styleframe.svg?style=plastic)]()
-[![PyPI](https://img.shields.io/pypi/pyversions/StyleFrame.svg?style=plastic)]()
-[![Downloads](http://pepy.tech/badge/styleframe)](http://pepy.tech/count/styleframe)
+[![codecov](https://codecov.io/gh/DeepSpace2/StyleFrame/branch/master/graph/badge.svg?token=f4Q048ZOwC)](https://codecov.io/gh/DeepSpace2/StyleFrame)
+[![GitHub Actions](https://img.shields.io/github/checks-status/deepspace2/styleframe/master?label=Tests&logo=github&style=plastic)](https://github.com/DeepSpace2/StyleFrame/actions/workflows/test.yml?query=branch%3Amaster)
+[![PyPI](https://img.shields.io/pypi/v/styleframe.svg?style=plastic)](https://pypi.org/project/styleframe/)
+![PyPI](https://img.shields.io/pypi/pyversions/StyleFrame.svg?style=plastic)
+[![Downloads](http://pepy.tech/badge/styleframe)](https://pepy.tech/project/styleframe)
 [![Documentation Status](https://readthedocs.org/projects/styleframe/badge/?version=latest&style=plastic)](https://styleframe.readthedocs.io/en/latest/?badge=latest)
 
 # StyleFrame
