@@ -1,0 +1,43 @@
+name: test
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    continue-on-error: ${{ matrix.experimental }}
+    name: Python ${{ matrix.python-version }}
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [3.6, 3.7, 3.8, 3.9]
+        experimental: [false]
+        include:
+          - python-version: 3.10-dev
+            experimental: true
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        if: "!endsWith(matrix.python-version, '-dev')"
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: deadsnakes/action@v1.0.0
+        if: endsWith(matrix.python-version, '-dev')
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Installing dependencies Python ${{ matrix.python-version }}
+        run: |
+          pip install -r requirements.txt
+          pip install codecov coverage
+      - name: Running tests Python ${{ matrix.python-version }}
+        run: |
+          coverage run -m unittest discover
+          coverage xml
+      - name: Uploading coverage Python ${{ matrix.python-version }}
+        uses: codecov/codecov-action@v1
+
