@@ -160,6 +160,13 @@ class borders(BaseDefClass):
 
 
 class border_locations(BaseDefClass):
+    """
+    :cvar str top: 'top'
+    :cvar str bottom: 'bottom'
+    :cvar str left: 'left'
+    :cvar str right: 'right'
+    """
+
     top = 'top'
     bottom = 'bottom'
     left = 'left'
