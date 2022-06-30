@@ -653,11 +653,14 @@ class StyleFrameTest(unittest.TestCase):
 
     def test_columns_and_rows_to_freeze(self):
         big_sf = StyleFrame({i:[j for j in range(25)] for i in range(29)}, self.default_styler_obj)
-        big_sf.to_excel(excel_writer=self.ew, right_to_left=True, columns_to_hide=big_sf.columns[0],
+        out = big_sf.to_excel(excel_writer=self.ew, right_to_left=True, columns_to_hide=big_sf.columns[0],
                          row_to_add_filters=0, columns_and_rows_to_freeze='AC2', allow_protection=True)
+        self.assertEqual(out.sheets["Sheet1"].freeze_panes, 'AC2')
 
-        big_sf.to_excel(excel_writer=self.ew, right_to_left=True, columns_to_hide=big_sf.columns[0],
+        out = big_sf.to_excel(excel_writer=self.ew, right_to_left=True, columns_to_hide=big_sf.columns[0],
                          row_to_add_filters=0, columns_and_rows_to_freeze='A24', allow_protection=True)
+        self.assertEqual(out.sheets["Sheet1"].freeze_panes, 'A24')
 
-        big_sf.to_excel(excel_writer=self.ew, right_to_left=True, columns_to_hide=big_sf.columns[0],
+        out = big_sf.to_excel(excel_writer=self.ew, right_to_left=True, columns_to_hide=big_sf.columns[0],
                          row_to_add_filters=0, columns_and_rows_to_freeze='AC24', allow_protection=True)
+        self.assertEqual(out.sheets["Sheet1"].freeze_panes, 'AC24')
