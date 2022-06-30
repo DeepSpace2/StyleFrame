@@ -1,5 +1,6 @@
 import datetime as dt
 import pathlib
+import re
 
 from collections import OrderedDict
 from collections.abc import Iterable
@@ -558,10 +559,11 @@ class StyleFrame:
         if columns_and_rows_to_freeze is not None:
             if not isinstance(columns_and_rows_to_freeze, str) or len(columns_and_rows_to_freeze) < 2:
                 raise TypeError("columns_and_rows_to_freeze must be a str for example: 'C3'")
-            if not within_sheet_boundaries(column=columns_and_rows_to_freeze[0]):
-                raise IndexError("column: %s is out of columns range." % columns_and_rows_to_freeze[0])
-            if not within_sheet_boundaries(row=columns_and_rows_to_freeze[1]):
-                raise IndexError("row: %s is out of rows range." % columns_and_rows_to_freeze[1])
+            columns_and_rows_to_freeze_list = re.split('(\d+)', columns_and_rows_to_freeze)
+            if not within_sheet_boundaries(column=columns_and_rows_to_freeze_list[0]):
+                raise IndexError("column: %s is out of columns range." % columns_and_rows_to_freeze_list[0])
+            if not within_sheet_boundaries(row=columns_and_rows_to_freeze_list[1]):
+                raise IndexError("row: %s is out of rows range." % columns_and_rows_to_freeze_list[1])
             sheet.freeze_panes = sheet[columns_and_rows_to_freeze]
 
         if allow_protection:

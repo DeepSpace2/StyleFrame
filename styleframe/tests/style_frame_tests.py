@@ -650,3 +650,14 @@ class StyleFrameTest(unittest.TestCase):
         self.sf.columns = ['c', 'd']
         self.assertTrue(all(isinstance(col, Container) for col in self.sf.columns))
         self.assertEqual([col.value for col in self.sf.columns], ['c', 'd'])
+
+    def test_columns_and_rows_to_freeze(self):
+        big_sf = StyleFrame({i:[j for j in range(25)] for i in range(29)}, self.default_styler_obj)
+        big_sf.to_excel(excel_writer=self.ew, right_to_left=True, columns_to_hide=big_sf.columns[0],
+                         row_to_add_filters=0, columns_and_rows_to_freeze='AC2', allow_protection=True)
+
+        big_sf.to_excel(excel_writer=self.ew, right_to_left=True, columns_to_hide=big_sf.columns[0],
+                         row_to_add_filters=0, columns_and_rows_to_freeze='A24', allow_protection=True)
+
+        big_sf.to_excel(excel_writer=self.ew, right_to_left=True, columns_to_hide=big_sf.columns[0],
+                         row_to_add_filters=0, columns_and_rows_to_freeze='AC24', allow_protection=True)
