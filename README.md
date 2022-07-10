@@ -8,10 +8,11 @@
 # StyleFrame
 _Exporting DataFrames to a styled Excel file has never been so easy_
 
-
 A library that wraps pandas and openpyxl and allows easy styling of dataframes in Excel.
 
-[Documentation](http://styleframe.readthedocs.org/en/latest/) and [Changelog](CHANGELOG.md)
+- [Documentation](http://styleframe.readthedocs.org/en/latest/)
+- [Changelog](CHANGELOG.md)
+- [How to contribute](.github/CONTRIBUTING.md)
 
 ---
 
