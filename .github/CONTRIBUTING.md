@@ -14,7 +14,7 @@ Of course there are some steps that could be considered to improve the quality o
 
 # Unittesting
 
-This project uses pythons default [`unittest`](https://docs.python.org/3/library/unittest.html) package. You can run all test cases via the *discover* feature when you run this in the projects root folder.
+This project uses Python's default [`unittest`](https://docs.python.org/3/library/unittest.html) package. You can run all test cases via the *discover* feature when you run this in the projects root folder.
 
 ```sh
 python3 -m unittest discover
