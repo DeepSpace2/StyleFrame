@@ -124,14 +124,16 @@ class Styler:
         self.fill_pattern_type = fill_pattern_type
 
         if isinstance(border_type, set):
-            self._borders = {border_location: utils.borders.thin for border_location in border_type}
-            self.border_type = None
+            self.border_type = {border_location: utils.borders.thin for border_location in border_type}
         elif isinstance(border_type, dict):
-            self._borders = border_type
-            self.border_type = None
-        else:
             self.border_type = border_type
-            self._borders = None
+        else:
+            self.border_type = {
+                utils.border_locations.top: border_type,
+                utils.border_locations.right: border_type,
+                utils.border_locations.bottom: border_type,
+                utils.border_locations.left: border_type
+            }
 
         if border_type == utils.borders.default_grid:
             if bg_color is not None or fill_pattern_type != utils.fill_pattern_types.solid:
@@ -150,14 +152,6 @@ class Styler:
         default = Styler().__dict__
         d = dict(self.__dict__)
         for k, v in other.__dict__.items():
-            # TODO this will break the following:
-            #    Styler(border_type={utils.border_locations.right: 'medium',
-            #                               utils.border_locations.left: 'mediumDashDot'})
-            #           + Styler(bg_color='yellow')
-            #  fix and add tests
-            if k.startswith('_'):
-                d.pop(k)
-                continue
             if v != default[k]:
                 d[k] = v
         return Styler(**d)
@@ -184,7 +178,7 @@ class Styler:
                 border = Border(left=side, right=side, top=side, bottom=side)
             else:
                 border = Border(**{border_location: Side(border_style=border_type, color=utils.colors.black)
-                                   for border_location, border_type in self._borders.items()})
+                                   for border_location, border_type in self.border_type.items()})
 
             openpyxl_style = self.cache[self] = NamedStyle(
                 name=str(hash(self)),
@@ -204,9 +198,6 @@ class Styler:
     @classmethod
     def from_openpyxl_style(cls, openpyxl_style: Cell, theme_colors: List[str],
                             openpyxl_comment: Optional[Comment] = None):
-
-        # TODO - implement same logic as in to_openpyxl_style regarding _borders and border_style
-        #      - add tests
 
         def _calc_new_hex_from_theme_hex_and_tint(theme_hex, color_tint):
             if not theme_hex.startswith('#'):
@@ -262,7 +253,6 @@ class Styler:
         number_format = openpyxl_style.number_format
         protection = openpyxl_style.protection.locked
         underline = openpyxl_style.font.underline
-        border_type = openpyxl_style.border.bottom.border_style
         horizontal_alignment = openpyxl_style.alignment.horizontal
         vertical_alignment = openpyxl_style.alignment.vertical
         wrap_text = openpyxl_style.alignment.wrap_text or False
@@ -270,6 +260,13 @@ class Styler:
         fill_pattern_type = openpyxl_style.fill.patternType
         indent = openpyxl_style.alignment.indent
         text_rotation = openpyxl_style.alignment.text_rotation
+
+        border_type = {
+            utils.border_locations.top: getattr(openpyxl_style.border.top, 'border_style', None),
+            utils.border_locations.right: getattr(openpyxl_style.border.right, 'border_style', None),
+            utils.border_locations.bottom: getattr(openpyxl_style.border.bottom, 'border_style', None),
+            utils.border_locations.left: getattr(openpyxl_style.border.left, 'border_style', None)
+        }
 
         if openpyxl_comment:
             comment_author = openpyxl_comment.author

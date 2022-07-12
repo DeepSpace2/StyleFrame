@@ -357,10 +357,9 @@ class StyleFrameTest(unittest.TestCase):
         rows_in_excel = sf_from_excel.data_df.itertuples()
         rows_in_self = self.sf.data_df.itertuples()
 
-        # making sure styles are the same
-        self.assertTrue(all(self_cell.style == Styler.from_openpyxl_style(excel_cell.style, [])
-                            for row_in_excel, row_in_self in zip(rows_in_excel, rows_in_self)
-                            for excel_cell, self_cell in zip(row_in_excel[1:], row_in_self[1:])))
+        for row_in_excel, row_in_self in zip(rows_in_excel, rows_in_self):
+            for excel_cell, self_cell in zip(row_in_excel[1:], row_in_self[1:]):
+                self.assertEqual(self_cell.style, Styler.from_openpyxl_style(excel_cell.style, []))
 
     def test_read_excel_with_style_openpyxl_objects(self):
         self.export_and_get_default_sheet(save=True)
@@ -396,15 +395,16 @@ class StyleFrameTest(unittest.TestCase):
         self.export_and_get_default_sheet(save=True)
         sf_from_excel = StyleFrame.read_excel(TEST_FILENAME, read_style=True)
         # making sure content is the same
-        self.assertTrue(all(list(self.sf[col]) == list(sf_from_excel[col]) for col in self.sf.columns))
+        for col in self.sf.columns:
+            self.assertEqual(list(self.sf[col]), list(sf_from_excel[col]))
 
         rows_in_excel = sf_from_excel.data_df.itertuples()
         rows_in_self = self.sf.data_df.itertuples()
 
         # making sure styles are the same
-        self.assertTrue(all(excel_cell.style == self_cell.style
-                        for row_in_excel, row_in_self in zip(rows_in_excel, rows_in_self)
-                        for excel_cell, self_cell in zip(row_in_excel[1:], row_in_self[1:])))
+        for row_in_excel, row_in_self in zip(rows_in_excel, rows_in_self):
+            for excel_cell, self_cell in zip(row_in_excel[1:], row_in_self[1:]):
+                self.assertEqual(excel_cell.style, self_cell.style)
 
     def test_read_excel_with_style_comments_openpyxl_objects(self):
         self.export_and_get_default_sheet(save=True)
