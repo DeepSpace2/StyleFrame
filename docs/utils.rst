@@ -16,6 +16,9 @@ It is possible to directly use a value that is not present in the utils module a
 .. autoclass:: styleframe.utils.borders
     :members:
 
+.. autoclass:: styleframe.utils.border_locations
+    :members:
+
 .. autoclass:: styleframe.utils.horizontal_alignments
     :members:
 

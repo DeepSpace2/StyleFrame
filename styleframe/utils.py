@@ -161,6 +161,8 @@ class borders(BaseDefClass):
 
 class border_locations(BaseDefClass):
     """
+    .. versionadded:: 4.2
+
     :cvar str top: 'top'
     :cvar str bottom: 'bottom'
     :cvar str left: 'left'

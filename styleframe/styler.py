@@ -27,8 +27,20 @@ class Styler:
     :param bool protection: If ``True``, the cell/column will be write-protected
     :param underline: The underline type
     :type underline: str: one of :class:`.utils.underline` or any other underline Excel supports
-    :param border_type: The border type
-    :type border_type: str: one of :class:`.utils.borders` or any other border type Excel supports
+
+    .. versionchanged:: 4.2
+
+    :param border_type:
+        - If provided a string (one of :class:`.utils.borders` or any other border type Excel supports): all borders
+          will be set to that type.
+        - If provided a set of strings (:class:`.utils.border_locations` or any other border location Excel supports):
+          each provided border will be set to the default border type.
+        - If provided a dict (from location,
+          one of :class:`.utils.border_locations` or any other border location Excel supports) to border type
+          (one of :class:`.utils.borders` or any other border type Excel supports): each provided border will be set to
+          the provided border type.
+
+    :type border_type: str or set[str] or dict[str, str]
 
     .. versionadded:: 1.2
 
@@ -172,7 +184,6 @@ class Styler:
         try:
             openpyxl_style = self.cache[self]
         except KeyError:
-            # TODO add tests
             if isinstance(self.border_type, str):
                 side = Side(border_style=self.border_type, color=utils.colors.black)
                 border = Border(left=side, right=side, top=side, bottom=side)
