@@ -159,6 +159,22 @@ class borders(BaseDefClass):
     thin = 'thin'
 
 
+class border_locations(BaseDefClass):
+    """
+    .. versionadded:: 4.2
+
+    :cvar str top: 'top'
+    :cvar str bottom: 'bottom'
+    :cvar str left: 'left'
+    :cvar str right: 'right'
+    """
+
+    top = 'top'
+    bottom = 'bottom'
+    left = 'left'
+    right = 'right'
+
+
 class horizontal_alignments(BaseDefClass):
     """
     :cvar str general: 'general'
