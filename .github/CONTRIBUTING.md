@@ -28,7 +28,7 @@ Ran 74 tests in 0.823s
 OK
 ```
 
-If you don't want to run all tests at once but a specific test case or method you need to *install* the package first. It is possible via a virtual environment but we recommend to use the `--editable` switch of `pip`. Run this in the projects root folder:
+If you want to run a specific test case or method you need to *install* the package first. It is recommended to use a virtual environment and the  `--editable` flag of `pip`. Run this in the projects root folder:
 ```sh
 python3 -m pip install --editable .
 ```
