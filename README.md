@@ -141,11 +141,14 @@ sf.apply_style_by_indexes(indexes_to_style=sf[sf['Pass/Fail'] == 'Failed'],
 sf.set_column_width(columns=sf.columns, width=20)
 sf.set_row_height(rows=sf.row_indexes, height=25)
 
-sf.to_excel('output.xlsx',
-            # Add filters in row 0 to each column.
-            row_to_add_filters=0, 
-            # Freeze the columns before column 'A' (=None) and rows above '2' (=1).
-            columns_and_rows_to_freeze='A2').save()
+writer = sf.to_excel('output.xlsx',
+                     # Add filters in row 0 to each column.
+                     row_to_add_filters=0, 
+                     # Freeze the columns before column 'A' (=None)
+                     # and rows above '2' (=1).
+                     columns_and_rows_to_freeze='A2')
+# Don't forget to save.
+writer.save()
 ```    
 The final output saved under output.xlsx:    
 ![Example 1](readme-images/example1.PNG?raw=true)
