@@ -5,7 +5,7 @@ from collections import OrderedDict
 from collections.abc import Iterable
 from copy import deepcopy
 from functools import partial
-from typing import Union, Optional, List, Dict, Tuple, Set
+from typing import Any, Dict, List, Optional, Set, Tuple, Union
 
 import numpy as np
 import pandas as pd
