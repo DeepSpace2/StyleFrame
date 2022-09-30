@@ -336,10 +336,10 @@ class StyleFrame:
         return tuple(range(1, len(self) + 2))
 
     @staticmethod
-    def _to_excel_pandas_defaults(kwargs):
-        """Return five arguments used by `pandas.DataFrame.to_excel()` and
-        use default values in case that arguments not explicit set.
+    def _to_excel_pandas_defaults(kwargs: Dict[str, Any]) -> Tuple[bool, int, int, str]:
+        """Returns the provided or default values for specific arguments as set by :meth:`pandas.DataFrame.to_excel`
         """
+
         header = kwargs.pop('header', True)
         startcol = kwargs.pop('startcol', 0)
         startrow = kwargs.pop('startrow', 0)
