@@ -387,8 +387,10 @@ class StyleFrame:
                       calling ``StyleFrame.to_excel`` by directly modifying ``StyleFrame.A_FACTOR`` and ``StyleFrame.P_FACTOR``
 
         :type best_fit: None or str or list or tuple or set
-        :param index: Write row names.
-        :type index: bool
+
+        .. versionadded:: 4.2
+
+        :param bool index: Write row names.
         :rtype: :class:`pandas.ExcelWriter`
 
         """
@@ -397,7 +399,7 @@ class StyleFrame:
             if excel_writer.engine != 'openpyxl':
                 raise TypeError('styleframe supports only openpyxl, attempted to use {}'.format(excel_writer.engine))
 
-        header, startcol, startrow, na_rep = StyleFrame._to_excel_pandas_defaults(kwargs)
+        header, startcol, startrow, na_rep = self._to_excel_pandas_defaults(kwargs)
 
         def get_values(x):
             if isinstance(x, Container):
