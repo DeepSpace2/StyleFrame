@@ -5,7 +5,7 @@ from collections import OrderedDict
 from collections.abc import Iterable
 from copy import deepcopy
 from functools import partial
-from typing import Union, Optional, List, Dict, Tuple, Set
+from typing import Any, Dict, List, Optional, Set, Tuple, Union
 
 import numpy as np
 import pandas as pd
@@ -335,10 +335,23 @@ class StyleFrame:
 
         return tuple(range(1, len(self) + 2))
 
+    @staticmethod
+    def _to_excel_pandas_defaults(kwargs: Dict[str, Any]) -> Tuple[bool, int, int, str]:
+        """Returns the provided or default values for specific arguments as set by :meth:`pandas.DataFrame.to_excel`
+        """
+
+        header = kwargs.pop('header', True)
+        startcol = kwargs.pop('startcol', 0)
+        startrow = kwargs.pop('startrow', 0)
+        na_rep = kwargs.pop('na_rep', '')
+
+        return header, startcol, startrow, na_rep
+
     def to_excel(self, excel_writer: Union[str, pd.ExcelWriter, pathlib.Path] = 'output.xlsx',
                  sheet_name: str = 'Sheet1', allow_protection: bool = False, right_to_left: bool = False,
                  columns_to_hide: Union[None, str, list, tuple, set] = None, row_to_add_filters: Optional[int] = None,
                  columns_and_rows_to_freeze: Optional[str] = None, best_fit: Union[None, str, list, tuple, set] = None,
+                 index: bool = False,
                  **kwargs) -> pd.ExcelWriter:
         """Saves the dataframe to excel and applies the styles.
 
@@ -374,6 +387,10 @@ class StyleFrame:
                       calling ``StyleFrame.to_excel`` by directly modifying ``StyleFrame.A_FACTOR`` and ``StyleFrame.P_FACTOR``
 
         :type best_fit: None or str or list or tuple or set
+
+        .. versionadded:: 4.2
+
+        :param bool index: Write row names.
         :rtype: :class:`pandas.ExcelWriter`
 
         """
@@ -382,12 +399,7 @@ class StyleFrame:
             if excel_writer.engine != 'openpyxl':
                 raise TypeError('styleframe supports only openpyxl, attempted to use {}'.format(excel_writer.engine))
 
-        # dealing with needed pandas.to_excel defaults
-        header = kwargs.pop('header', True)
-        index = kwargs.pop('index', False)
-        startcol = kwargs.pop('startcol', 0)
-        startrow = kwargs.pop('startrow', 0)
-        na_rep = kwargs.pop('na_rep', '')
+        header, startcol, startrow, na_rep = self._to_excel_pandas_defaults(kwargs)
 
         def get_values(x):
             if isinstance(x, Container):

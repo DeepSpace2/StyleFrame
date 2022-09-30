@@ -1,3 +1,4 @@
+import inspect
 import os
 import unittest
 
@@ -674,3 +675,16 @@ class StyleFrameTest(unittest.TestCase):
         self.sf.columns = ['c', 'd']
         self.assertTrue(all(isinstance(col, Container) for col in self.sf.columns))
         self.assertEqual([col.value for col in self.sf.columns], ['c', 'd'])
+    def test_to_excel_pandas_defaults(self):
+        # values that StyleFrame assume as pandas defaults
+        header, startcol, startrow, na_rep = StyleFrame._to_excel_pandas_defaults({})
+
+        # the "real" default values pandas use
+        sig = inspect.signature(pd.DataFrame.to_excel)
+
+        # compare them
+        self.assertEqual(header, sig.parameters['header'].default)
+        self.assertEqual(startcol, sig.parameters['startcol'].default)
+        self.assertEqual(startrow, sig.parameters['startrow'].default)
+        self.assertEqual(na_rep, sig.parameters['na_rep'].default)
+
