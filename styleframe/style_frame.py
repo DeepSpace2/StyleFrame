@@ -11,7 +11,7 @@ import numpy as np
 import pandas as pd
 
 from openpyxl import load_workbook, Workbook
-from openpyxl.cell.cell import get_column_letter, Cell
+from openpyxl.cell.cell import get_column_letter, Cell, MergedCell
 from openpyxl.utils import cell
 from openpyxl.worksheet.worksheet import Worksheet
 from openpyxl.xml.functions import fromstring, QName
@@ -68,11 +68,31 @@ class StyleFrame:
             raise TypeError("{} __init__ doesn't support {}".format(type(self).__name__, type(obj).__name__))
         self.data_df.columns = [Container(col, deepcopy(styler_obj)) if not isinstance(col, Container) else deepcopy(col)
                                 for col in self.data_df.columns]
-        self.data_df.index = [Container(index, deepcopy(styler_obj)) if not isinstance(index, Container) else deepcopy(index)
-                              for index in self.data_df.index]
+
+        index_li = []
+        if isinstance(self.data_df.index, pd.MultiIndex):
+            for index in self.data_df.index:
+                t = []
+                for e in index:
+                    if not isinstance(e, Container):
+                        x = Container(e, deepcopy(styler_obj))
+                    else:
+                        x = deepcopy(e)
+                    t.append(x)
+                index_li.append(t)
+            self.data_df.index = pd.MultiIndex.from_tuples(index_li)
+        else:
+            for index in self.data_df.index:
+                if not isinstance(index, Container):
+                    x = Container(index, deepcopy(styler_obj))
+                else:
+                    x = deepcopy(index)
+                index_li.append(x)
+            self.data_df.index = index_li
 
         if from_pandas_dataframe:
             self.data_df.index.name = obj.index.name
+            self.data_df.index.names = obj.index.names
 
         self._columns_width = obj._columns_width if from_another_styleframe else OrderedDict()
         self._rows_height = obj._rows_height if from_another_styleframe else OrderedDict()
@@ -395,6 +415,8 @@ class StyleFrame:
 
         """
 
+        output_index = index
+
         if isinstance(excel_writer, pd.ExcelWriter):
             if excel_writer.engine != 'openpyxl':
                 raise TypeError('styleframe supports only openpyxl, attempted to use {}'.format(excel_writer.engine))
@@ -438,20 +460,34 @@ class StyleFrame:
 
         if len(self.data_df) > 0:
             export_df = self.data_df.applymap(get_values)
-
         else:
             export_df = deepcopy(self.data_df)
 
         export_df.columns = [col.value for col in export_df.columns]
         # noinspection PyTypeChecker
-        export_df.index = [row_index.value for row_index in export_df.index]
+
+        index_li = []
+        if isinstance(export_df.index, pd.MultiIndex):
+            for index in export_df.index:
+                t = []
+                for e in index:
+                    t.append(e.value)
+                index_li.append(t)
+            index_li = pd.MultiIndex.from_tuples(index_li)
+        else:
+            for index in export_df.index:
+                index_li.append(index.value)
+
+        export_df.index = index_li
+
         export_df.index.name = self.data_df.index.name
+        export_df.index.names = self.data_df.index.names
 
         if isinstance(excel_writer, (str, pathlib.Path)):
             excel_writer = self.ExcelWriter(excel_writer)
 
         export_df.to_excel(excel_writer, sheet_name=sheet_name, engine='openpyxl', header=header,
-                           index=index, startcol=startcol, startrow=startrow, na_rep=na_rep, **kwargs)
+                           index=output_index, startcol=startcol, startrow=startrow, na_rep=na_rep, **kwargs)
 
         sheet = excel_writer.sheets[sheet_name]
 
@@ -459,31 +495,37 @@ class StyleFrame:
 
         self.data_df.fillna(Container('NaN'), inplace=True)
 
-        if index:
+        if output_index:
             if self.data_df.index.name:
                 index_name_cell = sheet.cell(row=startrow + 1, column=startcol + 1)
                 index_name_cell.style = self._index_header_style.to_openpyxl_style()
             for row_index, index in enumerate(self.data_df.index):
-                try:
-                    date_time_types_to_formats = {pd_timestamp: index.style.date_time_format,
-                                                  dt.datetime: index.style.date_time_format,
-                                                  dt.date: index.style.date_format,
-                                                  dt.time: index.style.time_format}
-                    index.style.number_format = date_time_types_to_formats.get(type(index.value),
-                                                                               index.style.number_format)
-                    style_to_apply = index.style.to_openpyxl_style()
-                except AttributeError:
-                    style_to_apply = index.style
-                current_cell = sheet.cell(row=startrow + row_index + 2, column=startcol + 1)
-                current_cell.style = style_to_apply
-                if isinstance(index.style, Styler):
-                    current_cell.comment = index.style.generate_comment()
-                else:
-                    if hasattr(index.style, 'comment'):
-                        index.style.comment.parent = None
-                        current_cell.comment = index.style.comment
+                if not isinstance(self.data_df.index, pd.MultiIndex):
+                    index = (index,)
+                for i, index_element in enumerate(index):
+                    try:
+                        date_time_types_to_formats = {pd_timestamp: index_element.style.date_time_format,
+                                                      dt.datetime: index_element.style.date_time_format,
+                                                      dt.date: index_element.style.date_format,
+                                                      dt.time: index_element.style.time_format}
+                        index_element.style.number_format = date_time_types_to_formats.get(type(index_element.value),
+                                                                                           index_element.style.number_format)
+                        style_to_apply = index_element.style.to_openpyxl_style()
+                    except AttributeError:
+                        style_to_apply = index_element.style
 
-            startcol += 1
+                    current_cell = sheet.cell(row=startrow + row_index + 2, column=startcol + i + 1)
+                    current_cell.style = style_to_apply
+
+                    if not isinstance(current_cell, MergedCell):
+                        if isinstance(index_element.style, Styler):
+                            current_cell.comment = index_element.style.generate_comment()
+                        else:
+                            if hasattr(index_element.style, 'comment'):
+                                index_element.style.comment.parent = None
+                                current_cell.comment = index_element.style.comment
+
+            startcol += self.data_df.index.nlevels
 
         if header and not self._has_custom_headers_style:
             self.apply_headers_style(Styler.default_header_style())
@@ -658,8 +700,13 @@ class StyleFrame:
         else:
             style_to_apply = Styler.combine(self._default_style, styler_obj)
 
+        # TODO behaves funny with non-unique indexes due to pandas index caching
         for index in indexes_to_style:
-            index.style = style_to_apply
+            if isinstance(self.data_df.index, pd.MultiIndex):
+                for index_element in index:
+                    index_element.style = style_to_apply
+            else:
+                index.style = style_to_apply
             for col in cols_to_style:
                 self.iloc[self.index.get_loc(index), self.columns.get_loc(col)].style = style_to_apply
 
