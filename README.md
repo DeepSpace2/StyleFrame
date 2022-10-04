@@ -49,45 +49,18 @@ $ pip install styleframe
 ## Basics
 
 * ***Styler***:
-```python
-__init__(self, bg_color=None, bold=False, font=utils.fonts.arial, font_size=12, font_color=None,
-         number_format=utils.number_formats.general, protection=False, underline=None,
-         border_type=utils.borders.thin, horizontal_alignment=utils.horizontal_alignments.center,
-         vertical_alignment=utils.vertical_alignments.center, wrap_text=True, shrink_to_fit=True,
-         fill_pattern_type=utils.fill_pattern_types.solid, indent=0,
-         comment_author=None, comment_text=None, text_rotation=0)
-```
-Object that represents the style of a cell in our excel file.   
-Styler is responsible of storing the style of single cell.   
-Once the style is ready, ```.to_openpyxl_style()``` method is called.
+The `Styler` class represents a style of a cell.   
 
 * ***utils***:
-```python
-from styleframe import utils
-```
-Before you start to style your StyleFrame, take a look in the utils module.
-You may find there very useful things such as number formats, colors, borders and more!
-
+The `utils` module contains helper classes for frequently used styling elements,
+such as number and date formats, colors and border types.
 
 * ***Container***: 
-```python
-__init__(self, value, styler=None)
-```
-Object that represents cell in our excel file.
- it contains two variables:          
-&nbsp;&nbsp;&nbsp;&nbsp;- value which may be anything you wish to put in the cell as long as excel file support its format.   
-&nbsp;&nbsp;&nbsp;&nbsp;- style which is the style of the cell- created by ```Styler(...).to_openpyxl_style()```
-
-And finally:
+The `Container` class represents a cell, a value/style pair.
 
 * ***StyleFrame***:
-```python
-__init__(self, obj, styler_obj=None):
-```
-StyleFrame is the main object we will be dealing with.   
-It contains self DataFrame which is based on the given obj.   
-Each item of the self DataFrame is wrapped by a Container object to store the given data and its` style.   
-StyleFrame (usually referred as sf) reveals a very easy api for styling.
+The `StyleFrame` is the main interaction point you will have. 
+It wraps the `DataFrame` object you will be styling.
 
 ## Usage Examples
 
@@ -148,8 +121,8 @@ writer = sf.to_excel('output.xlsx',
                      # Freeze the columns before column 'A' (=None)
                      # and rows above '2' (=1).
                      columns_and_rows_to_freeze='A2')
-# Don't forget to save.
-writer.save()
+
+writer.close()
 ```    
 The final output saved under output.xlsx:    
 ![Example 1](readme-images/example1.PNG?raw=true)
@@ -228,7 +201,7 @@ from styleframe import Styler, utils
 
 
 sf.apply_column_style(cols_to_style='Date',
-                      styler_obj=Styler(number_format=utils.number_formats.date,
+                      styler_obj=Styler(date_format=utils.number_formats.date,
                                         font=utils.fonts.calibri,
                                         bold=True))
 
@@ -267,7 +240,7 @@ Change the background of all rows where the date is after 14/1/2000 to green
 sf.apply_style_by_indexes(indexes_to_style=sf[sf['Date'] > date(2000, 1, 14)],
                           cols_to_style='Date',
                           styler_obj=Styler(bg_color=utils.colors.green,
-                                            number_format=utils.number_formats.date,
+                                            date_format=utils.number_formats.date,
                                             bold=True))
 ```
 
@@ -289,14 +262,14 @@ sf.to_excel(excel_writer=ew,
 Adding another excel sheet
 ```python
 other_sheet_sf = StyleFrame({'Dates': [date(2016, 10, 20), date(2016, 10, 21), date(2016, 10, 22)]},
-                            styler_obj=Styler(number_format=utils.number_formats.date))
+                            styler_obj=Styler(date_format=utils.number_formats.date))
                             
 other_sheet_sf.to_excel(excel_writer=ew, sheet_name='2')
 ```
 
 Don't forget to save
 ```python
-ew.save()
+ew.close()
 ```
 
 **_the result:_**

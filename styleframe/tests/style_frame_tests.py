@@ -46,7 +46,7 @@ class StyleFrameTest(unittest.TestCase):
         self.sf.to_excel(excel_writer=self.ew, right_to_left=True, columns_to_hide=self.sf.columns[0],
                          row_to_add_filters=0, columns_and_rows_to_freeze='A2', allow_protection=True)
         if save:
-            self.ew.save()
+            self.ew.close()
         return self.ew.sheets['Sheet1']
 
     def get_cf_rules(self, sheet):
@@ -390,7 +390,7 @@ class StyleFrameTest(unittest.TestCase):
                             for row_in_excel, row_in_self in zip(rows_in_excel, rows_in_self)
                             for excel_cell, self_cell in zip(row_in_excel[1:], row_in_self[1:])))
 
-        sf_from_excel.to_excel(TEST_FILENAME).save()
+        sf_from_excel.to_excel(TEST_FILENAME).close()
 
     def test_read_excel_with_style_styler_objects(self):
         self.export_and_get_default_sheet(save=True)
@@ -485,7 +485,7 @@ class StyleFrameTest(unittest.TestCase):
                         styler_obj=self.styler_obj_1
                     )
         template_sf.index[0].style = self.styler_obj_2
-        template_sf.to_excel(TEST_FILENAME, index=True).save()
+        template_sf.to_excel(TEST_FILENAME, index=True).close()
 
         df = pd.DataFrame(
                     data={
@@ -519,7 +519,7 @@ class StyleFrameTest(unittest.TestCase):
                         },
                         styler_obj=self.styler_obj_1
                     )
-        template_sf.to_excel(TEST_FILENAME).save()
+        template_sf.to_excel(TEST_FILENAME).close()
 
         df = pd.DataFrame(
                     data={
@@ -556,7 +556,7 @@ class StyleFrameTest(unittest.TestCase):
                         styler_obj=self.styler_obj_1
                     )
         template_sf.index[0].style = self.styler_obj_2
-        template_sf.to_excel(TEST_FILENAME, index=True).save()
+        template_sf.to_excel(TEST_FILENAME, index=True).close()
 
         df = pd.DataFrame(
                     data={
@@ -591,7 +591,7 @@ class StyleFrameTest(unittest.TestCase):
             },
             styler_obj=self.styler_obj_1
         )
-        template_sf.to_excel(TEST_FILENAME).save()
+        template_sf.to_excel(TEST_FILENAME).close()
 
         df = pd.DataFrame(
             data={
