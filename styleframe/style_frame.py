@@ -222,12 +222,12 @@ class StyleFrame:
             for col_index, col_name in enumerate(sf.columns):
                 col_index_in_excel = col_index + 1
                 if col_index_in_excel == excel_index_col:
-                    for row_index, sf_index in enumerate(sf.index, start=2):
+                    for row_index, sf_index in enumerate(sf.data_df.index, start=2):
                         sf_index.style = get_style_object(row=row_index, column=col_index_in_excel)
                     col_index_in_excel += 1  # Move next to excel indices column
 
                 sf.columns[col_index].style = get_style_object(row=1, column=col_index_in_excel)
-                for row_index, sf_index in enumerate(sf.index, start=start_row_index):
+                for row_index, sf_index in enumerate(sf.data_df.index, start=start_row_index):
                     sf.at[sf_index, col_name].style = get_style_object(row=row_index, column=col_index_in_excel)
                     sf._rows_height[row_index] = sheet.row_dimensions[row_index].height
 
@@ -273,7 +273,7 @@ class StyleFrame:
         sf = cls.read_excel(path=path, read_style=True, **kwargs)
 
         num_of_rows, num_of_cols = len(df.index), len(df.columns)
-        template_num_of_rows, template_num_of_cols = len(sf.index), len(sf.columns)
+        template_num_of_rows, template_num_of_cols = len(sf.data_df.index), len(sf.columns)
 
         num_of_cols_to_copy_with_style = min(num_of_cols, template_num_of_cols)
         num_of_rows_to_copy_with_style = min(num_of_rows, template_num_of_rows)
@@ -643,7 +643,7 @@ class StyleFrame:
             raise TypeError('styler_obj must be {}, got {} instead.'.format(Styler.__name__, type(styler_obj).__name__))
 
         if isinstance(indexes_to_style, (list, tuple, int)):
-            indexes_to_style = self.index[indexes_to_style]
+            indexes_to_style = self.data_df.index[indexes_to_style]
 
         elif isinstance(indexes_to_style, Container):
             indexes_to_style = pd.Index([indexes_to_style])
@@ -661,15 +661,15 @@ class StyleFrame:
         for index in indexes_to_style:
             index.style = style_to_apply
             for col in cols_to_style:
-                self.iloc[self.index.get_loc(index), self.columns.get_loc(col)].style = style_to_apply
+                self.iloc[self.data_df.index.get_loc(index), self.columns.get_loc(col)].style = style_to_apply
 
         if height:
             # Add offset 2 since rows do not include the headers and they starts from 1 (not 0).
-            rows_indexes_for_height_change = [self.index.get_loc(idx) + 2 for idx in indexes_to_style]
+            rows_indexes_for_height_change = [self.data_df.index.get_loc(idx) + 2 for idx in indexes_to_style]
             self.set_row_height(rows=rows_indexes_for_height_change, height=height)
 
         if complement_style:
-            self.apply_style_by_indexes(self.index.difference(indexes_to_style), complement_style, cols_to_style,
+            self.apply_style_by_indexes(self.data_df.index.difference(indexes_to_style), complement_style, cols_to_style,
                                         complement_height if complement_height else height)
 
         return self
@@ -715,7 +715,7 @@ class StyleFrame:
             if style_header:
                 self.columns[self.columns.get_loc(col_name)].style = style_to_apply
                 self._has_custom_headers_style = True
-            for index in self.index:
+            for index in self.data_df.index:
                 if use_default_formats:
                     if isinstance(self.at[index, col_name].value, pd_timestamp):
                         style_to_apply.number_format = utils.number_formats.date_time
@@ -899,7 +899,7 @@ class StyleFrame:
         """
 
         num_of_styles = len(styles)
-        split_indexes = (self.index[i::num_of_styles] for i in range(num_of_styles))
+        split_indexes = (self.data_df.index[i::num_of_styles] for i in range(num_of_styles))
         for i, indexes in enumerate(split_indexes):
             self.apply_style_by_indexes(indexes, styles[i], **kwargs)
         return self
