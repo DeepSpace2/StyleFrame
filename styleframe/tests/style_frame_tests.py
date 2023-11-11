@@ -121,7 +121,7 @@ class StyleFrameTest(unittest.TestCase):
         self.sf['d'] = self.sf['a'] + self.sf['b']
         self.sf['e'] = self.sf['a'] + 5
 
-        self.assertTrue(all(self.sf.applymap(lambda x: isinstance(x, Container)).all()))
+        self.assertTrue(all(self.sf.map(lambda x: isinstance(x, Container)).all()))
 
     def test__getattr__(self):
         self.assertEqual(self.sf.fillna, self.sf.data_df.fillna)
