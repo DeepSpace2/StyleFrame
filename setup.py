@@ -67,7 +67,8 @@ setup(
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
-        'Programming Language :: Python :: 3.9'
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10'
     ],
 
     # What does your project relate to?
@@ -86,7 +87,7 @@ setup(
         'openpyxl>=2.5,<4',
         'colour>=0.1.5,<0.2',
         'jsonschema',
-        'pandas<2',
+        'pandas<3',
         "xlrd>=1.0.0,<1.3.0 ; python_version<='3.6'"
     ]
 )

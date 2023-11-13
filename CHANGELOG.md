@@ -1,3 +1,12 @@
+#### 4.2
+* **Added Python 3.10 support**
+* Added ability to set individual borders' type via the `border_type` argument
+  when creating a `Styler` object
+* Fixes [GitHub issue #108](https://github.com/DeepSpace2/StyleFrame/issues/108) - Styling and exporting a dataframe that
+  contains a column called "index"
+* Fixes error when attempting to use `best_fit` argument in `StyleFrame.to_excel`
+  on an empty dataframe [GitHub PR #157](https://github.com/DeepSpace2/StyleFrame/pull/157)
+
 #### 4.1
 * Added `strikethrough` and `italic` to `Styler`
 * Raising `TypeError` in `to_excel` if trying to use a non-openpyxl engine

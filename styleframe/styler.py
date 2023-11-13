@@ -7,7 +7,7 @@ from openpyxl.styles import PatternFill, NamedStyle, Color as OpenPyColor, Borde
 from openpyxl.comments import Comment
 from pprint import pformat
 
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, Union, Set
 
 
 class Styler:
@@ -27,8 +27,20 @@ class Styler:
     :param bool protection: If ``True``, the cell/column will be write-protected
     :param underline: The underline type
     :type underline: str: one of :class:`.utils.underline` or any other underline Excel supports
-    :param border_type: The border type
-    :type border_type: str: one of :class:`.utils.borders` or any other border type Excel supports
+
+    .. versionchanged:: 4.2
+
+    :param border_type:
+        - If provided a string (one of :class:`.utils.borders` or any other border type Excel supports): all borders
+          will be set to that type.
+        - If provided a set of strings (:class:`.utils.border_locations` or any other border location Excel supports):
+          each provided border will be set to the default border type.
+        - If provided a dict (from location,
+          one of :class:`.utils.border_locations` or any other border location Excel supports) to border type
+          (one of :class:`.utils.borders` or any other border type Excel supports): each provided border will be set to
+          the provided border type.
+
+    :type border_type: str or set[str] or dict[str, str]
 
     .. versionadded:: 1.2
 
@@ -77,7 +89,7 @@ class Styler:
                  number_format: str = utils.number_formats.general,
                  protection: bool = False,
                  underline: Optional[str] = None,
-                 border_type: str = utils.borders.thin,
+                 border_type: Union[str, Set[str], Dict[str, str]] = utils.borders.thin,
                  horizontal_alignment: str = utils.horizontal_alignments.center,
                  vertical_alignment: str = utils.vertical_alignments.center,
                  wrap_text: bool = True,
@@ -100,15 +112,6 @@ class Styler:
                 color_str = utils.colors.get(color_str, default_color)
             return color_str
 
-        if border_type == utils.borders.default_grid:
-            if bg_color is not None or fill_pattern_type != utils.fill_pattern_types.solid:
-                raise ValueError('`bg_color`or `fill_pattern_type` conflict with border_type={}'.format(utils.borders.default_grid))
-            self.border_type = None
-            self.fill_pattern_type = None
-        else:
-            self.border_type = border_type
-            self.fill_pattern_type = fill_pattern_type
-
         self.bold = bold
         self.font = font
         self.font_size = font_size
@@ -130,12 +133,32 @@ class Styler:
         self.date_time_format = date_time_format
         self.strikethrough = strikethrough
         self.italic = italic
+        self.fill_pattern_type = fill_pattern_type
+
+        if isinstance(border_type, set):
+            self.border_type = {border_location: utils.borders.thin for border_location in border_type}
+        elif isinstance(border_type, dict):
+            self.border_type = border_type
+        else:
+            self.border_type = {
+                utils.border_locations.top: border_type,
+                utils.border_locations.right: border_type,
+                utils.border_locations.bottom: border_type,
+                utils.border_locations.left: border_type
+            }
+
+        if border_type == utils.borders.default_grid:
+            if bg_color is not None or fill_pattern_type != utils.fill_pattern_types.solid:
+                raise ValueError(f'`bg_color`or `fill_pattern_type` conflict with border_type={utils.borders.default_grid}')
+            self.border_type = None
+            self.fill_pattern_type = None
 
     def __eq__(self, other):
         return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
 
     def __hash__(self):
-        return hash(tuple((k, v) for k, v in sorted(self.__dict__.items())))
+        return hash(tuple((k, v) if not isinstance(v, (dict, set)) else hash(tuple(v.items()))
+                          for k, v in sorted(self.__dict__.items())))
 
     def __add__(self, other):
         default = Styler().__dict__
@@ -161,8 +184,13 @@ class Styler:
         try:
             openpyxl_style = self.cache[self]
         except KeyError:
-            side = Side(border_style=self.border_type, color=utils.colors.black)
-            border = Border(left=side, right=side, top=side, bottom=side)
+            if isinstance(self.border_type, str):
+                side = Side(border_style=self.border_type, color=utils.colors.black)
+                border = Border(left=side, right=side, top=side, bottom=side)
+            else:
+                border = Border(**{border_location: Side(border_style=border_type, color=utils.colors.black)
+                                   for border_location, border_type in self.border_type.items()})
+
             openpyxl_style = self.cache[self] = NamedStyle(
                 name=str(hash(self)),
                 font=Font(name=self.font, size=self.font_size, color=OpenPyColor(self.font_color),
@@ -181,6 +209,7 @@ class Styler:
     @classmethod
     def from_openpyxl_style(cls, openpyxl_style: Cell, theme_colors: List[str],
                             openpyxl_comment: Optional[Comment] = None):
+
         def _calc_new_hex_from_theme_hex_and_tint(theme_hex, color_tint):
             if not theme_hex.startswith('#'):
                 theme_hex = '#' + theme_hex
@@ -235,7 +264,6 @@ class Styler:
         number_format = openpyxl_style.number_format
         protection = openpyxl_style.protection.locked
         underline = openpyxl_style.font.underline
-        border_type = openpyxl_style.border.bottom.border_style
         horizontal_alignment = openpyxl_style.alignment.horizontal
         vertical_alignment = openpyxl_style.alignment.vertical
         wrap_text = openpyxl_style.alignment.wrap_text or False
@@ -243,6 +271,13 @@ class Styler:
         fill_pattern_type = openpyxl_style.fill.patternType
         indent = openpyxl_style.alignment.indent
         text_rotation = openpyxl_style.alignment.text_rotation
+
+        border_type = {
+            utils.border_locations.top: getattr(openpyxl_style.border.top, 'border_style', None),
+            utils.border_locations.right: getattr(openpyxl_style.border.right, 'border_style', None),
+            utils.border_locations.bottom: getattr(openpyxl_style.border.bottom, 'border_style', None),
+            utils.border_locations.left: getattr(openpyxl_style.border.left, 'border_style', None)
+        }
 
         if openpyxl_comment:
             comment_author = openpyxl_comment.author

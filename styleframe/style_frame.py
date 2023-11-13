@@ -5,7 +5,7 @@ from collections import OrderedDict
 from collections.abc import Iterable
 from copy import deepcopy
 from functools import partial
-from typing import Union, Optional, List, Dict, Tuple, Set
+from typing import Any, Dict, List, Optional, Set, Tuple, Union
 
 import numpy as np
 import pandas as pd
@@ -56,11 +56,11 @@ class StyleFrame:
             if obj.empty:
                 self.data_df = deepcopy(obj)
             else:
-                self.data_df = obj.applymap(lambda x: Container(x, deepcopy(styler_obj)) if not isinstance(x, Container) else x)
+                self.data_df = obj.map(lambda x: Container(x, deepcopy(styler_obj)) if not isinstance(x, Container) else x)
         elif isinstance(obj, pd.Series):
             self.data_df = obj.apply(lambda x: Container(x, deepcopy(styler_obj)) if not isinstance(x, Container) else x)
         elif isinstance(obj, (dict, list)):
-            self.data_df = pd.DataFrame(obj).applymap(lambda x: Container(x, deepcopy(styler_obj)) if not isinstance(x, Container) else x)
+            self.data_df = pd.DataFrame(obj).map(lambda x: Container(x, deepcopy(styler_obj)) if not isinstance(x, Container) else x)
         elif isinstance(obj, StyleFrame):
             self.data_df = deepcopy(obj.data_df)
             from_another_styleframe = True
@@ -84,10 +84,14 @@ class StyleFrame:
         self._known_attrs = {'at': self.data_df.at,
                              'loc': self.data_df.loc,
                              'iloc': self.data_df.iloc,
-                             'applymap': self.data_df.applymap,
                              'groupby': self.data_df.groupby,
                              'index': self.data_df.index,
-                             'fillna': self.data_df.fillna}
+                             'fillna': self.data_df.fillna,
+
+                             # applymap is deprecated in pandas > 2
+                             'applymap': self.data_df.map,
+                             'map': self.data_df.map
+        }
 
     def __str__(self):
         return str(self.data_df)
@@ -222,12 +226,12 @@ class StyleFrame:
             for col_index, col_name in enumerate(sf.columns):
                 col_index_in_excel = col_index + 1
                 if col_index_in_excel == excel_index_col:
-                    for row_index, sf_index in enumerate(sf.index, start=2):
+                    for row_index, sf_index in enumerate(sf.data_df.index, start=2):
                         sf_index.style = get_style_object(row=row_index, column=col_index_in_excel)
                     col_index_in_excel += 1  # Move next to excel indices column
 
                 sf.columns[col_index].style = get_style_object(row=1, column=col_index_in_excel)
-                for row_index, sf_index in enumerate(sf.index, start=start_row_index):
+                for row_index, sf_index in enumerate(sf.data_df.index, start=start_row_index):
                     sf.at[sf_index, col_name].style = get_style_object(row=row_index, column=col_index_in_excel)
                     sf._rows_height[row_index] = sheet.row_dimensions[row_index].height
 
@@ -273,7 +277,7 @@ class StyleFrame:
         sf = cls.read_excel(path=path, read_style=True, **kwargs)
 
         num_of_rows, num_of_cols = len(df.index), len(df.columns)
-        template_num_of_rows, template_num_of_cols = len(sf.index), len(sf.columns)
+        template_num_of_rows, template_num_of_cols = len(sf.data_df.index), len(sf.columns)
 
         num_of_cols_to_copy_with_style = min(num_of_cols, template_num_of_cols)
         num_of_rows_to_copy_with_style = min(num_of_rows, template_num_of_rows)
@@ -335,10 +339,23 @@ class StyleFrame:
 
         return tuple(range(1, len(self) + 2))
 
+    @staticmethod
+    def _to_excel_pandas_defaults(kwargs: Dict[str, Any]) -> Tuple[bool, int, int, str]:
+        """Returns the provided or default values for specific arguments as set by :meth:`pandas.DataFrame.to_excel`
+        """
+
+        header = kwargs.pop('header', True)
+        startcol = kwargs.pop('startcol', 0)
+        startrow = kwargs.pop('startrow', 0)
+        na_rep = kwargs.pop('na_rep', '')
+
+        return header, startcol, startrow, na_rep
+
     def to_excel(self, excel_writer: Union[str, pd.ExcelWriter, pathlib.Path] = 'output.xlsx',
                  sheet_name: str = 'Sheet1', allow_protection: bool = False, right_to_left: bool = False,
                  columns_to_hide: Union[None, str, list, tuple, set] = None, row_to_add_filters: Optional[int] = None,
                  columns_and_rows_to_freeze: Optional[str] = None, best_fit: Union[None, str, list, tuple, set] = None,
+                 index: bool = False,
                  **kwargs) -> pd.ExcelWriter:
         """Saves the dataframe to excel and applies the styles.
 
@@ -374,6 +391,10 @@ class StyleFrame:
                       calling ``StyleFrame.to_excel`` by directly modifying ``StyleFrame.A_FACTOR`` and ``StyleFrame.P_FACTOR``
 
         :type best_fit: None or str or list or tuple or set
+
+        .. versionadded:: 4.2
+
+        :param bool index: Write row names.
         :rtype: :class:`pandas.ExcelWriter`
 
         """
@@ -382,12 +403,7 @@ class StyleFrame:
             if excel_writer.engine != 'openpyxl':
                 raise TypeError('styleframe supports only openpyxl, attempted to use {}'.format(excel_writer.engine))
 
-        # dealing with needed pandas.to_excel defaults
-        header = kwargs.pop('header', True)
-        index = kwargs.pop('index', False)
-        startcol = kwargs.pop('startcol', 0)
-        startrow = kwargs.pop('startrow', 0)
-        na_rep = kwargs.pop('na_rep', '')
+        header, startcol, startrow, na_rep = self._to_excel_pandas_defaults(kwargs)
 
         def get_values(x):
             if isinstance(x, Container):
@@ -425,7 +441,7 @@ class StyleFrame:
                                                                                 end_index=end_index)
 
         if len(self.data_df) > 0:
-            export_df = self.data_df.applymap(get_values)
+            export_df = self.data_df.map(get_values)
 
         else:
             export_df = deepcopy(self.data_df)
@@ -533,8 +549,12 @@ class StyleFrame:
         if best_fit:
             if not isinstance(best_fit, (list, set, tuple)):
                 best_fit = [best_fit]
-            self.set_column_width_dict({column: (max(self.data_df[column].astype(str).str.len()) + self.A_FACTOR) * self.P_FACTOR
-                                        for column in best_fit})
+            self.set_column_width_dict(
+                {
+                    column: (max(self.data_df[column].astype(str).str.len(), default=0) + self.A_FACTOR) * self.P_FACTOR
+                    for column in best_fit
+                }
+            )
 
         for column in self._columns_width:
             column_letter = self._get_column_as_letter(sheet, column, startcol)
@@ -631,7 +651,7 @@ class StyleFrame:
             raise TypeError('styler_obj must be {}, got {} instead.'.format(Styler.__name__, type(styler_obj).__name__))
 
         if isinstance(indexes_to_style, (list, tuple, int)):
-            indexes_to_style = self.index[indexes_to_style]
+            indexes_to_style = self.data_df.index[indexes_to_style]
 
         elif isinstance(indexes_to_style, Container):
             indexes_to_style = pd.Index([indexes_to_style])
@@ -649,15 +669,15 @@ class StyleFrame:
         for index in indexes_to_style:
             index.style = style_to_apply
             for col in cols_to_style:
-                self.iloc[self.index.get_loc(index), self.columns.get_loc(col)].style = style_to_apply
+                self.iloc[self.data_df.index.get_loc(index), self.columns.get_loc(col)].style = style_to_apply
 
         if height:
             # Add offset 2 since rows do not include the headers and they starts from 1 (not 0).
-            rows_indexes_for_height_change = [self.index.get_loc(idx) + 2 for idx in indexes_to_style]
+            rows_indexes_for_height_change = [self.data_df.index.get_loc(idx) + 2 for idx in indexes_to_style]
             self.set_row_height(rows=rows_indexes_for_height_change, height=height)
 
         if complement_style:
-            self.apply_style_by_indexes(self.index.difference(indexes_to_style), complement_style, cols_to_style,
+            self.apply_style_by_indexes(self.data_df.index.difference(indexes_to_style), complement_style, cols_to_style,
                                         complement_height if complement_height else height)
 
         return self
@@ -703,7 +723,7 @@ class StyleFrame:
             if style_header:
                 self.columns[self.columns.get_loc(col_name)].style = style_to_apply
                 self._has_custom_headers_style = True
-            for index in self.index:
+            for index in self.data_df.index:
                 if use_default_formats:
                     if isinstance(self.at[index, col_name].value, pd_timestamp):
                         style_to_apply.number_format = utils.number_formats.date_time
@@ -887,7 +907,7 @@ class StyleFrame:
         """
 
         num_of_styles = len(styles)
-        split_indexes = (self.index[i::num_of_styles] for i in range(num_of_styles))
+        split_indexes = (self.data_df.index[i::num_of_styles] for i in range(num_of_styles))
         for i, indexes in enumerate(split_indexes):
             self.apply_style_by_indexes(indexes, styles[i], **kwargs)
         return self
