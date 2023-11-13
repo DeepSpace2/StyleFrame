@@ -24,7 +24,7 @@ Creating ExcelWriter object:
 
     ew = StyleFrame.ExcelWriter(r'C:\my_excel.xlsx')
     sf.to_excel(ew)
-    ew.save()
+    ew.close()
 
 It is also possible to style a whole column or columns, and decide whether to style the headers or not:
 ::

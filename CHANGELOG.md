@@ -1,3 +1,28 @@
+#### 4.2
+* **Added Python 3.10 support**
+* Added ability to set individual borders' type via the `border_type` argument
+  when creating a `Styler` object
+* Fixes [GitHub issue #108](https://github.com/DeepSpace2/StyleFrame/issues/108) - Styling and exporting a dataframe that
+  contains a column called "index"
+* Fixes error when attempting to use `best_fit` argument in `StyleFrame.to_excel`
+  on an empty dataframe [GitHub PR #157](https://github.com/DeepSpace2/StyleFrame/pull/157)
+
+#### 4.1
+* Added `strikethrough` and `italic` to `Styler`
+* Raising `TypeError` in `to_excel` if trying to use a non-openpyxl engine
+* Exposing `Exposing StyleFrame.ExcelWriter` and `StyleFrame.read_excel` to the module-level (`styleframe.ExcelWriter`
+  and `styleframe.read_excel`) to more closely mimic pandas' API
+* Fixes [GitHub issue #124](https://github.com/DeepSpace2/StyleFrame/issues/124) - Improved calculation of color luminosity from tint
+
+#### 4.0
+* **Removed Python 3.4 support**
+* **Removed Python 3.5 support**
+* **Added Python 3.9 support**
+* Allowing `StyleFrame.ExcelWriter` to accept any argument (except for `engine`) that `pandas.ExcelWriter` accepts
+* Allowing customizing formats of `date`, `time` and `datetime` objects when creating `Styler` instances
+* Fixed rows mis-alignment issue when calling `to_excel` with `header=False` ([GitHub issue #88](https://github.com/DeepSpace2/StyleFrame/issues/88))
+* `read_excel` does not accept `sheetname` argument anymore (was deprecated since version 1.6). Use `sheet_name` instead.
+
 #### 3.0.6
 * Fixes [GitHub issue #94](https://github.com/DeepSpace2/StyleFrame/issues/94) - Passing `border_type=utils.borders.default_grid` to `Styler`
 
