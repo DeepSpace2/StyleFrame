@@ -82,7 +82,7 @@ class CommandLineInterface:
             sf.set_row_height_dict(row_heights)
 
     def _save(self):
-        self.excel_writer.save()
+        self.excel_writer.close()
 
 
 def get_cli_args():

@@ -121,7 +121,7 @@ class StyleFrameTest(unittest.TestCase):
         self.sf['d'] = self.sf['a'] + self.sf['b']
         self.sf['e'] = self.sf['a'] + 5
 
-        self.assertTrue(all(self.sf.applymap(lambda x: isinstance(x, Container)).all()))
+        self.assertTrue(all(self.sf.map(lambda x: isinstance(x, Container)).all()))
 
     def test__getattr__(self):
         self.assertEqual(self.sf.fillna, self.sf.data_df.fillna)
@@ -536,12 +536,12 @@ class StyleFrameTest(unittest.TestCase):
         # and be left from the original template
         self.assertListEqual([col.value for col in sf_from_template.columns], ['A', 'b'])
 
-        self.assertEqual(template_sf['a'][0].style, sf_from_template['A'][0].style,
+        self.assertEqual(template_sf['a'].iloc[0].style, sf_from_template['A'].iloc[0].style,
                          'Different styles in template cell with style {template_style}'
                          '\nand actual cell with style {actual_cell_style}'.format(
-                             template_style=template_sf['a'][0].style, actual_cell_style=sf_from_template['A'][0].style)
+                             template_style=template_sf['a'].iloc[0].style, actual_cell_style=sf_from_template['A'].iloc[0].style)
                          )
-        self.assertEqual(sf_from_template['A'][0].value, 1)
+        self.assertEqual(sf_from_template['A'].iloc[0].value, 1)
 
         # Assert extra column equals
         self.assertListEqual(list(sf_from_template['b']), list(template_sf['b']))
@@ -607,15 +607,15 @@ class StyleFrameTest(unittest.TestCase):
         self.assertListEqual([col.value for col in sf_from_template.columns], ['A'])
         self.assertEqual(len(df), len(sf_from_template))
 
-        expected_cell_style = template_sf['a'][0].style
-        actual_cell_style = sf_from_template['A'][0].style
+        expected_cell_style = template_sf['a'].iloc[0].style
+        actual_cell_style = sf_from_template['A'].iloc[0].style
 
         self.assertEqual(actual_cell_style, expected_cell_style,
                          'Different styles in template cell with style {template_style}'
                          '\nand actual cell with style {actual_cell_style}'.format(
                              template_style=expected_cell_style, actual_cell_style=actual_cell_style)
                          )
-        self.assertEqual(sf_from_template['A'][0].value, 1)
+        self.assertEqual(sf_from_template['A'].iloc[0].value, 1)
 
     def test_row_indexes(self):
         self.assertEqual(self.sf.row_indexes, (1, 2, 3, 4))
@@ -690,4 +690,3 @@ class StyleFrameTest(unittest.TestCase):
         self.assertEqual(startcol, sig.parameters['startcol'].default)
         self.assertEqual(startrow, sig.parameters['startrow'].default)
         self.assertEqual(na_rep, sig.parameters['na_rep'].default)
-

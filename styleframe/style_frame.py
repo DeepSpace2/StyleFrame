@@ -56,11 +56,11 @@ class StyleFrame:
             if obj.empty:
                 self.data_df = deepcopy(obj)
             else:
-                self.data_df = obj.applymap(lambda x: Container(x, deepcopy(styler_obj)) if not isinstance(x, Container) else x)
+                self.data_df = obj.map(lambda x: Container(x, deepcopy(styler_obj)) if not isinstance(x, Container) else x)
         elif isinstance(obj, pd.Series):
             self.data_df = obj.apply(lambda x: Container(x, deepcopy(styler_obj)) if not isinstance(x, Container) else x)
         elif isinstance(obj, (dict, list)):
-            self.data_df = pd.DataFrame(obj).applymap(lambda x: Container(x, deepcopy(styler_obj)) if not isinstance(x, Container) else x)
+            self.data_df = pd.DataFrame(obj).map(lambda x: Container(x, deepcopy(styler_obj)) if not isinstance(x, Container) else x)
         elif isinstance(obj, StyleFrame):
             self.data_df = deepcopy(obj.data_df)
             from_another_styleframe = True
@@ -84,10 +84,14 @@ class StyleFrame:
         self._known_attrs = {'at': self.data_df.at,
                              'loc': self.data_df.loc,
                              'iloc': self.data_df.iloc,
-                             'applymap': self.data_df.applymap,
                              'groupby': self.data_df.groupby,
                              'index': self.data_df.index,
-                             'fillna': self.data_df.fillna}
+                             'fillna': self.data_df.fillna,
+
+                             # applymap is deprecated in pandas > 2
+                             'applymap': self.data_df.map,
+                             'map': self.data_df.map
+        }
 
     def __str__(self):
         return str(self.data_df)
@@ -437,7 +441,7 @@ class StyleFrame:
                                                                                 end_index=end_index)
 
         if len(self.data_df) > 0:
-            export_df = self.data_df.applymap(get_values)
+            export_df = self.data_df.map(get_values)
 
         else:
             export_df = deepcopy(self.data_df)
