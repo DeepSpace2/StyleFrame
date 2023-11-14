@@ -301,13 +301,13 @@ class Styler:
         Used to combine :class:`Styler` objects. The right-most object has precedence.
         For example:
 
-        ::
+        .. code-block:: python
 
             Styler.combine(Styler(bg_color='yellow', font_size=24), Styler(bg_color='blue'))
 
         will return
 
-        ::
+        .. code-block:: python
 
             Styler(bg_color='blue', font_size=24)
 

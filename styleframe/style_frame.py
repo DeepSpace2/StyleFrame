@@ -171,7 +171,7 @@ class StyleFrame:
 
             .. note:: Using ``use_openpyxl_styles=False`` is useful if you are going to filter columns or rows by style, for example:
 
-                     ::
+                     .. code-block:: python
 
                         sf = sf[[col for col in sf.columns if col.style.font == utils.fonts.arial]]
 
@@ -383,7 +383,7 @@ class StyleFrame:
                       column. However this isn't guaranteed to work for all fonts (works best with monospaced fonts). The formula
                       used to calculate a column's width is equivalent to
 
-                      ::
+                      .. code-block:: python
 
                         (len(longest_value_in_column) + A_FACTOR) * P_FACTOR
 
@@ -617,7 +617,7 @@ class StyleFrame:
         :param indexes_to_style: Indexes to which the provided style will be applied.
             Usually passed as pandas selecting syntax. For example,
 
-            ::
+            .. code-block:: python
 
                 sf[sf['some_col'] == 20]
 
